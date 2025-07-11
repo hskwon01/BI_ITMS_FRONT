@@ -1,0 +1,13 @@
+# 공통적으로 모든 node_modules 무시
+**/node_modules/
+
+# 모든 .env 파일 무시
+**/.env
+
+# backend/uploads 폴더 무시
+backend/uploads/
+
+# 기타 추천 무시 항목
+*.log
+.DS_Store
+.vscode/
