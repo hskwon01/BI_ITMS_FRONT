@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile } from '../api/ticket';
+import DragDropFileUpload from './DragDropFileUpload';
 import '../css/TicketDetailBase.css';
 
 const isImageFile = (filename) => {
@@ -12,12 +13,15 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [replies, setReplies] = useState([]);
   const [message, setMessage] = useState('');
   const [replyFiles, setReplyFiles] = useState([]);
+  const [replyFilePreviews, setReplyFilePreviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState({ filename: '', isTicketFile: false });
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -69,6 +73,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       await postReply(ticketId, formData, token);
       setMessage('');
       setReplyFiles([]);
+      setReplyFilePreviews([]);
       fetchDetail();
       showToast('댓글이 성공적으로 등록되었습니다.', 'success');
     } catch {
@@ -117,6 +122,16 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       case '낮음': return 'low';
       default: return 'default';
     }
+  };
+
+  const handleImageClick = (imageUrl, filename) => {
+    setSelectedImage({ url: imageUrl, filename });
+    setShowImageModal(true);
+  };
+
+  const closeImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
   };
 
   useEffect(() => {
@@ -238,6 +253,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                         src={`http://localhost:5000/uploads/${f.filename}`}
                         alt={f.originalname}
                         className="file-image"
+                        onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
+                        style={{ cursor: 'pointer' }}
                       />
                       <div className="file-actions">
                         <a
@@ -321,6 +338,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                               src={`http://localhost:5000/uploads/${f.filename}`}
                               alt={f.originalname}
                               className="file-image"
+                              onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
+                              style={{ cursor: 'pointer' }}
                             />
                             <div className="file-actions">
                               <a
@@ -382,37 +401,21 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </div>
           
           <div className="form-group">
-            <div className="file-upload-area">
-              <input 
-                type="file" 
-                multiple 
-                onChange={(e) => setReplyFiles(Array.from(e.target.files))}
-                className="file-input"
-                id="file-input"
-              />
-              <label htmlFor="file-input" className="file-upload-label">
-                📎 파일 첨부
-              </label>
-            </div>
-            {replyFiles.length > 0 && (
-              <div className="selected-files">
-                <h4>선택된 파일:</h4>
-                <ul>
-                  {replyFiles.map((file, index) => (
-                    <li key={index} className="selected-file">
-                      📎 {file.name}
-                      <button 
-                        type="button"
-                        onClick={() => setReplyFiles(replyFiles.filter((_, i) => i !== index))}
-                        className="remove-file-btn"
-                      >
-                        ✕
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <DragDropFileUpload
+              files={replyFiles}
+              setFiles={setReplyFiles}
+              filePreviews={replyFilePreviews}
+              setFilePreviews={setReplyFilePreviews}
+              maxFiles={5}
+              maxSize={10 * 1024 * 1024} // 10MB
+              acceptedTypes={[
+                'image/*',
+                'application/pdf',
+                'text/*',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+              ]}
+            />
           </div>
 
           <button 
@@ -424,6 +427,23 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </button>
         </form>
       </div>
+
+      {/* 이미지 모달 */}
+      {showImageModal && selectedImage && (
+        <div className="image-modal-overlay" onClick={closeImageModal}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="image-modal-header">
+              <h3>{selectedImage.filename}</h3>
+              <button className="modal-close-btn" onClick={closeImageModal}>
+                ✕
+              </button>
+            </div>
+            <div className="image-modal-body">
+              <img src={selectedImage.url} alt={selectedImage.filename} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
