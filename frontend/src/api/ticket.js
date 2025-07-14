@@ -65,3 +65,13 @@ export const getAdminUnreadCounts = async (token) => {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
+
+export const updateReply = (ticketId, replyId, message, token) =>
+  API.put(`/tickets/${ticketId}/replies/${replyId}`, { message }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+export const deleteReply = (ticketId, replyId, token) =>
+  API.delete(`/tickets/${ticketId}/replies/${replyId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
