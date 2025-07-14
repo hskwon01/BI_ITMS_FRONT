@@ -8,7 +8,7 @@ const DragDropFileUpload = ({
   setFilePreviews, 
   maxFiles = 5, 
   maxSize = 10 * 1024 * 1024, // 10MB
-  acceptedTypes = ['image/*', 'application/pdf', 'text/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+  acceptedTypes = ['image/*', 'application/pdf', 'text/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragCounter, setDragCounter] = useState(0);
@@ -140,6 +140,7 @@ const DragDropFileUpload = ({
     if (type.startsWith('image/')) return '🖼️';
     if (type.includes('pdf')) return '📄';
     if (type.includes('word') || type.includes('document')) return '📝';
+    if (type.includes('excel') || type.includes('spreadsheet')) return '📊';
     if (type.includes('text')) return '📄';
     return '📎';
   };
@@ -172,7 +173,8 @@ const DragDropFileUpload = ({
             파일을 드래그하여 여기에 놓거나 <span className="click-here">클릭</span>하여 선택하세요
           </p>
           <p className="drag-drop-hint">
-            최대 {maxFiles}개 파일, 각 파일 {maxSize / (1024 * 1024)}MB 이하
+            최대 {maxFiles}개 파일, 각 파일 {maxSize / (1024 * 1024)}MB 이하<br />
+            이미지, PDF, 문서, 엑셀 파일 지원
           </p>
         </div>
         <input
