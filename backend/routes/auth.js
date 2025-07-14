@@ -5,6 +5,10 @@ const jwt = require('jsonwebtoken');
 const { createUser, getUserByEmail } = require('../models/userModel');
 const JWT_SECRET = process.env.JWT_SECRET;
 const { verifyToken } = require('../middleware/auth');
+const { generateVerificationCode, sendVerificationEmail } = require('../config/email');
+
+// 인증 코드를 임시로 저장할 객체 (실제 운영에서는 Redis 등을 사용)
+const verificationCodes = new Map();
 
 // 회원가입
 router.post('/register', async (req, res) => {
@@ -13,8 +17,18 @@ router.post('/register', async (req, res) => {
     const existing = await getUserByEmail(email);
     if (existing) return res.status(400).json({ message: '이미 등록된 이메일입니다.' });
 
+    // 이메일 인증 확인
+    const storedData = verificationCodes.get(email);
+    if (!storedData || !storedData.verified) {
+      return res.status(400).json({ message: '이메일 인증이 필요합니다.' });
+    }
+
     const hashed = await bcrypt.hash(password, 10);
     const newUser = await createUser(email, hashed, name, company);
+    
+    // 인증 코드 삭제
+    verificationCodes.delete(email);
+    
     res.status(201).json({ message: '회원가입 완료 (관리자 승인 후 로그인 가능)' });
   } catch (err) {
     res.status(500).json({ error: '회원가입 오류' });
@@ -26,7 +40,6 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
-    console.log(user);
     if (!user) return res.status(400).json({ message: '사용자를 찾을 수 없습니다.' });
 
     if (!user.is_approved) return res.status(403).json({ message: '관리자 승인이 필요합니다.' });
@@ -43,6 +56,83 @@ router.post('/login', async (req, res) => {
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: '로그인 오류' });
+  }
+});
+
+// 이메일 인증 코드 발송
+router.post('/send-verification', async (req, res) => {
+  const { email } = req.body;
+  
+  try {
+    // 이미 등록된 이메일인지 확인
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: '이미 등록된 이메일입니다.' });
+    }
+
+    // 새로운 인증 코드 생성
+    const verificationCode = generateVerificationCode();
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10분 후 만료
+
+    // 인증 코드를 메모리에 저장
+    verificationCodes.set(email, {
+      code: verificationCode,
+      expiresAt: expiresAt,
+      verified: false
+    });
+
+    // 10분 후 자동 삭제
+    setTimeout(() => {
+      verificationCodes.delete(email);
+    }, 10 * 60 * 1000);
+
+    // 이메일 발송
+    const emailSent = await sendVerificationEmail(email, verificationCode);
+    if (!emailSent) {
+      return res.status(500).json({ message: '이메일 발송에 실패했습니다.' });
+    }
+
+    res.json({ message: '인증 코드가 이메일로 발송되었습니다.' });
+  } catch (error) {
+    console.error('Send verification error:', error);
+    res.status(500).json({ message: '인증 코드 발송에 실패했습니다.' });
+  }
+});
+
+// 이메일 인증 코드 확인
+router.post('/verify-email', async (req, res) => {
+  const { email, verificationCode } = req.body;
+
+  try {
+    // 인증 코드 확인
+    const storedData = verificationCodes.get(email);
+    console.log(storedData);
+    
+    if (!storedData) {
+      return res.status(400).json({ message: '인증 코드가 만료되었습니다. 다시 발송해주세요.' });
+    }
+
+    if (storedData.verified) {
+      return res.status(400).json({ message: '이미 인증된 이메일입니다.' });
+    }
+
+    if (Date.now() > storedData.expiresAt) {
+      verificationCodes.delete(email);
+      return res.status(400).json({ message: '인증 코드가 만료되었습니다. 다시 발송해주세요.' });
+    }
+
+    if (storedData.code !== verificationCode) {
+      return res.status(400).json({ message: '유효하지 않은 인증 코드입니다.' });
+    }
+
+    // 인증 완료 처리
+    storedData.verified = true;
+    verificationCodes.set(email, storedData);
+
+    res.json({ message: '이메일 인증이 완료되었습니다.' });
+  } catch (error) {
+    console.error('Verify email error:', error);
+    res.status(500).json({ message: '이메일 인증에 실패했습니다.' });
   }
 });
 
