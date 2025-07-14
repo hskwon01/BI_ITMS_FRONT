@@ -130,15 +130,113 @@
   }
   
   .register-simple-link:hover {
-    color: #2d3652;
+  color: #2d3652;
+}
+
+/* 이메일 인증 스타일 */
+.email-verification-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.email-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.email-input-group .register-simple-input {
+  flex: 1;
+}
+
+.send-code-btn {
+  padding: 0.9rem 1rem;
+  background: #7c83fd;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.send-code-btn:hover:not(:disabled) {
+  background: #6b73fd;
+}
+
+.send-code-btn:disabled {
+  background: #b3b8e0;
+  cursor: not-allowed;
+}
+
+.verification-code-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.verification-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.verification-input-group .register-simple-input {
+  flex: 1;
+}
+
+.verify-code-btn {
+  padding: 0.9rem 1rem;
+  background: #38a169;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.verify-code-btn:hover:not(:disabled) {
+  background: #2f855a;
+}
+
+.verify-code-btn:disabled {
+  background: #9ae6b4;
+  cursor: not-allowed;
+}
+
+.verification-success {
+  color: #38a169;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 0.5rem;
+  background: #f0fff4;
+  border-radius: 6px;
+  border: 1px solid #9ae6b4;
+}
+
+@media (max-width: 480px) {
+  .register-simple-card {
+    padding: 1.5rem 1rem;
+    max-width: 95vw;
+  }
+  .register-simple-title {
+    font-size: 1.2rem;
   }
   
-  @media (max-width: 480px) {
-    .register-simple-card {
-      padding: 1.5rem 1rem;
-      max-width: 95vw;
-    }
-    .register-simple-title {
-      font-size: 1.2rem;
-    }
+  .email-input-group,
+  .verification-input-group {
+    flex-direction: column;
   }
+  
+  .send-code-btn,
+  .verify-code-btn {
+    width: 100%;
+  }
+}
