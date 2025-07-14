@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, getUserByEmail } = require('../models/userModel');
+const { createUser, getUserByEmail, getAdminEmails } = require('../models/userModel');
 const JWT_SECRET = process.env.JWT_SECRET;
 const { verifyToken } = require('../middleware/auth');
-const { generateVerificationCode, sendVerificationEmail } = require('../config/email');
+const { generateVerificationCode, sendVerificationEmail, sendAdminApprovalNotification } = require('../config/email');
 
 // 인증 코드를 임시로 저장할 객체 (실제 운영에서는 Redis 등을 사용)
 const verificationCodes = new Map();
@@ -25,6 +25,18 @@ router.post('/register', async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
     const newUser = await createUser(email, hashed, name, company);
+    
+    // 관리자에게 승인 알림 메일 발송
+    try {
+      const adminEmails = await getAdminEmails();
+      if (adminEmails.length > 0) {
+        await sendAdminApprovalNotification(adminEmails, newUser);
+        console.log('관리자 승인 알림 메일 발송 완료');
+      }
+    } catch (error) {
+      console.error('관리자 승인 알림 메일 발송 실패:', error);
+      // 메일 발송 실패해도 회원가입은 성공으로 처리
+    }
     
     // 인증 코드 삭제
     verificationCodes.delete(email);
