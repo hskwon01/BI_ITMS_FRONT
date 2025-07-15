@@ -256,6 +256,58 @@ router.post('/:id/replies', verifyToken, upload.array('files', 5), async (req, r
   }
 });
 
+// 댓글 수정
+router.put('/:ticketId/replies/:replyId', verifyToken, async (req, res) => {
+  const { message } = req.body;
+  const { ticketId, replyId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM ticket_replies WHERE id = $1 AND ticket_id = $2 AND author_id = $3`,
+      [replyId, ticketId, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(403).json({ error: '수정 권한이 없습니다.' });
+    }
+
+    await pool.query(
+      `UPDATE ticket_replies SET message = $1, updated_at = NOW() WHERE id = $2`,
+      [message, replyId]
+    );
+
+    res.json({ message: '댓글 수정 완료' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '댓글 수정 실패' });
+  }
+});
+
+// 댓글 삭제
+router.delete('/:ticketId/replies/:replyId', verifyToken, async (req, res) => {
+  const { ticketId, replyId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM ticket_replies WHERE id = $1 AND ticket_id = $2 AND author_id = $3`,
+      [replyId, ticketId, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(403).json({ error: '삭제 권한이 없습니다.' });
+    }
+
+    await pool.query(`DELETE FROM ticket_replies WHERE id = $1`, [replyId]);
+
+    res.json({ message: '댓글 삭제 완료' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '댓글 삭제 실패' });
+  }
+});
+
 // 티켓 생성
 router.post('/', verifyToken, upload.array('files', 5), async (req, res) => {
   const { title, description, urgency, product } = req.body;
