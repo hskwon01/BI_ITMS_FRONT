@@ -21,8 +21,17 @@ const approveUserById = async (id, isApproved = true) => {
   return result.rows[0];
 };
 
+const getAdminEmails = async () => {
+  const result = await pool.query(
+    'SELECT email FROM users WHERE role = $1',
+    ['admin']
+  );
+  return result.rows.map(row => row.email);
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
   approveUserById,
+  getAdminEmails,
 };

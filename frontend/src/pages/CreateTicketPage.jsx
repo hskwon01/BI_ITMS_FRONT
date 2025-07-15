@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createTicket } from '../api/ticket';
 import { useNavigate } from 'react-router-dom';
+import DragDropFileUpload from '../components/DragDropFileUpload';
 import '../css/CreateTicketPage.css';
 
 const CreateTicketPage = () => {
@@ -29,26 +30,7 @@ const CreateTicketPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
-    
-    // 파일 미리보기 생성
-    const previews = selectedFiles.map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null
-    }));
-    setFilePreviews(previews);
-  };
-
-  const removeFile = (index) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    const newPreviews = filePreviews.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    setFilePreviews(newPreviews);
-  };
+  // 파일 관련 함수들은 DragDropFileUpload 컴포넌트에서 처리됨
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,13 +63,7 @@ const CreateTicketPage = () => {
     }
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+
 
   return (
     <div className="create-ticket-container">
@@ -167,49 +143,24 @@ const CreateTicketPage = () => {
 
           <div className="form-group">
             <label htmlFor="files">첨부 파일</label>
-            <div className="file-upload-area">
-              <input
-                id="files"
-                type="file"
-                multiple
-                onChange={handleFileChange}
-                className="file-input"
-                accept="image/*,.pdf,.doc,.docx,.txt"
-              />
-              <div className="file-upload-text">
-                <span>파일을 선택하거나 여기로 드래그하세요</span>
-                <small>이미지, PDF, 문서 파일 지원 (최대 10MB)</small>
-              </div>
-            </div>
+            <DragDropFileUpload
+              files={files}
+              setFiles={setFiles}
+              filePreviews={filePreviews}
+              setFilePreviews={setFilePreviews}
+              maxFiles={5}
+              maxSize={10 * 1024 * 1024} // 10MB
+              acceptedTypes={[
+                'image/*',
+                'application/pdf',
+                'text/*',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+              ]}
+            />
           </div>
-
-          {filePreviews.length > 0 && (
-            <div className="file-previews">
-              <h4>선택된 파일 ({filePreviews.length}개)</h4>
-              <div className="file-list">
-                {filePreviews.map((file, index) => (
-                  <div key={index} className="file-item">
-                    {file.preview ? (
-                      <img src={file.preview} alt={file.name} className="file-preview" />
-                    ) : (
-                      <div className="file-icon">📄</div>
-                    )}
-                    <div className="file-info">
-                      <span className="file-name">{file.name}</span>
-                      <span className="file-size">{formatFileSize(file.size)}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(index)}
-                      className="file-remove"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className="form-actions">
             <button

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile } from '../api/ticket';
+import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply } from '../api/ticket';
+import DragDropFileUpload from './DragDropFileUpload';
 import '../css/TicketDetailBase.css';
+import { jwtDecode } from 'jwt-decode';
 
 const isImageFile = (filename) => {
   return /\.(png|jpe?g|gif)$/i.test(filename);
@@ -12,12 +14,17 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [replies, setReplies] = useState([]);
   const [message, setMessage] = useState('');
   const [replyFiles, setReplyFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [replyFilePreviews, setReplyFilePreviews] = useState([]);
+  const [, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState({ filename: '', isTicketFile: false });
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [editingReplyId, setEditingReplyId] = useState(null);
+  const [editedMessage, setEditedMessage] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -69,6 +76,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       await postReply(ticketId, formData, token);
       setMessage('');
       setReplyFiles([]);
+      setReplyFilePreviews([]);
       fetchDetail();
       showToast('댓글이 성공적으로 등록되었습니다.', 'success');
     } catch {
@@ -118,6 +126,49 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       default: return 'default';
     }
   };
+
+  const handleImageClick = (imageUrl, filename) => {
+    setSelectedImage({ url: imageUrl, filename });
+    setShowImageModal(true);
+  };
+
+  const closeImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
+  };
+
+  const handleUpdateReply = async (replyId) => {
+    try {
+      await updateReply(ticketId, replyId, editedMessage, token);
+      await fetchDetail(); // 댓글 다시 불러오기
+      setEditingReplyId(null);
+    } catch {
+      alert('댓글 수정 실패');
+    }
+  };
+
+  const handleDeleteReply = async (replyId) => {
+    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+
+    try {
+      await deleteReply(ticketId, replyId, token);
+      await fetchDetail();
+    } catch {
+      alert('댓글 삭제 실패');
+    }
+  };
+
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const decoded = jwtDecode(token);
+  useEffect(() => {
+    if (token) {
+      try {
+        setCurrentUserId(decoded.id); // JWT에 있는 사용자 ID 키 확인 필요 (보통 'id' 또는 'user_id')
+      } catch (err) {
+        console.error("JWT 디코딩 실패", err);
+      }
+    }
+  }, [token]);
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -238,6 +289,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                         src={`http://localhost:5000/uploads/${f.filename}`}
                         alt={f.originalname}
                         className="file-image"
+                        onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
+                        style={{ cursor: 'pointer' }}
                       />
                       <div className="file-actions">
                         <a
@@ -307,9 +360,35 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               </div>
               
               <div className="reply-content">
-                <p>{reply.message}</p>
+                {editingReplyId === reply.id ? (
+                  <div className="reply-edit-form">
+                    <textarea
+                      value={editedMessage}
+                      onChange={(e) => setEditedMessage(e.target.value)}
+                      className="reply-edit-textarea"
+                    />
+                    <div className="reply-edit-buttons">
+                      <button onClick={() => handleUpdateReply(reply.id)}>저장</button>
+                      <button onClick={() => setEditingReplyId(null)}>취소</button>
+                    </div>
+                  </div>
+                ) : (
+                  <p>{reply.message}</p>
+                )}
               </div>
-
+              {reply.author_id === currentUserId && editingReplyId !== reply.id && (
+                <div className="reply-actions">
+                  <button onClick={() => {
+                    setEditingReplyId(reply.id);
+                    setEditedMessage(reply.message);
+                  }}>
+                    ✏️ 수정
+                  </button>
+                  <button onClick={() => handleDeleteReply(reply.id)}>
+                    🗑️ 삭제
+                  </button>
+                </div>
+              )}
               {reply.files && reply.files.length > 0 && (
                 <div className="reply-files">
                   <div className="file-grid">
@@ -321,6 +400,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                               src={`http://localhost:5000/uploads/${f.filename}`}
                               alt={f.originalname}
                               className="file-image"
+                              onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
+                              style={{ cursor: 'pointer' }}
                             />
                             <div className="file-actions">
                               <a
@@ -382,37 +463,23 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </div>
           
           <div className="form-group">
-            <div className="file-upload-area">
-              <input 
-                type="file" 
-                multiple 
-                onChange={(e) => setReplyFiles(Array.from(e.target.files))}
-                className="file-input"
-                id="file-input"
-              />
-              <label htmlFor="file-input" className="file-upload-label">
-                📎 파일 첨부
-              </label>
-            </div>
-            {replyFiles.length > 0 && (
-              <div className="selected-files">
-                <h4>선택된 파일:</h4>
-                <ul>
-                  {replyFiles.map((file, index) => (
-                    <li key={index} className="selected-file">
-                      📎 {file.name}
-                      <button 
-                        type="button"
-                        onClick={() => setReplyFiles(replyFiles.filter((_, i) => i !== index))}
-                        className="remove-file-btn"
-                      >
-                        ✕
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <DragDropFileUpload
+              files={replyFiles}
+              setFiles={setReplyFiles}
+              filePreviews={replyFilePreviews}
+              setFilePreviews={setReplyFilePreviews}
+              maxFiles={5}
+              maxSize={10 * 1024 * 1024} // 10MB
+              acceptedTypes={[
+                'image/*',
+                'application/pdf',
+                'text/*',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+              ]}
+            />
           </div>
 
           <button 
@@ -424,6 +491,23 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </button>
         </form>
       </div>
+
+      {/* 이미지 모달 */}
+      {showImageModal && selectedImage && (
+        <div className="image-modal-overlay" onClick={closeImageModal}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="image-modal-header">
+              <h3>{selectedImage.filename}</h3>
+              <button className="modal-close-btn" onClick={closeImageModal}>
+                ✕
+              </button>
+            </div>
+            <div className="image-modal-body">
+              <img src={selectedImage.url} alt={selectedImage.filename} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
