@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile } from '../api/ticket';
+import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply } from '../api/ticket';
 import DragDropFileUpload from './DragDropFileUpload';
 import '../css/TicketDetailBase.css';
+import { jwtDecode } from 'jwt-decode';
 
 const isImageFile = (filename) => {
   return /\.(png|jpe?g|gif)$/i.test(filename);
@@ -14,7 +15,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [message, setMessage] = useState('');
   const [replyFiles, setReplyFiles] = useState([]);
   const [replyFilePreviews, setReplyFilePreviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -22,6 +23,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [editingReplyId, setEditingReplyId] = useState(null);
+  const [editedMessage, setEditedMessage] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -133,6 +136,39 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     setShowImageModal(false);
     setSelectedImage(null);
   };
+
+  const handleUpdateReply = async (replyId) => {
+    try {
+      await updateReply(ticketId, replyId, editedMessage, token);
+      await fetchDetail(); // 댓글 다시 불러오기
+      setEditingReplyId(null);
+    } catch {
+      alert('댓글 수정 실패');
+    }
+  };
+
+  const handleDeleteReply = async (replyId) => {
+    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+
+    try {
+      await deleteReply(ticketId, replyId, token);
+      await fetchDetail();
+    } catch {
+      alert('댓글 삭제 실패');
+    }
+  };
+
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const decoded = jwtDecode(token);
+  useEffect(() => {
+    if (token) {
+      try {
+        setCurrentUserId(decoded.id); // JWT에 있는 사용자 ID 키 확인 필요 (보통 'id' 또는 'user_id')
+      } catch (err) {
+        console.error("JWT 디코딩 실패", err);
+      }
+    }
+  }, [token]);
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -324,9 +360,35 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               </div>
               
               <div className="reply-content">
-                <p>{reply.message}</p>
+                {editingReplyId === reply.id ? (
+                  <div className="reply-edit-form">
+                    <textarea
+                      value={editedMessage}
+                      onChange={(e) => setEditedMessage(e.target.value)}
+                      className="reply-edit-textarea"
+                    />
+                    <div className="reply-edit-buttons">
+                      <button onClick={() => handleUpdateReply(reply.id)}>저장</button>
+                      <button onClick={() => setEditingReplyId(null)}>취소</button>
+                    </div>
+                  </div>
+                ) : (
+                  <p>{reply.message}</p>
+                )}
               </div>
-
+              {reply.author_id === currentUserId && editingReplyId !== reply.id && (
+                <div className="reply-actions">
+                  <button onClick={() => {
+                    setEditingReplyId(reply.id);
+                    setEditedMessage(reply.message);
+                  }}>
+                    ✏️ 수정
+                  </button>
+                  <button onClick={() => handleDeleteReply(reply.id)}>
+                    🗑️ 삭제
+                  </button>
+                </div>
+              )}
               {reply.files && reply.files.length > 0 && (
                 <div className="reply-files">
                   <div className="file-grid">
