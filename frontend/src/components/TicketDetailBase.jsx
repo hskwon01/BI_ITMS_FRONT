@@ -148,8 +148,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   };
 
   const handleDeleteReply = async (replyId) => {
-    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
-
     try {
       await deleteReply(ticketId, replyId, token);
       await fetchDetail();
@@ -222,6 +220,23 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               >
                 삭제
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 댓글 삭제 모달 */}
+      {deleteTarget.replyId && (
+        <div className="modal-overlay">
+          <div className="reply-delete-modal">
+            <div className="modal-title">댓글 삭제 확인</div>
+            <div className="modal-message">정말로 이 댓글을 삭제하시겠습니까?<br/>삭제된 댓글은 복구할 수 없습니다.</div>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={() => setDeleteTarget({})}>취소</button>
+              <button className="modal-btn confirm" onClick={async () => {
+                await handleDeleteReply(deleteTarget.replyId);
+                setDeleteTarget({});
+              }}>삭제</button>
             </div>
           </div>
         </div>
@@ -376,19 +391,17 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                   <p>{reply.message}</p>
                 )}
               </div>
-              {reply.author_id === currentUserId && editingReplyId !== reply.id && (
-                <div className="reply-actions">
-                  <button onClick={() => {
-                    setEditingReplyId(reply.id);
-                    setEditedMessage(reply.message);
-                  }}>
-                    ✏️ 수정
-                  </button>
-                  <button onClick={() => handleDeleteReply(reply.id)}>
-                    🗑️ 삭제
-                  </button>
-                </div>
-              )}
+              <div className="reply-actions">
+                {reply.author_id === currentUserId && editingReplyId !== reply.id && (
+                  <>
+                    <button className="reply-edit-btn" onClick={() => {
+                      setEditingReplyId(reply.id);
+                      setEditedMessage(reply.message);
+                    }}>✏️ 수정</button>
+                    <button className="reply-delete-btn" onClick={() => setDeleteTarget({ replyId: reply.id })}>🗑️ 삭제</button>
+                  </>
+                )}
+              </div>
               {reply.files && reply.files.length > 0 && (
                 <div className="reply-files">
                   <div className="file-grid">

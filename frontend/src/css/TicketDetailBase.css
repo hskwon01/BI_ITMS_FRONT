@@ -673,6 +673,149 @@
   }
 }
 
+/* 댓글 수정/삭제 버튼 디자인 */
+.reply-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.reply-edit-btn, .reply-delete-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.reply-edit-btn {
+  background: #f1f3f4;
+  color: #2d3652;
+}
+.reply-edit-btn:hover {
+  background: #e2e8f0;
+}
+
+.reply-delete-btn {
+  background: #ffe6e6;
+  color: #e53e3e;
+}
+.reply-delete-btn:hover {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.reply-delete-modal {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 350px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+}
+.reply-delete-modal .modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+.reply-delete-modal .modal-message {
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+}
+.reply-delete-modal .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.reply-delete-modal .modal-btn {
+  padding: 8px 24px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.reply-delete-modal .modal-btn.cancel {
+  background: #f1f3f4;
+  color: #2d3652;
+}
+.reply-delete-modal .modal-btn.cancel:hover {
+  background: #e2e8f0;
+}
+.reply-delete-modal .modal-btn.confirm {
+  background: #e53e3e;
+  color: #fff;
+}
+.reply-delete-modal .modal-btn.confirm:hover {
+  background: #c53030;
+}
+
+.reply-edit-form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reply-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+  background: #f8f9fa;
+  color: #2d3652;
+}
+
+.reply-edit-textarea:focus {
+  outline: none;
+  border-color: #7c83fd;
+  background: #fff;
+}
+
+.reply-edit-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.reply-edit-buttons button {
+  padding: 7px 20px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.reply-edit-buttons button:first-child {
+  background: #7c83fd;
+  color: #fff;
+}
+
+.reply-edit-buttons button:first-child:hover {
+  background: #6366f1;
+}
+
+.reply-edit-buttons button:last-child {
+  background: #f1f3f4;
+  color: #2d3652;
+}
+
+.reply-edit-buttons button:last-child:hover {
+  background: #e2e8f0;
+}
+
 @media (max-width: 768px) {
   .ticket-meta {
     flex-direction: column;
