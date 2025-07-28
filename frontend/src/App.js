@@ -16,6 +16,8 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 const App = () => (
   <BrowserRouter>
     <Routes>
+       {/* 루트로 접속하면 /login 으로 자동 이동 */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
