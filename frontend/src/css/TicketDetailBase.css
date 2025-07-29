@@ -189,6 +189,33 @@
   font-size: 1rem;
 }
 
+.ticket-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3652;
+  margin-bottom: 0.5rem;
+}
+
+.meta-value {
+  font-size: 1rem;
+  color: #4a5568;
+}
+
 .ticket-files h3 {
   font-size: 1.2rem;
   font-weight: 600;

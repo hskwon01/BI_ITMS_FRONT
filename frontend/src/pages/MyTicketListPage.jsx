@@ -149,6 +149,9 @@ const MyTicketListPage = () => {
             <thead>
               <tr>
                 <th>제목</th>
+                <th>Component</th>
+                <th>S/W Version</th>
+                <th>OS</th>
                 <th>상태</th>
                 <th>긴급도</th>
                 <th>등록일</th>
@@ -167,6 +170,9 @@ const MyTicketListPage = () => {
                       </span>
                     )}
                   </td>
+                  <td>{ticket.component}</td>
+                  <td>{ticket.sw_version}</td>
+                  <td>{ticket.os}</td>
                   <td>
                     <span className={`status-badge ${getStatusClass(ticket.status)}`}>
                       {ticket.status}

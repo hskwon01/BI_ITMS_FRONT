@@ -315,6 +315,21 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           <p>{ticket.description}</p>
         </div>
 
+        <div className="ticket-meta-grid">
+          <div className="meta-item">
+            <span className="meta-label">Component:</span>
+            <span className="meta-value">{ticket.component}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">S/W Version:</span>
+            <span className="meta-value">{ticket.sw_version}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">OS:</span>
+            <span className="meta-value">{ticket.os}</span>
+          </div>
+        </div>
+
         {ticket.files && ticket.files.length > 0 && (
           <div className="ticket-files">
             <h3>첨부파일</h3>
@@ -349,7 +364,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))}`
             </div>
           </div>
         )}
