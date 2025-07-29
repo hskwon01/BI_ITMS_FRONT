@@ -123,6 +123,9 @@ const AdminTicketListPage = () => {
           <thead>
             <tr>
               <th>제목</th>
+              <th>Component</th>
+              <th>S/W Version</th>
+              <th>OS</th>
               <th>상태</th>
               <th>긴급도</th>
               <th>고객</th>
@@ -143,6 +146,9 @@ const AdminTicketListPage = () => {
                     </span>
                   )}
                 </td>
+                <td>{ticket.component}</td>
+                <td>{ticket.sw_version}</td>
+                <td>{ticket.os}</td>
                 <td>
                   <span className={`status-badge ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
                 </td>
