@@ -28,7 +28,6 @@ const MyTicketListPage = () => {
       await fetchTickets();
 
       try {
-        console.log(token);
         const res = await getUnreadCounts(token);
         const map = {};
         res.data.forEach(r => {
