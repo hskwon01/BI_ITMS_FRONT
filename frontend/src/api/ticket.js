@@ -45,13 +45,13 @@ export const updateTicketStatus = (id, status, token) =>
     headers: { Authorization: `Bearer ${token}` }
   });  
 
-export const deleteTicketFile = (filename, token) =>
-  API.delete(`/tickets/files/ticket/${filename}`, {
+export const deleteTicketFile = (ticket_files_id, token) =>
+  API.delete(`/tickets/files/ticket/${ticket_files_id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
 
-export const deleteReplyFile = (filename, token) =>
-  API.delete(`/tickets/files/reply/${filename}`, {
+export const deleteReplyFile = (ticket_reply_files_id, token) =>
+  API.delete(`/tickets/files/reply/${ticket_reply_files_id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
 
@@ -75,3 +75,25 @@ export const deleteReply = (ticketId, replyId, token) =>
   API.delete(`/tickets/${ticketId}/replies/${replyId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
+
+export const uploadTicketFiles = (file, token) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return API.post('/users/upload/ticket', formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const uploadReplyFiles = (file, token) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return API.post('/users/upload/reply', formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};

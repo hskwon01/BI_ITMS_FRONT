@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createTicket } from '../api/ticket';
+import { createTicket, uploadTicketFiles } from '../api/ticket';
 import { useNavigate } from 'react-router-dom';
 import DragDropFileUpload from '../components/DragDropFileUpload';
 import '../css/CreateTicketPage.css';
@@ -36,22 +36,32 @@ const CreateTicketPage = () => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-    
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('description', form.description);
-    formData.append('urgency', form.urgency);
-    formData.append('product', form.product);
-    files.forEach(file => formData.append('files', file));
-
     try {
-      await createTicket(formData, token);
+      // 1. 파일들을 Cloudinary에 업로드
+      const uploadedFiles = [];
+      for (const file of files) {
+        const res = await uploadTicketFiles(file, token);
+        uploadedFiles.push({
+          public_id: res.data.public_id,
+          url: res.data.url, // 백엔드에서 반환하는 Cloudinary URL 필드명에 맞게 수정
+          originalname: file.name,
+        });
+      }
+
+      // 2. 티켓 정보와 Cloudinary 파일 URL을 함께 전송
+      const ticketData = {
+        title: form.title,
+        description: form.description,
+        urgency: form.urgency,
+        product: form.product,
+        files: uploadedFiles, // Cloudinary URL 목록
+      };
+
+      await createTicket(ticketData, token);
       showToast('티켓이 성공적으로 등록되었습니다!', 'success');
       setForm({ title: '', description: '', urgency: '', product: '' });
       setFiles([]);
       setFilePreviews([]);
-      
-      // 2초 후 내 티켓 목록으로 이동
       setTimeout(() => {
         navigate('/my-tickets');
       }, 2000);

@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply } from '../api/ticket';
+import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles } from '../api/ticket';
 import DragDropFileUpload from './DragDropFileUpload';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
-
-const isImageFile = (filename) => {
-  return /\.(png|jpe?g|gif)$/i.test(filename);
-};
 
 const TicketDetailBase = ({ ticketId, token, role }) => {
   const [ticket, setTicket] = useState(null);
@@ -19,7 +15,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState({ filename: '', isTicketFile: false });
+  const [deleteTarget, setDeleteTarget] = useState({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -40,7 +36,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       setTicket(res.data.ticket);
       setReplies(res.data.replies);
     } catch {
-      alert('티켓 불러오기 실패');
+      showToast('티켓 불러오기 실패', 'error');
     } finally {
       setLoading(false);
     }
@@ -70,10 +66,25 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     
     try {
       setSubmitting(true);
-      const formData = new FormData();
-      formData.append('message', message);
-      replyFiles.forEach(file => formData.append('files', file));
-      await postReply(ticketId, formData, token);
+      
+      // 1. 파일들을 Cloudinary에 업로드
+      const uploadedFiles = [];
+      for (const file of replyFiles) {
+        const res = await uploadReplyFiles(file, token);
+        uploadedFiles.push({
+          public_id: res.data.public_id,
+          url: res.data.url, // 백엔드에서 반환하는 Cloudinary URL 필드명에 맞게 수정
+          originalname: file.name,
+        });
+      }
+
+      // 2. 댓글 정보와 Cloudinary 파일 URL을 함께 전송
+      const replyData = {
+        message: message,
+        files: uploadedFiles, // Cloudinary URL 목록
+      };
+      
+      await postReply(ticketId, replyData, token);
       setMessage('');
       setReplyFiles([]);
       setReplyFilePreviews([]);
@@ -86,25 +97,37 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     }
   };
 
-  const handleFileDelete = async (filename, isTicketFile = false) => {
-    setDeleteTarget({ filename, isTicketFile });
+  const handleFileDelete = async (ticket_files_id, isTicketFile = false) => {
+    setDeleteTarget({ ticket_files_id, isTicketFile: true });
+    setShowDeleteModal(true);
+  };
+
+  const handleReplyFileDelete = async (ticket_reply_files_id, isTicketFile = false) => {
+    setDeleteTarget({ ticket_reply_files_id, isTicketFile: false });
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
     try {
       if (deleteTarget.isTicketFile) {
-        await deleteTicketFile(deleteTarget.filename, token);
+        await deleteTicketFile(deleteTarget.ticket_files_id, token);
       } else {
-        await deleteReplyFile(deleteTarget.filename, token);
+        await deleteReplyFile(deleteTarget.ticket_reply_files_id, token);
       }
       fetchDetail();
       showToast('파일이 삭제되었습니다.', 'success');
-    } catch {
-      showToast('파일 삭제에 실패했습니다.', 'error');
+    } catch (error) {
+      console.error("파일 삭제 에러:", error);
+      if (error.response?.status === 403) {
+        showToast('파일 삭제 권한이 없습니다.', 'error');
+      } else if (error.response?.status === 404) {
+        showToast('파일을 찾을 수 없습니다.', 'error');
+      } else {
+        showToast('파일 삭제에 실패했습니다.', 'error');
+      }
     } finally {
       setShowDeleteModal(false);
-      setDeleteTarget({ filename: '', isTicketFile: false });
+      setDeleteTarget({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
     }
   };
 
@@ -143,7 +166,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       await fetchDetail(); // 댓글 다시 불러오기
       setEditingReplyId(null);
     } catch {
-      alert('댓글 수정 실패');
+      showToast('댓글 수정 실패', 'error');
     }
   };
 
@@ -152,7 +175,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       await deleteReply(ticketId, replyId, token);
       await fetchDetail();
     } catch {
-      alert('댓글 삭제 실패');
+      showToast('첨부 파일을 먼저 삭제해 주세요', 'error');
     }
   };
 
@@ -199,12 +222,12 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         <div className="modal-overlay">
           <div className="confirm-modal">
             <div className="modal-header">
-              <h3>🗑️ 파일 삭제 확인</h3>
+              <h3>⚠️ 파일 삭제 확인</h3>
             </div>
             <div className="modal-content">
               <p>이 파일을 삭제하시겠습니까?</p>
               <div className="modal-warning">
-                <span>⚠️ 삭제된 파일은 복구할 수 없습니다.</span>
+                <span>삭제된 파일은 복구할 수 없습니다.</span>
               </div>
             </div>
             <div className="modal-actions">
@@ -298,54 +321,33 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
             <div className="file-grid">
               {ticket.files.map(f => (
                 <div key={f.filename} className="file-item">
-                  {isImageFile(f.originalname) ? (
-                    <div className="image-file">
-                      <img
-                        src={`http://localhost:5000/uploads/${f.filename}`}
-                        alt={f.originalname}
-                        className="file-image"
-                        onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <div className="file-actions">
-                        <a
-                          href={`http://localhost:5000/uploads/${f.filename}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="file-link"
-                        >
-                          📎 {f.originalname}
-                        </a>
-                        {role === 'admin' && (
-                          <button 
-                            className="delete-btn"
-                            onClick={() => handleFileDelete(f.filename, true)}
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="file-item">
+                  <div className="image-file">
+                    <img
+                      src={f.url}
+                      alt={f.originalname}
+                      className="file-image"
+                      onClick={() => handleImageClick(f.url, f.originalname)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <div className="file-actions">
                       <a
-                        href={`http://localhost:5000/uploads/${f.filename}`}
+                        href={f.url}
                         target="_blank"
                         rel="noreferrer"
                         className="file-link"
                       >
                         📎 {f.originalname}
                       </a>
-                      {role === 'admin' && (
-                        <button 
+                      {(role === 'admin' || ticket.author_id === currentUserId) && (
+                        <button
                           className="delete-btn"
-                          onClick={() => handleFileDelete(f.filename, true)}
+                          onClick={() => handleFileDelete(f.ticket_files_id, true)}
                         >
                           ✕
                         </button>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -407,54 +409,33 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                   <div className="file-grid">
                     {reply.files.map(f => (
                       <div key={f.filename} className="file-item">
-                        {isImageFile(f.originalname) ? (
-                          <div className="image-file">
-                            <img
-                              src={`http://localhost:5000/uploads/${f.filename}`}
-                              alt={f.originalname}
-                              className="file-image"
-                              onClick={() => handleImageClick(`http://localhost:5000/uploads/${f.filename}`, f.originalname)}
-                              style={{ cursor: 'pointer' }}
-                            />
-                            <div className="file-actions">
-                              <a
-                                href={`http://localhost:5000/uploads/${f.filename}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="file-link"
-                              >
-                                📎 {f.originalname}
-                              </a>
-                              {role === 'admin' && (
-                                <button 
-                                  className="delete-btn"
-                                  onClick={() => handleFileDelete(f.filename, false)}
-                                >
-                                  ✕
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="file-item">
+                        <div className="image-file">
+                          <img
+                            src={f.url}
+                            alt={f.originalname}
+                            className="file-image"
+                            onClick={() => handleImageClick(f.url, f.originalname)}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <div className="file-actions">
                             <a
-                              href={`http://localhost:5000/uploads/${f.filename}`}
+                              href={f.url}
                               target="_blank"
                               rel="noreferrer"
                               className="file-link"
                             >
                               📎 {f.originalname}
                             </a>
-                            {role === 'admin' && (
+                            {(role === 'admin' || reply.author_id === currentUserId) && (
                               <button 
                                 className="delete-btn"
-                                onClick={() => handleFileDelete(f.filename, false)}
+                                onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
                               >
                                 ✕
                               </button>
                             )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     ))}
                   </div>
