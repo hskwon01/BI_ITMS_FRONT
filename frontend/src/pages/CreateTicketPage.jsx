@@ -10,6 +10,9 @@ const CreateTicketPage = () => {
     description: '',
     urgency: '',
     product: '',
+    component: '',
+    sw_version: '',
+    os: '',
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,12 +45,15 @@ const CreateTicketPage = () => {
     formData.append('description', form.description);
     formData.append('urgency', form.urgency);
     formData.append('product', form.product);
+    formData.append('component', form.component);
+    formData.append('sw_version', form.sw_version);
+    formData.append('os', form.os);
     files.forEach(file => formData.append('files', file));
 
     try {
       await createTicket(formData, token);
       showToast('티켓이 성공적으로 등록되었습니다!', 'success');
-      setForm({ title: '', description: '', urgency: '', product: '' });
+      setForm({ title: '', description: '', urgency: '', product: '', component: '', sw_version: '', os: '' });
       setFiles([]);
       setFilePreviews([]);
       
@@ -138,6 +144,48 @@ const CreateTicketPage = () => {
                 onChange={handleChange}
                 className="form-input"
               />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="component">Component</label>
+              <input
+                id="component"
+                name="component"
+                type="text"
+                placeholder="Component"
+                value={form.component}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="sw_version">S/W Version</label>
+              <input
+                id="sw_version"
+                name="sw_version"
+                type="text"
+                placeholder="S/W Version"
+                value={form.sw_version}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+                <label htmlFor="os">OS</label>
+                <input
+                    id="os"
+                    name="os"
+                    type="text"
+                    placeholder="OS"
+                    value={form.os}
+                    onChange={handleChange}
+                    className="form-input"
+                />
             </div>
           </div>
 
