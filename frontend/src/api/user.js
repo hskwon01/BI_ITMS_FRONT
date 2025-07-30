@@ -1,15 +1,9 @@
-import axios from 'axios';
+import api from './api';
 
-const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
-});
+export const getAllUsers = () => api.get('/users');
 
-export const getAllUsers = (token) =>
-  API.get('/users', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const approveUser = (id, approve) => api.patch(`/users/${id}/approve`, { approve });
 
-export const approveUser = (id, approve, token) =>
-  API.patch(`/users/${id}/approve`, { approve }, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const verifyPassword = (password) => api.post('/users/verify-password', { password });
+
+export const updateProfile = (userData) => api.put('/users/profile', userData);
