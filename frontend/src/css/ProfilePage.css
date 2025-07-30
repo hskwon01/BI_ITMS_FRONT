@@ -13,7 +13,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 480px;
+  max-width: 800px; /* 레이아웃을 위해 너비 확장 */
   text-align: center;
 }
 
@@ -53,6 +53,11 @@
   background-color: #004494;
 }
 
+.profile-form-wrapper form button:disabled {
+  background-color: #cccccc; /* 회색 */
+  cursor: not-allowed;
+}
+
 .profile-message {
   margin-top: 16px;
   font-size: 14px;
@@ -64,4 +69,88 @@
 
 .profile-message.error {
   color: red;
+}
+
+/* ProfileLayout specific styles */
+.profile-layout {
+  display: flex;
+  width: 100%;
+  max-width: 800px; /* ProfileFormWrapper와 동일하게 설정 */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* 자식 요소의 border-radius를 위해 */
+}
+
+.profile-menu {
+  flex: 0 0 200px; /* 고정 너비 메뉴 */
+  background-color: #f0f2f5;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+}
+
+.profile-menu button {
+  background: none;
+  border: none;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.profile-menu button:hover {
+  background-color: #e2e6ea;
+}
+
+.profile-menu button.active {
+  background-color: #0056b3;
+  color: white;
+}
+
+.profile-content {
+  flex-grow: 1;
+  padding: 30px;
+  text-align: left;
+}
+
+.profile-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2d3652;
+  font-size: 22px;
+}
+
+.my-info-display p {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #4a5568;
+}
+
+.my-info-display strong {
+  color: #2d3652;
+}
+
+.account-deletion .warning-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.account-deletion .delete-button {
+  background-color: #d32f2f;
+}
+
+.account-deletion .delete-button:hover {
+  background-color: #b71c1c;
 }
