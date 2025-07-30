@@ -155,7 +155,7 @@ const AdminTicketListPage = () => {
                 <td>
                   <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>{ticket.urgency}</span>
                 </td>
-                <td>{ticket.customer_email}</td>
+                <td>{ticket.name}</td>
                 <td>{ticket.company_name}</td>
                 <td>
                   {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
