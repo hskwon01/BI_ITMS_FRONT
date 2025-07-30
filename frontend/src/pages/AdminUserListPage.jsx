@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { getAllUsers, approveUser } from '../api/user';
 import '../css/AdminUserListPage.css';
 
+import axios from 'axios';
+
+const API = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+});
+
 const AdminUserListPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +32,13 @@ const AdminUserListPage = () => {
     try {
       await approveUser(id, !current, token);
       fetchUsers(); // 갱신
+ 
+      // 승인인 경우에만 이메일 전송
+      if (!current) {
+        await API.post(`/users/${id}/send-approval-email`, null, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
     } catch {
       alert('승인 처리 실패');
     }
