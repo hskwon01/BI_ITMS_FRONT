@@ -105,12 +105,15 @@
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  table-layout: fixed;
 }
 
 .my-ticket-table th, .my-ticket-table td {
   padding: 1rem 0.7rem;
   text-align: left;
   font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .my-ticket-table th {
@@ -123,6 +126,13 @@
 .my-ticket-table td {
   border-bottom: 1px solid #f1f3f4;
   color: #2d3652;
+}
+
+/* 제목 칸은 줄바꿈 허용 + 최대 너비 */
+.my-ticket-table td.title-cell {
+  word-break: break-word;
+  white-space: normal;
+  max-width: 200px;
 }
 
 .my-ticket-link {

@@ -159,7 +159,7 @@ const MyTicketListPage = () => {
             <tbody>
               {tickets.map(ticket => (
                 <tr key={ticket.id}>
-                  <td>
+                  <td className="title-cell">
                     <Link to={`/my-tickets/${ticket.id}`} className="my-ticket-link">
                       {ticket.title}
                     </Link>
