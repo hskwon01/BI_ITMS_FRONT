@@ -28,8 +28,7 @@ const LoginPage = () => {
       const token = res.data.token;
       localStorage.setItem('token', token);
 
-      const me = await getMe(token);
-      localStorage.setItem('role', me.data.role);
+      const me = await getMe();
 
       if (me.data.role === 'admin') {
         navigate('/admin/tickets');

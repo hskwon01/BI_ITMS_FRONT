@@ -9,8 +9,7 @@ const PasswordVerification = ({ onSuccess }) => {
     e.preventDefault();
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      await verifyPassword(password, token);
+      await verifyPassword(password);
       onSuccess();
     } catch (err) {
       setError('비밀번호가 일치하지 않습니다.');
@@ -28,7 +27,7 @@ const PasswordVerification = ({ onSuccess }) => {
         required
       />
       <button type="submit">확인</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="profile-message error">{error}</p>}
     </form>
   );
 };

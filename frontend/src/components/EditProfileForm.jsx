@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { updateProfile } from '../api/user';
-import { getCurrentUser } from '../api/auth';
+import { getMe } from '../api/auth';
 
 const EditProfileForm = () => {
   const [formData, setFormData] = useState({ name: '', company_name: '', password: '' });
@@ -10,8 +10,7 @@ const EditProfileForm = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await getCurrentUser(token);
+        const res = await getMe();
         setFormData({ name: res.data.name, company_name: res.data.company_name, password: '' });
       } catch (err) {
         setError('사용자 정보를 불러오는데 실패했습니다.');
@@ -29,8 +28,7 @@ const EditProfileForm = () => {
     setMessage('');
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      await updateProfile(formData, token);
+      await updateProfile(formData);
       setMessage('프로필이 성공적으로 업데이트되었습니다.');
     } catch (err) {
       setError('프로필 업데이트에 실패했습니다.');
@@ -60,11 +58,11 @@ const EditProfileForm = () => {
         name="password"
         value={formData.password}
         onChange={handleChange}
-        placeholder="새 비밀번호 (선택 사항)"
+        placeholder="새 비밀번호 (변경 시에만 입력)"
       />
-      <button type="submit">수정</button>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <button type="submit">수정하기</button>
+      {message && <p className="profile-message success">{message}</p>}
+      {error && <p className="profile-message error">{error}</p>}
     </form>
   );
 };

@@ -1,10 +1,23 @@
 import React from 'react';
 import { Link, useNavigate, Outlet } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import '../css/Layout.css';
 
 const Layout = () => {
-  const role = localStorage.getItem('role');
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  let userRole = null;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userRole = decodedToken.role;
+    } catch (error) {
+      console.error("Invalid token, logging out:", error);
+      localStorage.clear();
+      navigate('/login');
+    }
+  }
 
   const handleLogout = () => {
     localStorage.clear();
@@ -19,7 +32,7 @@ const Layout = () => {
           <span className="navbar-brand">ITMS</span>
         </div>
         <div className="navbar-links">
-          {role === 'admin' ? (
+          {userRole === 'admin' ? (
             <>
               <Link to="/admin/tickets" className="nav-link">티켓 관리</Link>
               <Link to="/admin/users" className="nav-link">사용자</Link>
