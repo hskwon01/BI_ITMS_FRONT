@@ -136,7 +136,7 @@ const AdminTicketListPage = () => {
           <tbody>
             {filteredTickets.map(ticket => (
               <tr key={ticket.id}>
-                <td>
+                <td className="title-cell">
                   <Link to={`/admin/tickets/${ticket.id}`} className="admin-ticket-link">
                     {ticket.title}
                   </Link>

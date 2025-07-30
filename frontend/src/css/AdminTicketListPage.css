@@ -105,12 +105,15 @@
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  table-layout: fixed;
 }
 
 .admin-ticket-table th, .admin-ticket-table td {
   padding: 1rem 0.7rem;
   text-align: left;
   font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .admin-ticket-table th {
@@ -123,6 +126,12 @@
 .admin-ticket-table td {
   border-bottom: 1px solid #f1f3f4;
   color: #2d3652;
+}
+
+.admin-ticket-table td.title-cell {
+  word-break: break-word;
+  white-space: normal;
+  max-width: 200px;
 }
 
 .admin-ticket-link {
