@@ -4,14 +4,13 @@ const API = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
 });
 
-export const createTicket = (formData, token) =>
-  API.post('/tickets', formData, {
+export const createTicket = (ticketData, token) =>
+  API.post('/tickets', ticketData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'application/json'
     }
   });
-
 
 export const getMyTickets = (token, filters = {}) => {
   const params = new URLSearchParams(filters).toString();

@@ -40,16 +40,6 @@ const CreateTicketPage = () => {
     setLoading(true);
     setMessage('');
     
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('description', form.description);
-    formData.append('urgency', form.urgency);
-    formData.append('product', form.product);
-    formData.append('component', form.component);
-    formData.append('sw_version', form.sw_version);
-    formData.append('os', form.os);
-    files.forEach(file => formData.append('files', file));
-
     try {
       // 1. 파일들을 Cloudinary에 업로드
       const uploadedFiles = [];
@@ -69,9 +59,13 @@ const CreateTicketPage = () => {
         urgency: form.urgency,
         product: form.product,
         files: uploadedFiles, // Cloudinary URL 목록
+        component: form.component,
+        sw_version: form.sw_version,
+        os: form.os,
       };
 
       await createTicket(ticketData, token);
+
       showToast('티켓이 성공적으로 등록되었습니다!', 'success');
       setForm({ title: '', description: '', urgency: '', product: '', component: '', sw_version: '', os: '' });
       setFiles([]);
