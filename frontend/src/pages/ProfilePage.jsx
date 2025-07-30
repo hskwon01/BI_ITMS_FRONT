@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PasswordVerification from '../components/PasswordVerification';
-import EditProfileForm from '../components/EditProfileForm';
+import ProfileLayout from '../components/ProfileLayout'; // 새로 생성할 컴포넌트
 import '../css/ProfilePage.css';
 
 const ProfilePage = () => {
@@ -15,10 +15,7 @@ const ProfilePage = () => {
             <PasswordVerification onSuccess={() => setIsVerified(true)} />
           </>
         ) : (
-          <>
-            <h2>회원 정보 수정</h2>
-            <EditProfileForm />
-          </>
+          <ProfileLayout />
         )}
       </div>
     </div>
