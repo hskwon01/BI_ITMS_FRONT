@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-const AdminRoute = ({ children }) => {
+const UserRoute = ({ children }) => {
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -11,18 +11,17 @@ const AdminRoute = ({ children }) => {
 
   try {
     const decodedToken = jwtDecode(token);
-    // 토큰이 유효하고, 역할이 'admin'인 경우에만 접근 허용
-    if (decodedToken.role === 'admin') {
+    // 'admin' 역할이 아닌 모든 사용자(user, null 등)에게 접근을 허용합니다.
+    if (decodedToken.role !== 'admin') {
       return children;
     }
   } catch (error) {
     console.error("Invalid token:", error);
-    // 디코딩 실패 시 로그인 페이지로
     return <Navigate to="/login" />;
   }
   
-  // 역할이 'admin'이 아니면 접근 거부 (예: 일반 사용자 티켓 페이지로 리디렉션)
-  return <Navigate to="/my-tickets" />;
+  // 'admin' 역할인 경우에만 관리자 대시보드로 리디렉션합니다.
+  return <Navigate to="/admin/dashboard" />;
 };
 
-export default AdminRoute;
+export default UserRoute;

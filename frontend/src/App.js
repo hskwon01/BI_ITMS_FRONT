@@ -3,8 +3,10 @@ import Layout from './components/Layout';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
 import AdminUserListPage from './pages/AdminUserListPage';
 import AdminRoute from './routes/AdminRoute';
+import UserRoute from './routes/UserRoute';
 import CreateTicketPage from './pages/CreateTicketPage';
 import MyTicketListPage from './pages/MyTicketListPage';
 import TicketDetailPage from './pages/TicketDetailPage';
@@ -26,6 +28,7 @@ const App = () => (
         <Route path="/my-tickets" element={<MyTicketListPage />} />
         <Route path="/my-tickets/create" element={<CreateTicketPage />} />
         <Route path="/my-tickets/:id" element={<TicketDetailPage />} />
+        <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
 
         {/* 관리자용 */}
         <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage /></AdminRoute>} />
