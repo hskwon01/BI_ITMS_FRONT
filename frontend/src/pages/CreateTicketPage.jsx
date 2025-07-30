@@ -64,7 +64,7 @@ const CreateTicketPage = () => {
         os: form.os,
       };
 
-      await createTicket(ticketData, token);
+      const ticketResponse = await createTicket(ticketData, token);
 
       showToast('티켓이 성공적으로 등록되었습니다!', 'success');
       setForm({ title: '', description: '', urgency: '', product: '', component: '', sw_version: '', os: '' });
