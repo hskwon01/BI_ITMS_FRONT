@@ -317,8 +317,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
         <div className="ticket-meta-grid">
           <div className="meta-item">
-            <span className="meta-label">Component:</span>
-            <span className="meta-value">{ticket.component}</span>
+            <span className="meta-label">관련 제품:</span>
+            <span className="meta-value">{ticket.product}</span>
           </div>
           <div className="meta-item">
             <span className="meta-label">S/W Version:</span>
@@ -327,6 +327,10 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           <div className="meta-item">
             <span className="meta-label">OS:</span>
             <span className="meta-value">{ticket.os}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">Platform:</span>
+            <span className="meta-value">{ticket.platform}</span>
           </div>
         </div>
 
