@@ -10,9 +10,15 @@ const CreateTicketPage = () => {
     description: '',
     urgency: '',
     product: '',
-    component: '',
+    platform: '',
     sw_version: '',
     os: '',
+  });
+  const [otherData, setOtherData] = useState({
+    product: '',
+    sw_version: '',
+    os: '',
+    platform: '',
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,6 +27,19 @@ const CreateTicketPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+
+  const productOptions = [
+    'webMethods API Gateway',
+    'webMethods Integration Server',
+    'webMethods B2B Trading Networks',
+    'My webMethods Server',
+    'webMethods Terracotta',
+    'webMethods Universal Messaging',
+    '그 외',
+  ];
+  const versionOptions = ['11.1', '10.15', '10.11', '10.7', '10.5', '10.3', '10.1', '9.X', '그 외'];
+  const osOptions = ['Red Hat Enterprise Linux', 'Windows Server (Microsoft)', 'CentOS', 'openSUSE', 'z/Linux', '그 외'];
+  const platformOptions = ['On Premises', 'AWS', 'Microsoft Azure', 'Google Cloud Platform', '그 외'];
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -33,41 +52,49 @@ const CreateTicketPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 파일 관련 함수들은 DragDropFileUpload 컴포넌트에서 처리됨
+  const handleOtherChange = (e) => {
+    setOtherData({ ...otherData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-    
+
     try {
-      // 1. 파일들을 Cloudinary에 업로드
       const uploadedFiles = [];
       for (const file of files) {
         const res = await uploadTicketFiles(file, token);
         uploadedFiles.push({
           public_id: res.data.public_id,
-          url: res.data.url, // 백엔드에서 반환하는 Cloudinary URL 필드명에 맞게 수정
+          url: res.data.url,
           originalname: file.name,
         });
       }
 
-      // 2. 티켓 정보와 Cloudinary 파일 URL을 함께 전송
+      const getFinalValue = (fieldName) => {
+        if (form[fieldName] === '그 외') {
+          return `그 외(${otherData[fieldName]})`;
+        }
+        return form[fieldName];
+      };
+
       const ticketData = {
         title: form.title,
         description: form.description,
         urgency: form.urgency,
-        product: form.product,
-        files: uploadedFiles, // Cloudinary URL 목록
-        component: form.component,
-        sw_version: form.sw_version,
-        os: form.os,
+        product: getFinalValue('product'),
+        platform: getFinalValue('platform'),
+        sw_version: getFinalValue('sw_version'),
+        os: getFinalValue('os'),
+        files: uploadedFiles,
       };
 
-      const ticketResponse = await createTicket(ticketData, token);
+      await createTicket(ticketData, token);
 
       showToast('티켓이 성공적으로 등록되었습니다!', 'success');
-      setForm({ title: '', description: '', urgency: '', product: '', component: '', sw_version: '', os: '' });
+      setForm({ title: '', description: '', urgency: '', product: '', platform: '', sw_version: '', os: '' });
+      setOtherData({ product: '', sw_version: '', os: '', platform: '' });
       setFiles([]);
       setFilePreviews([]);
       setTimeout(() => {
@@ -83,7 +110,6 @@ const CreateTicketPage = () => {
 
   return (
     <div className="create-ticket-container">
-      {/* Toast Notification */}
       {toast.show && (
         <div className={`toast-notification ${toast.type}`}>
           {toast.message}
@@ -145,57 +171,109 @@ const CreateTicketPage = () => {
 
             <div className="form-group">
               <label htmlFor="product">관련 제품</label>
-              <input
+              <select
                 id="product"
                 name="product"
-                type="text"
-                placeholder="관련 제품명을 입력하세요"
                 value={form.product}
                 onChange={handleChange}
-                className="form-input"
-              />
+                className="form-select"
+              >
+                <option value="">제품을 선택하세요</option>
+                {productOptions.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+              {form.product === '그 외' && (
+                <input
+                  type="text"
+                  name="product"
+                  placeholder="제품명 입력"
+                  value={otherData.product}
+                  onChange={handleOtherChange}
+                  className="form-input other-input"
+                />
+              )}
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="component">Component</label>
-              <input
-                id="component"
-                name="component"
-                type="text"
-                placeholder="Component"
-                value={form.component}
+              <label htmlFor="platform">Platform</label>
+              <select
+                id="platform"
+                name="platform"
+                value={form.platform}
                 onChange={handleChange}
-                className="form-input"
-              />
+                className="form-select"
+              >
+                <option value="">플랫폼을 선택하세요</option>
+                {platformOptions.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+              {form.platform === '그 외' && (
+                <input
+                  type="text"
+                  name="platform"
+                  placeholder="플랫폼명 입력"
+                  value={otherData.platform}
+                  onChange={handleOtherChange}
+                  className="form-input other-input"
+                />
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="sw_version">S/W Version</label>
-              <input
+              <select
                 id="sw_version"
                 name="sw_version"
-                type="text"
-                placeholder="S/W Version"
                 value={form.sw_version}
                 onChange={handleChange}
-                className="form-input"
-              />
+                className="form-select"
+              >
+                <option value="">버전을 선택하세요</option>
+                {versionOptions.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+              {form.sw_version === '그 외' && (
+                <input
+                  type="text"
+                  name="sw_version"
+                  placeholder="버전 입력"
+                  value={otherData.sw_version}
+                  onChange={handleOtherChange}
+                  className="form-input other-input"
+                />
+              )}
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-                <label htmlFor="os">OS</label>
+              <label htmlFor="os">OS</label>
+              <select
+                id="os"
+                name="os"
+                value={form.os}
+                onChange={handleChange}
+                className="form-select"
+              >
+                <option value="">OS를 선택하세요</option>
+                {osOptions.map((o) => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
+              </select>
+              {form.os === '그 외' && (
                 <input
-                    id="os"
-                    name="os"
-                    type="text"
-                    placeholder="OS"
-                    value={form.os}
-                    onChange={handleChange}
-                    className="form-input"
+                  type="text"
+                  name="os"
+                  placeholder="OS 입력"
+                  value={otherData.os}
+                  onChange={handleOtherChange}
+                  className="form-input other-input"
                 />
+              )}
             </div>
           </div>
 
@@ -207,7 +285,7 @@ const CreateTicketPage = () => {
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
               maxFiles={5}
-              maxSize={10 * 1024 * 1024} // 10MB
+              maxSize={10 * 1024 * 1024}
               acceptedTypes={[
                 'image/*',
                 'application/pdf',
@@ -215,7 +293,7 @@ const CreateTicketPage = () => {
                 'application/msword',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
               ]}
             />
           </div>
