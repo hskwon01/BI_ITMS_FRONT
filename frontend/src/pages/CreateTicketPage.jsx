@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createTicket, uploadTicketFiles } from '../api/ticket';
 import { useNavigate } from 'react-router-dom';
 import DragDropFileUpload from '../components/DragDropFileUpload';
@@ -35,11 +35,20 @@ const CreateTicketPage = () => {
     'My webMethods Server',
     'webMethods Terracotta',
     'webMethods Universal Messaging',
+    'iChain',
     '그 외',
   ];
-  const versionOptions = ['11.1', '10.15', '10.11', '10.7', '10.5', '10.3', '10.1', '9.X', '그 외'];
+  const defaultVersionOptions = ['11.1', '10.15', '10.11', '10.7', '10.5', '10.3', '10.1', '9.X', '그 외'];
+  const iChainVersionOptions = ['4', '5', '그 외'];
   const osOptions = ['Red Hat Enterprise Linux', 'Windows Server (Microsoft)', 'CentOS', 'openSUSE', 'z/Linux', '그 외'];
   const platformOptions = ['On Premises', 'AWS', 'Microsoft Azure', 'Google Cloud Platform', '그 외'];
+
+  const versionOptions = form.product === 'iChain' ? iChainVersionOptions : defaultVersionOptions;
+
+  useEffect(() => {
+    setForm((prevForm) => ({ ...prevForm, sw_version: '' }));
+    setOtherData((prev) => ({ ...prev, sw_version: '' }));
+  }, [form.product]);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
