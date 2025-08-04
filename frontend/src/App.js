@@ -13,6 +13,7 @@ import TicketDetailPage from './pages/TicketDetailPage';
 import AdminTicketListPage from './pages/AdminTicketListPage';
 import AdminTicketDetailPage from './pages/AdminTicketDetailPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminTeamListPage from './pages/AdminTeamListPage';
 
 
 const App = () => (
@@ -30,10 +31,11 @@ const App = () => (
         <Route path="/my-tickets/:id" element={<TicketDetailPage />} />
         <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
 
-        {/* 관리자용 */}
+        {/* 관리자 & 기술지원팀용 */}
         <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage /></AdminRoute>} />
         <Route path="/admin/tickets/:id" element={<AdminRoute><AdminTicketDetailPage /></AdminRoute>} />
-        <Route path="/admin/users" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
+        <Route path="/admin/customers" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
+        <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} /> {/* 새로운 팀 페이지 라우트 */}
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
       </Route>
     </Routes>

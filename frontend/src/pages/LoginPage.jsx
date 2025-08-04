@@ -30,7 +30,7 @@ const LoginPage = () => {
 
       const me = await getMe();
 
-      if (me.data.role === 'admin') {
+      if (me.data.role === 'admin' || me.data.role === 'itsm_team') {
         navigate('/admin/tickets');
       } else {
         navigate('/my-tickets');

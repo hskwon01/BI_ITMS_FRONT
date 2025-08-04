@@ -128,6 +128,7 @@ const AdminTicketListPage = () => {
               <th>고객</th>
               <th>회사</th>
               <th>등록일</th>
+              <th>담당자</th>
             </tr>
           </thead>
           <tbody>
@@ -157,6 +158,7 @@ const AdminTicketListPage = () => {
                     hour: '2-digit', minute: '2-digit'
                   })}
                 </td>
+                <td>{ticket.assignee_name || '미배정'}</td>
               </tr>
             ))}
           </tbody>

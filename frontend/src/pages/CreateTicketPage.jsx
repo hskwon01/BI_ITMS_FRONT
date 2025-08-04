@@ -36,12 +36,12 @@ const CreateTicketPage = () => {
     'webMethods Terracotta',
     'webMethods Universal Messaging',
     'iChain',
-    '그 외',
+    '기타',
   ];
-  const defaultVersionOptions = ['11.1', '10.15', '10.11', '10.7', '10.5', '10.3', '10.1', '9.X', '그 외'];
-  const iChainVersionOptions = ['4', '5', '그 외'];
-  const osOptions = ['Red Hat Enterprise Linux', 'Windows Server (Microsoft)', 'CentOS', 'openSUSE', 'z/Linux', '그 외'];
-  const platformOptions = ['On Premises', 'AWS', 'Microsoft Azure', 'Google Cloud Platform', '그 외'];
+  const defaultVersionOptions = ['11.1', '10.15', '10.11', '10.7', '10.5', '10.3', '10.1', '9.X', '기타'];
+  const iChainVersionOptions = ['4', '5', '기타'];
+  const osOptions = ['Red Hat Enterprise Linux', 'Windows Server (Microsoft)', 'CentOS', 'openSUSE', 'z/Linux', '기타'];
+  const platformOptions = ['On Premises', 'AWS', 'Microsoft Azure', 'Google Cloud Platform', '기타'];
 
   const versionOptions = form.product === 'iChain' ? iChainVersionOptions : defaultVersionOptions;
 
@@ -82,8 +82,8 @@ const CreateTicketPage = () => {
       }
 
       const getFinalValue = (fieldName) => {
-        if (form[fieldName] === '그 외') {
-          return `그 외(${otherData[fieldName]})`;
+        if (form[fieldName] === '기타') {
+          return `기타(${otherData[fieldName]})`;
         }
         return form[fieldName];
       };
@@ -192,7 +192,7 @@ const CreateTicketPage = () => {
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
-              {form.product === '그 외' && (
+              {form.product === '기타' && (
                 <input
                   type="text"
                   name="product"
@@ -220,7 +220,7 @@ const CreateTicketPage = () => {
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
-              {form.platform === '그 외' && (
+              {form.platform === '기타' && (
                 <input
                   type="text"
                   name="platform"
@@ -245,7 +245,7 @@ const CreateTicketPage = () => {
                   <option key={v} value={v}>{v}</option>
                 ))}
               </select>
-              {form.sw_version === '그 외' && (
+              {form.sw_version === '기타' && (
                 <input
                   type="text"
                   name="sw_version"
@@ -273,7 +273,7 @@ const CreateTicketPage = () => {
                   <option key={o} value={o}>{o}</option>
                 ))}
               </select>
-              {form.os === '그 외' && (
+              {form.os === '기타' && (
                 <input
                   type="text"
                   name="os"

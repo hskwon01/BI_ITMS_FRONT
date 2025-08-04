@@ -44,6 +44,11 @@ export const updateTicketStatus = (id, status, token) =>
     headers: { Authorization: `Bearer ${token}` }
   });  
 
+export const assignTicket = (ticketId, assigneeId, token) =>
+  API.put(`/tickets/${ticketId}/assignee`, { assignee_id: assigneeId }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });  
+
 export const deleteTicketFile = (ticket_files_id, token) =>
   API.delete(`/tickets/files/ticket/${ticket_files_id}`, {
     headers: { Authorization: `Bearer ${token}` }

@@ -12,7 +12,7 @@ const AdminRoute = ({ children }) => {
   try {
     const decodedToken = jwtDecode(token);
     // 토큰이 유효하고, 역할이 'admin'인 경우에만 접근 허용
-    if (decodedToken.role === 'admin') {
+    if (decodedToken.role === 'admin' || decodedToken.role === 'itsm_team') {
       return children;
     }
   } catch (error) {
