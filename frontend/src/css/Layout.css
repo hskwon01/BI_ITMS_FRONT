@@ -75,6 +75,27 @@
   gap: 1rem;
 }
 
+.navbar .user-name {
+  color: #2d3652;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #c9c9cc;
+  backdrop-filter: blur(10px);
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+.navbar .user-name:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: #667eea;
+  box-shadow: 0 4px 20px rgba(124, 131, 253, 0.15);
+  transform: translateY(-1px);
+}
+
 .logout-btn {
   background: linear-gradient(90deg, #ff6b6b 0%, #ff8787 100%);
   color: #fff;
@@ -131,6 +152,13 @@
 
   .navbar-right {
     margin-left: auto;
+    gap: 0.5rem;
+  }
+
+  .navbar .user-name {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 10px;
   }
 
   .hamburger-btn {

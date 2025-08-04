@@ -9,18 +9,27 @@ const Layout = () => {
   const token = localStorage.getItem('token');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
-  let userRole = null;
+  const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState(null);
 
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      userRole = decodedToken.role;
-    } catch (error) {
-      console.error("Invalid token, logging out:", error);
-      localStorage.clear();
-      navigate('/login');
+  useEffect(() => {
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("decodedToken!!!!", decodedToken);
+        setUserRole(decodedToken.role);
+        const name = decodedToken.name || '사용자';
+        setUserName(name + '님');
+      } catch (error) {
+        console.error("Invalid token, logging out:", error);
+        localStorage.clear();
+        navigate('/login');
+      }
+    } else {
+      setUserRole(null);
+      setUserName('');
     }
-  }
+  }, [token, navigate]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -91,6 +100,7 @@ const Layout = () => {
         </div>
 
         <div className="navbar-right">
+          <span className="user-name">{userName}</span>
           <button className="logout-btn" onClick={handleLogout}>로그아웃</button>
           {isMobile && (
             <button className="hamburger-btn" onClick={toggleMenu}>

@@ -252,6 +252,12 @@
   border-radius: 8px;
   padding: 1rem;
   border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.file-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .image-file {
@@ -265,6 +271,25 @@
   height: 120px;
   object-fit: cover;
   border-radius: 6px;
+  transition: transform 0.2s ease;
+}
+
+.file-image:hover {
+  transform: scale(1.02);
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2d3652;
+  word-break: break-all;
+  line-height: 1.3;
 }
 
 .file-actions {
@@ -272,7 +297,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
-  flex-direction: row;
 }
 
 .file-link {
@@ -280,10 +304,124 @@
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .file-link:hover {
-  text-decoration: underline;
+  background: #7c83fd;
+  color: white;
+  text-decoration: none;
+}
+
+/* 문서 파일 미리보기 스타일 */
+.document-file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.document-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3652;
+  margin-bottom: 0.25rem;
+  word-break: break-all;
+  line-height: 1.3;
+}
+
+.document-meta {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.file-size {
+  background: #e5e7eb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.file-type {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.document-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.document-link,
+.document-download {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.document-link {
+  background: #7c83fd;
+  color: white;
+}
+
+.document-link:hover {
+  background: #6b73fd;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(124, 131, 253, 0.3);
+}
+
+.document-download {
+  background: #f8f9fa;
+  color: #4a5568;
+  border-color: #e2e8f0;
+}
+
+.document-download:hover {
+  background: #e2e8f0;
+  color: #2d3652;
+  transform: translateY(-1px);
 }
 
 .delete-btn {
@@ -295,15 +433,57 @@
   height: 24px;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .delete-btn:hover {
   background: #ff5252;
+  transform: scale(1.1);
+}
+
+/* 댓글 파일 스타일 */
+.reply-files {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.reply-files .file-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.reply-files .file-item {
+  padding: 0.75rem;
+}
+
+.reply-files .document-preview {
+  padding: 0.5rem;
+}
+
+.reply-files .document-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+}
+
+.reply-files .document-name {
+  font-size: 0.8rem;
+}
+
+.reply-files .document-meta {
+  font-size: 0.7rem;
+}
+
+.reply-files .document-link,
+.reply-files .document-download {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.75rem;
 }
 
 .modal-overlay {
@@ -526,10 +706,6 @@
 .reply-date {
   color: #7b8190;
   font-size: 0.85rem;
-}
-
-.reply-files {
-  margin-top: 1rem;
 }
 
 .reply-form {
@@ -977,6 +1153,7 @@
   box-shadow: 0 4px 12px rgba(124, 131, 253, 0.2);
 }
 
+/* 반응형 디자인 */
 @media (max-width: 768px) {
   .ticket-meta {
     flex-direction: column;
@@ -984,7 +1161,8 @@
   }
   
   .file-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
   }
   
   .reply-header {
@@ -1014,5 +1192,24 @@
 
   .image-modal-body {
     padding: 16px;
+  }
+
+  .document-preview {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .document-actions {
+    flex-direction: column;
+  }
+  
+  .document-link,
+  .document-download {
+    flex: none;
+  }
+  
+  .reply-files .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 } 
