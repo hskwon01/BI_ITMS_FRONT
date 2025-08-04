@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllUsers, approveUser } from '../api/user';
+import { getCustomers, approveUser } from '../api/user';
 import '../css/AdminUserListPage.css';
 
 import axios from 'axios';
@@ -18,11 +18,11 @@ const AdminUserListPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await getAllUsers(token);
+      const res = await getCustomers(token);
       setUsers(res.data);
       setFilteredUsers(res.data);
     } catch {
-      alert('접근 권한이 없거나 오류 발생');
+      alert('고객 목록을 불러오는 데 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,6 @@ const AdminUserListPage = () => {
       await approveUser(id, !current, token);
       fetchUsers(); // 갱신
  
-      // 승인인 경우에만 이메일 전송
       if (!current) {
         await API.post(`/users/${id}/send-approval-email`, null, {
           headers: { Authorization: `Bearer ${token}` },
@@ -61,10 +60,8 @@ const AdminUserListPage = () => {
     const total = users.length;
     const approved = users.filter(u => u.is_approved).length;
     const pending = users.filter(u => !u.is_approved).length;
-    const admins = users.filter(u => u.role === 'admin').length;
-    const customers = users.filter(u => u.role === 'customer').length;
     
-    return { total, approved, pending, admins, customers };
+    return { total, approved, pending };
   };
 
   const stats = getStats();
@@ -81,29 +78,21 @@ const AdminUserListPage = () => {
     <div className="admin-user-list-container">
       <div className="admin-user-header">
         <h1>고객 계정 관리</h1>
-        <p className="admin-user-desc">모든 사용자 계정을 관리하고 승인하세요</p>
+        <p className="admin-user-desc">가입한 고객 계정을 관리하고 승인합니다.</p>
       </div>
 
       <div className="admin-user-stats">
         <div className="admin-user-stat-card total">
-          <div className="stat-label">전체</div>
+          <div className="stat-label">전체 고객</div>
           <div className="stat-value">{stats.total}</div>
         </div>
         <div className="admin-user-stat-card approved">
-          <div className="stat-label">승인됨</div>
+          <div className="stat-label">승인된 고객</div>
           <div className="stat-value">{stats.approved}</div>
         </div>
         <div className="admin-user-stat-card pending">
-          <div className="stat-label">대기 중</div>
+          <div className="stat-label">승인 대기</div>
           <div className="stat-value">{stats.pending}</div>
-        </div>
-        <div className="admin-user-stat-card admin">
-          <div className="stat-label">관리자</div>
-          <div className="stat-value">{stats.admins}</div>
-        </div>
-        <div className="admin-user-stat-card customer">
-          <div className="stat-label">고객</div>
-          <div className="stat-value">{stats.customers}</div>
         </div>
       </div>
 
@@ -124,7 +113,6 @@ const AdminUserListPage = () => {
               <th>이메일</th>
               <th>이름</th>
               <th>회사</th>
-              <th>권한</th>
               <th>승인 상태</th>
               <th>조작</th>
             </tr>
@@ -136,24 +124,17 @@ const AdminUserListPage = () => {
                 <td className="user-name">{user.name}</td>
                 <td className="user-company">{user.company_name}</td>
                 <td>
-                  <span className={`role-badge ${user.role}`}>
-                    {user.role === 'admin' ? '관리자' : '고객'}
-                  </span>
-                </td>
-                <td>
                   <span className={`approval-badge ${user.is_approved ? 'approved' : 'pending'}`}>
                     {user.is_approved ? '승인됨' : '대기 중'}
                   </span>
                 </td>
                 <td>
-                  {user.role !== 'admin' && (
-                    <button 
-                      className={`approval-btn ${user.is_approved ? 'revoke' : 'approve'}`}
-                      onClick={() => toggleApproval(user.id, user.is_approved)}
-                    >
-                      {user.is_approved ? '승인 취소' : '승인하기'}
-                    </button>
-                  )}
+                  <button 
+                    className={`approval-btn ${user.is_approved ? 'revoke' : 'approve'}`}
+                    onClick={() => toggleApproval(user.id, user.is_approved)}
+                  >
+                    {user.is_approved ? '승인 취소' : '승인하기'}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -161,7 +142,7 @@ const AdminUserListPage = () => {
         </table>
         {filteredUsers.length === 0 && (
           <div className="admin-user-empty">
-            {searchTerm ? '검색 결과가 없습니다.' : '등록된 사용자가 없습니다.'}
+            {searchTerm ? '검색 결과가 없습니다.' : '등록된 고객이 없습니다.'}
           </div>
         )}
       </div>

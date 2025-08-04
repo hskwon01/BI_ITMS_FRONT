@@ -219,6 +219,7 @@
 .meta-item:nth-child(2)::before { content: '🏷️'; }
 .meta-item:nth-child(3)::before { content: '💻'; }
 .meta-item:nth-child(4)::before { content: '☁️'; }
+.meta-item:nth-child(5)::before { content: '👤'; }
 
 .meta-label {
   font-size: 0.9rem;
@@ -340,15 +341,21 @@
   margin: 0;
 }
 
-.modal-content {
-  padding: 1rem 1.5rem;
+.confirm-modal .modal-content {
+  padding: 1.5rem;
 }
 
-.modal-content p {
-  color: #7b8190;
-  font-size: 1rem;
-  line-height: 1.5;
+.confirm-modal .modal-content p {
+  color: #4a5568;
+  font-size: 1.05rem;
+  line-height: 1.6;
   margin: 0 0 1rem 0;
+  word-break: keep-all;
+  text-align: center;
+}
+
+.modal-content {
+  padding: 1rem 1.5rem;
 }
 
 .modal-warning {
@@ -536,13 +543,15 @@
 
 .reply-textarea {
   width: 100%;
+  max-width: 100%; /* 추가: 부모 요소 너비를 넘지 않도록 */
   min-height: 120px;
   padding: 1rem;
   border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
-  resize: vertical;
+  resize: none; /* 변경: 크기 조절 비활성화 */
+  box-sizing: border-box; /* 추가: 패딩과 보더를 너비에 포함 */
   transition: border-color 0.2s;
 }
 
@@ -858,6 +867,114 @@
 
 .reply-edit-buttons button:last-child:hover {
   background: #e2e8f0;
+}
+
+/* 담당자 배정 모달 스타일 */
+.assign-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  animation: slideUp 0.3s ease-out;
+}
+
+.assign-modal .modal-header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  text-align: center;
+}
+
+.assign-modal .modal-header h3 {
+  color: #2d3652;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.assign-modal .modal-content {
+  padding: 1rem 1.5rem;
+}
+
+.assign-modal .modal-content p {
+  color: #7b8190;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+.assign-modal .form-group {
+  margin-bottom: 1rem;
+}
+
+.assign-modal label {
+  display: block;
+  font-weight: 600;
+  color: #2d3652;
+  margin-bottom: 0.5rem;
+}
+
+.assign-modal .assignee-select,
+.assign-modal .assign-reply-textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f9fafb;
+  color: #2d3652;
+  transition: border-color 0.2s;
+}
+
+.assign-modal .assignee-select:focus,
+.assign-modal .assign-reply-textarea:focus {
+  outline: none;
+  border-color: #7c83fd;
+  background: #fff;
+}
+
+.assign-modal .assign-reply-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.assign-modal .modal-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+.assign-modal .modal-btn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.assign-modal .modal-btn.cancel {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.assign-modal .modal-btn.cancel:hover {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.assign-modal .modal-btn.confirm {
+  background: #7c83fd;
+  color: #fff;
+}
+
+.assign-modal .modal-btn.confirm:hover {
+  background: #6b73fd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 131, 253, 0.2);
 }
 
 @media (max-width: 768px) {

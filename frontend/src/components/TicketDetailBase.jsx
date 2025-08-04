@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles } from '../api/ticket';
+import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles, assignTicket, updateTicketStatus } from '../api/ticket';
+import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
@@ -14,13 +15,20 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [modalState, setModalState] = useState({ show: false, title: '', content: '', warning: '', onConfirm: null });
   const [deleteTarget, setDeleteTarget] = useState({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [assignees, setAssignees] = useState([]); // 담당자 목록
+  const [assigning, setAssigning] = useState(false); // 담당자 배정 중 상태
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [editingReplyId, setEditingReplyId] = useState(null);
   const [editedMessage, setEditedMessage] = useState('');
+
+  // 담당자 배정 및 댓글 모달 관련 상태
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedAssignee, setSelectedAssignee] = useState('');
+  const [assignReplyMessage, setAssignReplyMessage] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -44,19 +52,107 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   const handleStatusChange = async (newStatus) => {
     if (newStatus === ticket.status) return;
+
+    if (ticket.status === '종결') {
+      showToast('이미 종결된 티켓입니다.', 'error');
+      return;
+    }
+
+    if (newStatus === '종결') {
+      setModalState({
+        show: true,
+        title: '티켓 종결 확인',
+        content: '이 티켓을 종결 처리하시겠습니까?',
+        warning: '종결된 티켓은 더 이상 상태를 변경할 수 없습니다.',
+        onConfirm: () => handleCloseTicket(),
+      });
+      return;
+    }
+
+    if (ticket.status === '접수' && newStatus === '진행중') {
+      setShowAssignModal(true);
+      return;
+    }
+
+    // 진행중 상태에서 접수로 변경하는 것을 막음
+    if (ticket.status === '진행중' && newStatus === '접수') {
+      showToast('진행중인 티켓은 접수 상태로 되돌릴 수 없습니다.', 'error');
+      return;
+    }
     
     try {
       setUpdatingStatus(true);
-      await axios.put(`${process.env.REACT_APP_API_URL}/tickets/${ticketId}/status`, 
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await updateTicketStatus(ticketId, newStatus, token);
       showToast(`티켓 상태가 '${newStatus}'로 변경되었습니다.`, 'success');
       fetchDetail();
     } catch {
       showToast('상태 변경에 실패했습니다.', 'error');
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const handleAssignAndReplySubmit = async () => {
+    if (!selectedAssignee) {
+      showToast('담당자를 선택해주세요.', 'error');
+      return;
+    }
+
+    try {
+      setAssigning(true);
+      // 1. 담당자 배정
+      await assignTicket(ticketId, parseInt(selectedAssignee), token);
+
+      // 2. 댓글 등록 (선택 사항)
+      if (assignReplyMessage.trim()) {
+        const replyData = { message: assignReplyMessage, files: [] };
+        await postReply(ticketId, replyData, token);
+      }
+
+      // 3. 상태 변경
+      await updateTicketStatus(ticketId, '진행중', token);
+
+      showToast('담당자 배정 및 상태 변경 완료', 'success');
+      setShowAssignModal(false);
+      setSelectedAssignee('');
+      setAssignReplyMessage('');
+      fetchDetail();
+    } catch (err) {
+      console.error("담당자 배정 및 상태 변경 실패:", err);
+      showToast('담당자 배정 및 상태 변경 실패', 'error');
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  const handleCloseTicket = async () => {
+    try {
+      setUpdatingStatus(true);
+      await updateTicketStatus(ticketId, '종결', token);
+      showToast('티켓이 종결 처리되었습니다.', 'success');
+      fetchDetail();
+    } catch (err) {
+      console.error("티켓 종결 실패:", err);
+      showToast('티켓 종결 처리에 실패했습니다.', 'error');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const handleAssigneeChange = async (e) => {
+    const newAssigneeId = e.target.value === '' ? null : parseInt(e.target.value);
+    if (newAssigneeId === ticket.assignee_id) return; // 동일한 담당자 선택 시 변경 없음
+
+    try {
+      setAssigning(true);
+      await assignTicket(ticketId, newAssigneeId, token);
+      showToast(newAssigneeId ? '담당자가 배정되었습니다.' : '담당자 배정이 해제되었습니다.', 'success');
+      fetchDetail(); // 변경된 담당자 정보 반영
+    } catch (err) {
+      console.error("담당자 배정 실패:", err);
+      showToast('담당자 배정에 실패했습니다.', 'error');
+    } finally {
+      setAssigning(false);
     }
   };
 
@@ -99,12 +195,24 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   const handleFileDelete = async (ticket_files_id, isTicketFile = false) => {
     setDeleteTarget({ ticket_files_id, isTicketFile: true });
-    setShowDeleteModal(true);
+    setModalState({
+      show: true,
+      title: '⚠️ 파일 삭제 확인',
+      content: '이 파일을 삭제하시겠습니까?',
+      warning: '삭제된 파일은 복구할 수 없습니다.',
+      onConfirm: () => confirmDelete(),
+    });
   };
 
   const handleReplyFileDelete = async (ticket_reply_files_id, isTicketFile = false) => {
     setDeleteTarget({ ticket_reply_files_id, isTicketFile: false });
-    setShowDeleteModal(true);
+    setModalState({
+      show: true,
+      title: '⚠️ 파일 삭제 확인',
+      content: '이 파일을 삭제하시겠습니까?',
+      warning: '삭제된 파일은 복구할 수 없습니다.',
+      onConfirm: () => confirmDelete(),
+    });
   };
 
   const confirmDelete = async () => {
@@ -126,7 +234,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         showToast('파일 삭제에 실패했습니다.', 'error');
       }
     } finally {
-      setShowDeleteModal(false);
+      setModalState({ show: false, title: '', content: '', warning: '', onConfirm: null });
       setDeleteTarget({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
     }
   };
@@ -204,9 +312,24 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       }
     };
 
-    markAsRead();      // ✅ 추가된 부분: 서버에 읽음 기록 저장
-    fetchDetail();     // 기존 기능: 티켓 + 댓글 불러오기
-  }, [ticketId]);
+    markAsRead();
+    fetchDetail();
+  }, [ticketId, token]);
+
+  useEffect(() => {
+    const fetchAssignees = async () => {
+      if (role === 'admin' || role === 'itsm_team') {
+        try {
+          const res = await getAssignees(token);
+          setAssignees(res.data);
+        } catch (err) {
+          console.error("담당자 목록 불러오기 실패", err);
+          showToast('담당자 목록 불러오기 실패', 'error');
+        }
+      }
+    };
+    fetchAssignees();
+  }, [role, token]);
 
   if (!ticket) return null;
 
@@ -218,52 +341,42 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         </div>
       )}
 
-      {showDeleteModal && (
+      {modalState.show && (
         <div className="modal-overlay">
           <div className="confirm-modal">
             <div className="modal-header">
-              <h3>⚠️ 파일 삭제 확인</h3>
+              <h3>{modalState.title}</h3>
             </div>
             <div className="modal-content">
-              <p>이 파일을 삭제하시겠습니까?</p>
-              <div className="modal-warning">
-                <span>삭제된 파일은 복구할 수 없습니다.</span>
-              </div>
+              <p>{modalState.content}</p>
+              {modalState.warning && (
+                <div className="modal-warning">
+                  <span>{modalState.warning}</span>
+                </div>
+              )}
             </div>
             <div className="modal-actions">
               <button 
                 className="modal-btn cancel"
-                onClick={() => setShowDeleteModal(false)}
+                onClick={() => setModalState({ ...modalState, show: false })}
               >
                 취소
               </button>
               <button 
                 className="modal-btn confirm"
-                onClick={confirmDelete}
+                onClick={() => {
+                  modalState.onConfirm();
+                  setModalState({ ...modalState, show: false });
+                }}
               >
-                삭제
+                확인
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 댓글 삭제 모달 */}
-      {deleteTarget.replyId && (
-        <div className="modal-overlay">
-          <div className="reply-delete-modal">
-            <div className="modal-title">댓글 삭제 확인</div>
-            <div className="modal-message">정말로 이 댓글을 삭제하시겠습니까?<br/>삭제된 댓글은 복구할 수 없습니다.</div>
-            <div className="modal-actions">
-              <button className="modal-btn cancel" onClick={() => setDeleteTarget({})}>취소</button>
-              <button className="modal-btn confirm" onClick={async () => {
-                await handleDeleteReply(deleteTarget.replyId);
-                setDeleteTarget({});
-              }}>삭제</button>
-            </div>
-          </div>
-        </div>
-      )}
+      
 
       <div className="ticket-header">
         <div className="ticket-header-content">
@@ -275,7 +388,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                 id="status-select"
                 value={ticket.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
-                disabled={updatingStatus}
+                disabled={updatingStatus || ticket.status === '종결'}
                 className="status-select"
               >
                 <option value="접수">접수</option>
@@ -331,6 +444,10 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           <div className="meta-item">
             <span className="meta-label">Platform:</span>
             <span className="meta-value">{ticket.platform}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">담당자:</span>
+            <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
           </div>
         </div>
 
@@ -489,7 +606,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                 'text/*',
                 'application/msword',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
               ]}
             />
@@ -521,6 +637,67 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </div>
         </div>
       )}
+
+      {/* 담당자 배정 및 댓글 모달 */}
+      {showAssignModal && (
+        <div className="modal-overlay">
+          <div className="assign-modal">
+            <div className="modal-header">
+              <h3>티켓 진행 시작</h3>
+            </div>
+            <div className="modal-content">
+              <p>이 티켓의 상태를 '진행중'으로 변경하고 담당자를 배정하시겠습니까?</p>
+              
+              <div className="form-group">
+                <label htmlFor="assignee-select">담당자 선택:</label>
+                <select
+                  id="assignee-select"
+                  value={selectedAssignee}
+                  onChange={(e) => setSelectedAssignee(e.target.value)}
+                  className="assignee-select"
+                  disabled={assigning}
+                >
+                  <option value="">-- 담당자 선택 --</option>
+                  {assignees.map(assignee => (
+                    <option key={assignee.id} value={assignee.id}>
+                      {assignee.name} ({assignee.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="assign-reply-message">댓글 (선택 사항):</label>
+                <textarea
+                  id="assign-reply-message"
+                  value={assignReplyMessage}
+                  onChange={(e) => setAssignReplyMessage(e.target.value)}
+                  placeholder="진행 시작에 대한 댓글을 남겨주세요..."
+                  className="assign-reply-textarea"
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="modal-btn cancel"
+                onClick={() => setShowAssignModal(false)}
+                disabled={assigning}
+              >
+                취소
+              </button>
+              <button 
+                className="modal-btn confirm"
+                onClick={handleAssignAndReplySubmit}
+                disabled={assigning || !selectedAssignee}
+              >
+                {assigning ? '처리 중...' : '진행 시작'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      
     </div>
   );
 };

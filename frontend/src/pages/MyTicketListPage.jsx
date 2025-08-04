@@ -150,6 +150,7 @@ const MyTicketListPage = () => {
                 <th>제목</th>
                 <th>상태</th>
                 <th>긴급도</th>
+                <th>담당자</th>
                 <th>등록일</th>
               </tr>
             </thead>
@@ -176,6 +177,7 @@ const MyTicketListPage = () => {
                       {ticket.urgency}
                     </span>
                   </td>
+                  <td>{ticket.assignee_name || '미배정'}</td>
                   <td>{new Date(ticket.created_at).toLocaleString()}</td>
                 </tr>
               ))}

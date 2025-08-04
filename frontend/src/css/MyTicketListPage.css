@@ -213,9 +213,24 @@
 }
 
 @media (max-width: 900px) {
-  .my-ticket-stats, .my-ticket-filters {
-    flex-direction: column;
-    align-items: stretch;
+  .my-ticket-stats {
+    flex-direction: row;
+    flex-wrap: nowrap; /* 한 줄로 강제 */
+    overflow-x: auto; /* 넘칠 경우 스크롤 */
+    padding-bottom: 10px; /* 스크롤바 공간 확보 */
+    justify-content: flex-start;
+  }
+  .my-ticket-stats > * {
+    flex-shrink: 0; /* 자식 요소 줄어들지 않게 */
+  }
+  .my-ticket-filters {
+    flex-direction: row;
+    flex-wrap: nowrap; /* 한 줄로 강제 */
+    overflow-x: auto; /* 넘칠 경우 스크롤 */
+    padding-bottom: 10px; /* 스크롤바 공간 확보 */
+  }
+  .my-ticket-filters > * {
+    flex-shrink: 0; /* 자식 요소 줄어들지 않게 */
   }
   .my-ticket-table-wrapper {
     padding: 1rem 0.3rem;
