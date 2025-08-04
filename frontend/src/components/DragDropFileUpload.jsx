@@ -141,8 +141,14 @@ const DragDropFileUpload = ({
     if (type.includes('pdf')) return '📄';
     if (type.includes('word') || type.includes('document')) return '📝';
     if (type.includes('excel') || type.includes('spreadsheet')) return '📊';
+    if (type.includes('powerpoint') || type.includes('presentation')) return '📈';
     if (type.includes('text')) return '📄';
+    if (type.includes('zip') || type.includes('rar')) return '📦';
     return '📎';
+  };
+
+  const isImageFile = (type) => {
+    return type.startsWith('image/');
   };
 
   const handleFileClick = (file, index) => {
@@ -193,30 +199,58 @@ const DragDropFileUpload = ({
           <div className="file-list">
             {filePreviews.map((file, index) => (
               <div key={index} className="file-item">
-                <div className="file-info">
-                  <span className="file-icon">{getFileIcon(file.type)}</span>
-                  <div className="file-details">
-                    <span className="file-name">{file.name}</span>
-                    <span className="file-size">{formatFileSize(file.size)}</span>
+                {isImageFile(file.type) ? (
+                  // 이미지 파일 미리보기
+                  <div className="image-file">
+                    <img
+                      src={file.preview}
+                      alt={file.name}
+                      className="file-image"
+                      onClick={() => handleFileClick(file, index)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <div className="file-info">
+                      <div className="file-name">{file.name}</div>
+                      <div className="file-actions">
+                        <span className="file-size">{formatFileSize(file.size)}</span>
+                        <button
+                          type="button"
+                          className="remove-file-btn"
+                          onClick={() => removeFile(index)}
+                          title="파일 제거"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                {file.preview && (
-                  <div 
-                    className="file-preview"
-                    onClick={() => handleFileClick(file, index)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <img src={file.preview} alt={file.name} />
+                ) : (
+                  // 문서 파일 미리보기
+                  <div className="document-file">
+                    <div className="document-preview">
+                      <div className="document-icon">
+                        {getFileIcon(file.type)}
+                      </div>
+                      <div className="document-info">
+                        <div className="document-name">{file.name}</div>
+                        <div className="document-meta">
+                          <span className="file-size">{formatFileSize(file.size)}</span>
+                          <span className="file-type">{file.type.split('/')[1]?.toUpperCase()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="document-actions">
+                      <button
+                        type="button"
+                        className="remove-file-btn"
+                        onClick={() => removeFile(index)}
+                        title="파일 제거"
+                      >
+                        ✕ 제거
+                      </button>
+                    </div>
                   </div>
                 )}
-                <button
-                  type="button"
-                  className="remove-file-btn"
-                  onClick={() => removeFile(index)}
-                  title="파일 제거"
-                >
-                  ✕
-                </button>
               </div>
             ))}
           </div>

@@ -76,99 +76,152 @@
 }
 
 .file-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 12px;
-  background-color: white;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
-  position: relative;
-  gap: 12px;
-  max-width: 100%; /* 최대 너비 제한 */
+  margin-bottom: 0.75rem;
 }
 
 .file-item:hover {
-  border-color: #007bff;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* 이미지 파일 스타일 */
+.image-file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
+}
+
+.file-image:hover {
+  transform: scale(1.02);
 }
 
 .file-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0; /* flexbox에서 text-overflow가 제대로 작동하도록 */
-  margin-right: 8px; /* X 버튼과의 간격 확보 */
-}
-
-.file-icon {
-  font-size: 24px;
-  width: 32px;
-  text-align: center;
-}
-
-.file-details {
-  display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 0; /* flexbox에서 text-overflow가 제대로 작동하도록 */
-  flex: 1;
+  gap: 0.5rem;
 }
 
 .file-name {
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
+  color: #2d3652;
+  word-break: break-all;
   line-height: 1.3;
-  font-size: 14px;
+}
+
+.file-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .file-size {
-  font-size: 12px;
-  color: #666;
-  margin-top: 2px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #e5e7eb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* 문서 파일 스타일 */
+.document-file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.document-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3652;
+  margin-bottom: 0.25rem;
+  word-break: break-all;
+  line-height: 1.3;
+}
+
+.document-meta {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.file-type {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.document-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
 .remove-file-btn {
-  background: none;
+  background: #ff6b6b;
+  color: #fff;
   border: none;
-  color: #dc3545;
-  font-size: 16px;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 4px;
   transition: all 0.2s ease;
-  flex-shrink: 0;
-  align-self: flex-start;
-  position: relative;
-  z-index: 1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .remove-file-btn:hover {
-  background-color: #dc3545;
-  color: white;
-}
-
-.file-preview {
-  width: 120px;
-  height: 80px;
-  text-align: center;
-  flex-shrink: 0;
-  overflow: hidden; /* 이미지가 넘치지 않도록 */
-  border-radius: 4px;
-  margin-right: 8px; /* X 버튼과의 간격 확보 */
-}
-
-.file-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #ff5252;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
 }
 
 /* 이미지 모달 스타일 */
@@ -286,22 +339,37 @@
   }
   
   .file-item {
+    padding: 0.75rem;
+  }
+  
+  .document-preview {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    text-align: center;
+    gap: 0.5rem;
   }
   
-  .file-info {
-    width: 100%;
+  .document-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
   }
   
-  .file-name {
-    max-width: 100%;
+  .document-name {
+    font-size: 0.8rem;
+  }
+  
+  .document-meta {
+    font-size: 0.7rem;
+    justify-content: center;
+  }
+  
+  .document-actions {
+    flex-direction: column;
   }
   
   .remove-file-btn {
-    align-self: flex-end;
-    margin-left: 0;
+    width: 100%;
+    justify-content: center;
   }
 
   .image-modal-content {

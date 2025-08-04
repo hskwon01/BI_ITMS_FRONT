@@ -16,7 +16,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [modalState, setModalState] = useState({ show: false, title: '', content: '', warning: '', onConfirm: null });
-  const [deleteTarget, setDeleteTarget] = useState({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [assignees, setAssignees] = useState([]); // 담당자 목록
   const [assigning, setAssigning] = useState(false); // 담당자 배정 중 상태
@@ -166,7 +165,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       // 1. 파일들을 Cloudinary에 업로드
       const uploadedFiles = [];
       for (const file of replyFiles) {
-        const res = await uploadReplyFiles(file, token);
+        const res = await uploadReplyFiles(file, token); 
         uploadedFiles.push({
           public_id: res.data.public_id,
           url: res.data.url, // 백엔드에서 반환하는 Cloudinary URL 필드명에 맞게 수정
@@ -194,33 +193,31 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   };
 
   const handleFileDelete = async (ticket_files_id, isTicketFile = false) => {
-    setDeleteTarget({ ticket_files_id, isTicketFile: true });
     setModalState({
       show: true,
       title: '⚠️ 파일 삭제 확인',
       content: '이 파일을 삭제하시겠습니까?',
       warning: '삭제된 파일은 복구할 수 없습니다.',
-      onConfirm: () => confirmDelete(),
+      onConfirm: () => confirmDelete(ticket_files_id, isTicketFile),
     });
   };
 
   const handleReplyFileDelete = async (ticket_reply_files_id, isTicketFile = false) => {
-    setDeleteTarget({ ticket_reply_files_id, isTicketFile: false });
     setModalState({
       show: true,
       title: '⚠️ 파일 삭제 확인',
       content: '이 파일을 삭제하시겠습니까?',
       warning: '삭제된 파일은 복구할 수 없습니다.',
-      onConfirm: () => confirmDelete(),
+      onConfirm: () => confirmDelete(ticket_reply_files_id, isTicketFile),
     });
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (id, isTicketFile) => {
     try {
-      if (deleteTarget.isTicketFile) {
-        await deleteTicketFile(deleteTarget.ticket_files_id, token);
+      if (isTicketFile) {
+        await deleteTicketFile(id, token);
       } else {
-        await deleteReplyFile(deleteTarget.ticket_reply_files_id, token);
+        await deleteReplyFile(id, token);
       }
       fetchDetail();
       showToast('파일이 삭제되었습니다.', 'success');
@@ -235,7 +232,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       }
     } finally {
       setModalState({ show: false, title: '', content: '', warning: '', onConfirm: null });
-      setDeleteTarget({ ticket_files_id: '', ticket_reply_files_id: '', isTicketFile: false });
     }
   };
 
@@ -268,6 +264,61 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     setSelectedImage(null);
   };
 
+  // 파일 타입에 따른 아이콘과 미리보기 컴포넌트 생성 함수
+  const getFileIcon = (filename) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return '📄';
+      case 'doc':
+      case 'docx':
+        return '📝';
+      case 'xls':
+      case 'xlsx':
+        return '📊';
+      case 'ppt':
+      case 'pptx':
+        return '📈';
+      case 'txt':
+        return '📄';
+      case 'zip':
+      case 'rar':
+        return '📦';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+      case 'svg':
+        return '🖼️';
+      default:
+        return '📎';
+    }
+  };
+
+  const isImageFile = (filename) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(extension);
+  };
+
+  const isPdfFile = (filename) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    return extension === 'pdf';
+  };
+
+  const isDocumentFile = (filename) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    return ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'].includes(extension);
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const handleUpdateReply = async (replyId) => {
     try {
       await updateReply(ticketId, replyId, editedMessage, token);
@@ -279,12 +330,29 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   };
 
   const handleDeleteReply = async (replyId) => {
-    try {
-      await deleteReply(ticketId, replyId, token);
-      await fetchDetail();
-    } catch {
+    // 해당 댓글의 첨부파일이 있는지 확인
+    const reply = replies.find(r => r.id === replyId);
+    if (reply && reply.files && reply.files.length > 0) {
       showToast('첨부 파일을 먼저 삭제해 주세요', 'error');
+      return;
     }
+
+    setModalState({
+      show: true,
+      title: '⚠️ 댓글 삭제 확인',
+      content: '이 댓글을 삭제하시겠습니까?',
+      warning: '삭제된 댓글은 복구할 수 없습니다.',
+      onConfirm: async () => {
+        try {
+          await deleteReply(ticketId, replyId, token);
+          await fetchDetail();
+          showToast('댓글이 삭제되었습니다.', 'success');
+        } catch (error) {
+          console.error("댓글 삭제 에러:", error);
+          showToast('댓글 삭제에 실패했습니다.', 'error');
+        }
+      },
+    });
   };
 
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -457,35 +525,89 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
             <div className="file-grid">
               {ticket.files.map(f => (
                 <div key={f.filename} className="file-item">
-                  <div className="image-file">
-                    <img
-                      src={f.url}
-                      alt={f.originalname}
-                      className="file-image"
-                      onClick={() => handleImageClick(f.url, f.originalname)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <div className="file-actions">
-                      <a
-                        href={f.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="file-link"
-                      >
-                        📎 {f.originalname}
-                      </a>
-                      {(role === 'admin' || ticket.author_id === currentUserId) && (
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleFileDelete(f.ticket_files_id, true)}
-                        >
-                          ✕
-                        </button>
-                      )}
+                  {isImageFile(f.originalname) ? (
+                    // 이미지 파일 미리보기
+                    <div className="image-file">
+                      <img
+                        src={f.url}
+                        alt={f.originalname}
+                        className="file-image"
+                        onClick={() => handleImageClick(f.url, f.originalname)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <div className="file-info">
+                        <div className="file-name">{f.originalname}</div>
+                        <div className="file-actions">
+                          <a
+                            href={f.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="file-link"
+                            title="새 탭에서 열기"
+                          >
+                            🔗
+                          </a>
+                          {(role === 'admin' || ticket.author_id === currentUserId) && (
+                            <button
+                              className="delete-btn"
+                              onClick={() => handleFileDelete(f.ticket_files_id, true)}
+                              title="삭제"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    // 문서 파일 미리보기
+                    <div className="document-file">
+                      <div className="document-preview">
+                        <div className="document-icon">
+                          {getFileIcon(f.originalname)}
+                        </div>
+                        <div className="document-info">
+                          <div className="document-name">{f.originalname}</div>
+                          <div className="document-meta">
+                            {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
+                            <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="document-actions">
+                        {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
+                          <a
+                            href={f.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="document-link"
+                            title="새 탭에서 열기"
+                          >
+                            🔗 열기
+                          </a>
+                        )}
+                        <a
+                          href={f.url}
+                          download={f.originalname}
+                          className="document-download"
+                          title="다운로드"
+                        >
+                          ⬇️ 다운로드
+                        </a>
+                        {(role === 'admin' || ticket.author_id === currentUserId) && (
+                          <button
+                            className="delete-btn"
+                            onClick={() => handleFileDelete(f.ticket_files_id, true)}
+                            title="삭제"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))}`
+              ))}
             </div>
           </div>
         )}
@@ -536,7 +658,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                       setEditingReplyId(reply.id);
                       setEditedMessage(reply.message);
                     }}>✏️ 수정</button>
-                    <button className="reply-delete-btn" onClick={() => setDeleteTarget({ replyId: reply.id })}>🗑️ 삭제</button>
+                    <button className="reply-delete-btn" onClick={() => handleDeleteReply(reply.id)}>🗑️ 삭제</button>
                   </>
                 )}
               </div>
@@ -545,33 +667,87 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                   <div className="file-grid">
                     {reply.files.map(f => (
                       <div key={f.filename} className="file-item">
-                        <div className="image-file">
-                          <img
-                            src={f.url}
-                            alt={f.originalname}
-                            className="file-image"
-                            onClick={() => handleImageClick(f.url, f.originalname)}
-                            style={{ cursor: 'pointer' }}
-                          />
-                          <div className="file-actions">
-                            <a
-                              href={f.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="file-link"
-                            >
-                              📎 {f.originalname}
-                            </a>
-                            {(role === 'admin' || reply.author_id === currentUserId) && (
-                              <button 
-                                className="delete-btn"
-                                onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
-                              >
-                                ✕
-                              </button>
-                            )}
+                        {isImageFile(f.originalname) ? (
+                          // 이미지 파일 미리보기
+                          <div className="image-file">
+                            <img
+                              src={f.url}
+                              alt={f.originalname}
+                              className="file-image"
+                              onClick={() => handleImageClick(f.url, f.originalname)}
+                              style={{ cursor: 'pointer' }}
+                            />
+                            <div className="file-info">
+                              <div className="file-name">{f.originalname}</div>
+                              <div className="file-actions">
+                                <a
+                                  href={f.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="file-link"
+                                  title="새 탭에서 열기"
+                                >
+                                  🔗
+                                </a>
+                                {(role === 'admin' || reply.author_id === currentUserId) && (
+                                  <button 
+                                    className="delete-btn"
+                                    onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
+                                    title="삭제"
+                                  >
+                                    ✕
+                                  </button>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          // 문서 파일 미리보기
+                          <div className="document-file">
+                            <div className="document-preview">
+                              <div className="document-icon">
+                                {getFileIcon(f.originalname)}
+                              </div>
+                              <div className="document-info">
+                                <div className="document-name">{f.originalname}</div>
+                                <div className="document-meta">
+                                  {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
+                                  <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="document-actions">
+                              {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
+                                <a
+                                  href={f.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="document-link"
+                                  title="새 탭에서 열기"
+                                >
+                                  🔗 열기
+                                </a>
+                              )}
+                              <a
+                                href={f.url}
+                                download={f.originalname}
+                                className="document-download"
+                                title="다운로드"
+                              >
+                                ⬇️ 다운로드
+                              </a>
+                              {(role === 'admin' || reply.author_id === currentUserId) && (
+                                <button 
+                                  className="delete-btn"
+                                  onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
+                                  title="삭제"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
