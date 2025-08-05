@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../css/AdminLayout.css';
 
 // Metanet 로고 이미지 경로
@@ -7,25 +7,31 @@ const metanetLogo = process.env.PUBLIC_URL + '/metanet-logo.jpg';
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/';
   };
 
+  const handleLogoClick = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // 토큰이 있으면 /home으로 이동
+      navigate('/home');
+    } else {
+      // 토큰이 없으면 /로 이동
+      navigate('/');
+    }
+  };
+
   return (
     <div className="admin-layout">
       {/* 상단 헤더 */}
-      <header className="admin-header">
-        <div className="top-header">
-          <div className="top-links">
-            <Link to="/">HOME</Link> | <Link to="/sitemap">SITEMAP</Link> | <Link to="/">ENGLISH</Link>
-          </div>
-        </div>
-        
+      <header className="admin-header">        
         <div className="main-header">
           <div className="logo-section">
-            <div className="logo-container">
+            <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
               <div className="logo-text">
                 <h1 className="logo">ITMS <span className="company-tag">by rockPLACE</span></h1>

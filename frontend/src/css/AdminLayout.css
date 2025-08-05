@@ -13,28 +13,6 @@
   z-index: 1000;
 }
 
-/* 상단 헤더 */
-.top-header {
-  background: #2d3652;
-  padding: 0.5rem 2rem;
-}
-
-.top-links {
-  text-align: right;
-}
-
-.top-links a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.85rem;
-  margin-left: 1rem;
-  transition: color 0.3s ease;
-}
-
-.top-links a:hover {
-  color: #67cd4e;
-}
-
 /* 메인 헤더 */
 .main-header {
   padding: 1rem 2rem;

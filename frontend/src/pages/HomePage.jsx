@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login, getMe } from '../api/auth';
+import { getMe } from '../api/auth';
 import '../css/HomePage.css';
 
 // Metanet 로고 이미지 경로
@@ -8,52 +8,29 @@ const metanetLogo = process.env.PUBLIC_URL + '/metanet-logo.jpg';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({
-    id: '',
-    password: '',
-    saveId: false
-  });
-  const [loginError, setLoginError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [me, setMe] = useState(null);
 
-  const handleLoginChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setLoginData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoginError('');
-    setIsLoading(true);
-
-    try {
-      
-      // JSON 객체로 로그인 요청
-      const response = await login({
-        email: loginData.id,
-        password: loginData.password
-      });
-      
-      // 토큰 저장
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-
-      // 사용자 정보 가져오기
-      const me = await getMe();
-
-      // 사용자 역할에 따라 페이지 이동
-      if (me.data.role === 'admin' || me.data.role === 'itsm_team') {
-        navigate('/admin/tickets');
-      } else {
-        navigate('/my-tickets');
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const res = await getMe();
+        setMe(res);
+      } catch (error) {
+        // 토큰이 만료되었거나 없는 경우
+        setMe(null);
       }
-    } catch (error) {
-      setLoginError(error.response?.data?.message || '로그인에 실패했습니다.');
-    } finally {
-      setIsLoading(false);
+    };
+    fetchMe();
+  }, []);
+
+  const handleLogoClick = () => {
+    const token = localStorage.getItem('token');
+    if (token && me) {
+      // 토큰이 있고 사용자 정보가 있으면 /home으로 이동
+      navigate('/home');
+    } else {
+      // 토큰이 없거나 만료되었으면 /로 이동
+      navigate('/');
     }
   };
 
@@ -83,24 +60,28 @@ const HomePage = () => {
     <div className="homepage">
       {/* 상단 헤더 */}
       <header className="header">
-        <div className="top-header">
-          <div className="top-links">
-            <Link to="/">HOME</Link> | <Link to="/sitemap">SITEMAP</Link> | <Link to="/">ENGLISH</Link>
-          </div>
-        </div>
           <div className="main-header">
-           <div className="logo-section">
-             <div className="logo-container">
-               <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
-                <div className="logo-text">
-                  <h1 className="logo">ITMS <span className="company-tag">by rockPLACE</span></h1>
-                </div>
-             </div>
-           </div>
+                       <div className="logo-section">
+              <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+                <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
+                 <div className="logo-text">
+                   <h1 className="logo">ITMS <span className="company-tag">by rockPLACE</span></h1>
+                 </div>
+              </div>
+            </div>
          </div>
         <nav className="main-nav">
           <div className="nav-center">
             <ul>
+              {me ? (
+                me?.data?.role === 'admin' || me?.data?.role === 'itsm_team' ? (
+                <li><Link to="/admin/tickets">고객 티켓</Link></li>
+              ) : (
+              <li><Link to="/my-tickets">내 티켓</Link></li>
+            )
+          ) : (
+          <li>로딩 중...</li> // 또는 null
+          )}              
               <li><Link to="/notices">공지사항</Link></li>
               <li><Link to="/inquiries">문의사항</Link></li>
               <li><Link to="/news">신규소식</Link></li>
@@ -108,7 +89,17 @@ const HomePage = () => {
             </ul>
           </div>
           <div className="nav-right">
-            {/* 우측 영역 - 필요시 버튼이나 다른 요소 추가 가능 */}
+            {me && (
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  window.location.href = '/';
+                }} 
+                className="logout-btn"
+              >
+                로그아웃
+              </button>
+            )}
           </div>
         </nav>
       </header>
@@ -116,85 +107,65 @@ const HomePage = () => {
       {/* 메인 컨텐츠 영역 */}
       <main className="main-content">
         <div className="content-wrapper">
-          {/* 왼쪽 메인 영역 */}
-          <div className="main-section">
-                         {/* 메인 배너 */}
-             <div className="main-banner">
-               <div className="banner-content">
-                 <h2>통합 IT 관리 시스템</h2>
-                 <h1>ITMS</h1>
-                 <p>IT Infrastructure Management System</p>
-                 <p className="banner-subtitle">
-                   효율적인 IT 서비스 관리와 모니터링을 위한 통합 플랫폼입니다.
-                 </p>
-                 <div className="banner-action">
-                   <Link to="/create-ticket" className="banner-btn">
-                     티켓 생성하기
-                   </Link>
-                 </div>
-               </div>
-             </div>
-          </div>
+          {/* 메인 배너와 사용자 정보 영역 */}
+          <div className="banner-user-section">
+            {/* 메인 배너 */}
+            <div className="main-banner">
+              <div className="banner-content">
+                <h2>통합 IT 관리 시스템</h2>
+                <h1>ITMS</h1>
+                <p>IT Infrastructure Management System</p>
+                <p className="banner-subtitle">
+                  효율적인 IT 서비스 관리와 모니터링을 위한 통합 플랫폼입니다.
+                </p>
+                <div className="banner-action">
+                  <Link to="/my-tickets/create" className="banner-btn">
+                    티켓 생성하기
+                  </Link>
+                </div>
+              </div>
+            </div>
 
-                     {/* 우측 사이드바 */}
-           <div className="sidebar">
-             {/* 로그인 박스 */}
-             <div className="login-box">
-               <h3>LOGIN</h3>
-               <form onSubmit={handleLogin}>
-                 <div className="input-group">
-                   <input
-                     type="text"
-                     name="id"
-                     placeholder="ID"
-                     value={loginData.id}
-                     onChange={handleLoginChange}
-                     required
-                     disabled={isLoading}
-                   />
-                 </div>
-                 <div className="input-group">
-                   <input
-                     type="password"
-                     name="password"
-                     placeholder="Password"
-                     value={loginData.password}
-                     onChange={handleLoginChange}
-                     required
-                     disabled={isLoading}
-                   />
-                 </div>
-                 {loginError && (
-                   <div className="login-error">
-                     {loginError}
+            {/* 사용자 정보 카드 */}
+            <div className="user-info-card">
+              {me ? (
+                <div className="user-info-content">
+                  <div className="user-avatar">
+                    <div className="avatar-circle">
+                      {me?.data?.name ? me.data.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  </div>
+                  <div className="user-details">
+                    <h3 className="user-name">{me?.data?.name || '사용자'} 님</h3>
+                    <p className="user-email">{me?.data?.email || '이메일 없음'}</p>
+                    <p className="user-role">
+                      {me?.data?.role === 'admin' ? '관리자' : 
+                       me?.data?.role === 'itsm_team' ? '기술지원팀' : '일반 사용자'}
+                    </p>
+                    <p className="user-company">{me?.data?.company_name || '회사 정보 없음'}</p>
+                  </div>
+                     <div className="user-actions">
+                     <Link to="/profile" className="profile-link">마이 페이지</Link>
                    </div>
-                 )}
-                 <div className="login-options">
-                   <label>
-                     <input
-                       type="checkbox"
-                       name="saveId"
-                       checked={loginData.saveId}
-                       onChange={handleLoginChange}
-                       disabled={isLoading}
-                     />
-                     ID 저장
-                   </label>
-                   <Link to="/find-account" className="find-account">ID/PW 찾기</Link>
-                 </div>
-                 <div className="login-buttons">
-                   <button 
-                     type="submit" 
-                     className="btn-login"
-                     disabled={isLoading}
-                   >
-                     {isLoading ? '로그인 중...' : '로그인'}
-                   </button>
-                   <Link to="/register" className="btn-register">회원가입</Link>
-                 </div>
-               </form>
-             </div>
-           </div>
+                </div>
+              ) : (
+                <div className="user-info-content">
+                  <div className="user-avatar">
+                    <div className="avatar-circle">
+                      ?
+                    </div>
+                  </div>
+                  <div className="user-details">
+                    <h3 className="user-name">로그인이 필요합니다</h3>
+                    <p className="user-email">서비스를 이용하려면 로그인해주세요</p>
+                  </div>
+                  <div className="user-actions">
+                    <Link to="/" className="login-link">로그인하기</Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* 하단 뉴스/공지사항 섹션 */}

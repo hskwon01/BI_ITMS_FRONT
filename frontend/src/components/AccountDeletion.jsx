@@ -12,7 +12,7 @@ const AccountDeletion = () => {
       try {
         await deleteAccount();
         localStorage.clear(); // 로컬 스토리지 비우기
-        navigate('/'); // 홈페이지로 리디렉션
+        navigate('/login'); // 로그인 페이지로 리디렉션
       } catch (err) {
         setError('계정 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
         console.error('Account deletion error:', err);

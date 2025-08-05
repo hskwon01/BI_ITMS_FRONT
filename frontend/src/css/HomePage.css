@@ -11,28 +11,6 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.top-header {
-  background: #f8f9fa;
-  padding: 8px 0;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.top-links {
-  text-align: right;
-  padding: 0 20px;
-  font-size: 12px;
-}
-
-.top-links a {
-  color: #6c757d;
-  text-decoration: none;
-  margin: 0 5px;
-}
-
-.top-links a:hover {
-  color: #3498db;
-}
-
 .main-header {
   padding: 20px;
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
@@ -120,6 +98,25 @@
   color: #3498db;
 }
 
+/* 로그아웃 버튼 */
+.logout-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
 /* 서브 네비게이션 */
 .sub-nav {
   background: #f8f9fa;
@@ -147,12 +144,135 @@
 }
 
 .content-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
   margin-bottom: 30px;
-  align-items: start;
   width: 100%;
+}
+
+/* 배너와 사용자 정보 섹션 */
+.banner-user-section {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 30px;
+  align-items: start;
+  margin-bottom: 30px;
+}
+
+/* 사용자 정보 카드 */
+.user-info-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  border: 1px solid #e9ecef;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.user-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.user-avatar {
+  margin-bottom: 10px;
+}
+
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.user-details {
+  width: 100%;
+}
+
+.user-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  color: #7b8190;
+  margin: 0 0 8px 0;
+  word-break: break-all;
+}
+
+.user-role {
+  font-size: 0.85rem;
+  color: #3498db;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  padding: 4px 12px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 15px;
+  display: inline-block;
+}
+
+.user-company {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.profile-link, .login-link, .logout-link {
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-link, .login-link {
+  background: #3498db;
+  color: white;
+}
+
+.profile-link:hover, .login-link:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.logout-link {
+  background: #e74c3c;
+  color: white;
+}
+
+.logout-link:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
 }
 
 /* 메인 섹션 */
@@ -245,153 +365,7 @@
 
 
 
-/* 사이드바 */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 0;
-}
 
-/* 로그인 박스 */
-.login-box {
-  background: white;
-  border-radius: 15px;
-  padding: 35px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  border: 1px solid #e9ecef;
-  width: 100%;
-  max-width: 380px;
-  margin-top: 0;
-  height: fit-content;
-}
-
-.login-box h3 {
-  margin: 0 0 25px 0;
-  color: #2c3e50;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 1px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 15px;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-  background: #f8f9fa;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
-  background: white;
-  transform: translateY(-1px);
-}
-
-.input-group input:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
-}
-
-.login-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 13px;
-  border: 1px solid #f5c6cb;
-}
-
-.login-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  font-size: 13px;
-}
-
-.login-options label {
-  display: flex;
-  align-items: center;
-  color: #666;
-  cursor: pointer;
-}
-
-.login-options input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-.find-account {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.find-account:hover {
-  text-decoration: underline;
-}
-
-.login-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-login, .btn-register {
-  flex: 1;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-}
-
-.btn-login {
-  background: #3498db;
-  color: white;
-}
-
-.btn-login:hover {
-  background: #2980b9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-}
-
-.btn-login:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.btn-login:disabled:hover {
-  background: #6c757d;
-}
-
-.btn-register {
-  background: #6c757d;
-  color: white;
-}
-
-.btn-register:hover {
-  background: #545b62;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-}
 
 /* 서비스 아이콘 - 삭제됨 */
 
@@ -500,11 +474,16 @@
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
   .content-wrapper {
-    grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 30px;
   }
   
-  .sidebar {
+  .banner-user-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .user-info-card {
+    position: static;
     order: -1;
   }
   
@@ -573,7 +552,5 @@
     padding: 30px 20px;
   }
   
-  .login-box {
-    padding: 25px;
-  }
+
 } 

@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminUserListPage from './pages/AdminUserListPage';
 import AdminRoute from './routes/AdminRoute';
@@ -20,7 +21,9 @@ const App = () => (
   <BrowserRouter>
     <Routes>
       {/* 홈 페이지 */}
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
       {/* 고객용 - UserLayout 사용 */}

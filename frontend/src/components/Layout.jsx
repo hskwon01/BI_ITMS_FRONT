@@ -22,7 +22,7 @@ const Layout = () => {
       } catch (error) {
         console.error("Invalid token, logging out:", error);
         localStorage.clear();
-        navigate('/');
+        navigate('/login');
       }
     } else {
       setUserRole(null);
@@ -32,7 +32,7 @@ const Layout = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/');
+    navigate('/login');
   };
 
   const toggleMenu = () => {

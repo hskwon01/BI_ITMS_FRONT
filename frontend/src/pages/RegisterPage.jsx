@@ -72,7 +72,7 @@ const RegisterPage = () => {
       await register(form); // company도 함께 전송됨
       showToast('회원가입이 완료되었습니다!', 'success');
       setTimeout(() => {
-        navigate('/');
+        navigate('/login');
       }, 2000);
     } catch (err) {
       const errorMessage = err.response?.data?.message || '회원가입에 실패했습니다. 입력값을 확인해주세요.';
