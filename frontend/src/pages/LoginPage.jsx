@@ -57,7 +57,7 @@ const LoginPage = () => {
         <div className="login-simple-logo">
           <img src="/metanet-logo.jpg" alt="Metanet Logo" />
         </div>
-        <h1 className="login-simple-title">ITMS 로그인</h1>
+        <h1 className="login-simple-title">ITSM 로그인</h1>
         <div className="login-simple-fields">
           <input
             name="email"

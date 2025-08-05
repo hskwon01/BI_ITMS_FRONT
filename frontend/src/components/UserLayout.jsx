@@ -34,7 +34,7 @@ const UserLayout = ({ children }) => {
             <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
               <div className="logo-text">
-                <h1 className="logo">ITMS <span className="company-tag">by rockPLACE</span></h1>
+                <h1 className="logo">ITSM <span className="company-tag">by rockPLACE</span></h1>
               </div>
             </div>
           </div>
