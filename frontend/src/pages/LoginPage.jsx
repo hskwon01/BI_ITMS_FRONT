@@ -23,19 +23,20 @@ const LoginPage = () => {
     e.preventDefault();
     setMessage('');
     try {
-      setLoading(true);
-      const res = await login(form);
-      const token = res.data.token;
+      setLoading(true);      
+      const res = await login(form);     
+      const token = res.data.token;  
       localStorage.setItem('token', token);
-
       const me = await getMe();
 
       if (me.data.role === 'admin' || me.data.role === 'itsm_team') {
-        navigate('/admin/tickets');
+        navigate('/home');
       } else {
-        navigate('/my-tickets');
+        navigate('/home');
       }
     } catch (err) {
+      console.error('로그인 에러:', err);
+      console.error('에러 응답:', err.response);
       const errorMessage = err.response?.data?.message || '사용자를 찾을 수 없습니다. 이메일과 비밀번호를 확인해주세요.';
       showToast(errorMessage, 'error');
     } finally {

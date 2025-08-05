@@ -179,7 +179,7 @@ const RegisterPage = () => {
         </button>
         <div className="register-simple-footer">
           <span>이미 계정이 있으신가요? </span>
-          <Link to="/login" className="register-simple-link">로그인</Link>
+          <Link to="/" className="register-simple-link">로그인</Link>
         </div>
       </form>
     </div>

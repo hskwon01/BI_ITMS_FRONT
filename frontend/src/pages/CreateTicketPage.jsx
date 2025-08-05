@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createTicket, uploadTicketFiles } from '../api/ticket';
 import { useNavigate } from 'react-router-dom';
 import DragDropFileUpload from '../components/DragDropFileUpload';
+import UserLayout from '../components/UserLayout';
 import '../css/CreateTicketPage.css';
 
 const CreateTicketPage = () => {
@@ -100,17 +101,10 @@ const CreateTicketPage = () => {
       };
 
       await createTicket(ticketData, token);
-
-      showToast('티켓이 성공적으로 등록되었습니다!', 'success');
-      setForm({ title: '', description: '', urgency: '', product: '', platform: '', sw_version: '', os: '' });
-      setOtherData({ product: '', sw_version: '', os: '', platform: '' });
-      setFiles([]);
-      setFilePreviews([]);
-      setTimeout(() => {
-        navigate('/my-tickets');
-      }, 2000);
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || '티켓 생성에 실패했습니다. 다시 시도해주세요.';
+      showToast('티켓이 성공적으로 등록되었습니다.');
+      navigate('/my-tickets');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || '티켓 등록에 실패했습니다.';
       showToast(errorMessage, 'error');
     } finally {
       setLoading(false);
@@ -118,214 +112,217 @@ const CreateTicketPage = () => {
   };
 
   return (
-    <div className="create-ticket-container">
-      {toast.show && (
-        <div className={`toast-notification ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
+    <UserLayout>
+      <div className="create-ticket-container">
+        {toast.show && (
+          <div className={`toast-notification ${toast.type}`}>
+            {toast.message}
+          </div>
+        )}
 
-      <div className="create-ticket-card">
-        <div className="create-ticket-header">
-          <h1>기술 지원 요청</h1>
-          <p className="create-ticket-desc">새로운 기술 지원 티켓을 등록하세요</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="create-ticket-form">
-          <div className="form-group">
-            <label htmlFor="title">제목 *</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              placeholder="티켓 제목을 입력하세요"
-              value={form.title}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
+        <div className="create-ticket-card">
+          <div className="create-ticket-header">
+            <h1>기술 지원 요청</h1>
+            <p className="create-ticket-desc">새로운 기술 지원 티켓을 등록하세요</p>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="description">설명 *</label>
-            <textarea
-              id="description"
-              name="description"
-              placeholder="문제 상황을 자세히 설명해주세요"
-              value={form.description}
-              onChange={handleChange}
-              className="form-textarea"
-              rows="6"
-              required
-            />
-          </div>
-
-          <div className="form-row">
+          <form onSubmit={handleSubmit} className="create-ticket-form">
             <div className="form-group">
-              <label htmlFor="urgency">긴급도 *</label>
-              <select
-                id="urgency"
-                name="urgency"
-                value={form.urgency}
+              <label htmlFor="title">제목 *</label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                placeholder="티켓 제목을 입력하세요"
+                value={form.title}
                 onChange={handleChange}
-                className="form-select"
+                className="form-input"
                 required
-              >
-                <option value="">긴급도를 선택하세요</option>
-                <option value="낮음">낮음</option>
-                <option value="보통">보통</option>
-                <option value="높음">높음</option>
-              </select>
+              />
             </div>
 
             <div className="form-group">
-              <label htmlFor="product">관련 제품</label>
-              <select
-                id="product"
-                name="product"
-                value={form.product}
+              <label htmlFor="description">설명 *</label>
+              <textarea
+                id="description"
+                name="description"
+                placeholder="문제 상황을 자세히 설명해주세요"
+                value={form.description}
                 onChange={handleChange}
-                className="form-select"
-              >
-                <option value="">제품을 선택하세요</option>
-                {productOptions.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
-              {form.product === '기타' && (
-                <input
-                  type="text"
+                className="form-textarea"
+                rows="6"
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="urgency">긴급도 *</label>
+                <select
+                  id="urgency"
+                  name="urgency"
+                  value={form.urgency}
+                  onChange={handleChange}
+                  className="form-select"
+                  required
+                >
+                  <option value="">긴급도를 선택하세요</option>
+                  <option value="낮음">낮음</option>
+                  <option value="보통">보통</option>
+                  <option value="높음">높음</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="product">관련 제품</label>
+                <select
+                  id="product"
                   name="product"
-                  placeholder="제품명 입력"
-                  value={otherData.product}
-                  onChange={handleOtherChange}
-                  className="form-input other-input"
-                />
-              )}
+                  value={form.product}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="">제품을 선택하세요</option>
+                  {productOptions.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+                {form.product === '기타' && (
+                  <input
+                    type="text"
+                    name="product"
+                    placeholder="제품명 입력"
+                    value={otherData.product}
+                    onChange={handleOtherChange}
+                    className="form-input other-input"
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="platform">Platform</label>
-              <select
-                id="platform"
-                name="platform"
-                value={form.platform}
-                onChange={handleChange}
-                className="form-select"
-              >
-                <option value="">플랫폼을 선택하세요</option>
-                {platformOptions.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
-              {form.platform === '기타' && (
-                <input
-                  type="text"
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="platform">Platform</label>
+                <select
+                  id="platform"
                   name="platform"
-                  placeholder="플랫폼명 입력"
-                  value={otherData.platform}
-                  onChange={handleOtherChange}
-                  className="form-input other-input"
-                />
-              )}
-            </div>
-            <div className="form-group">
-              <label htmlFor="sw_version">S/W Version</label>
-              <select
-                id="sw_version"
-                name="sw_version"
-                value={form.sw_version}
-                onChange={handleChange}
-                className="form-select"
-              >
-                <option value="">버전을 선택하세요</option>
-                {versionOptions.map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-              {form.sw_version === '기타' && (
-                <input
-                  type="text"
+                  value={form.platform}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="">Platform을 선택하세요</option>
+                  {platformOptions.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+                {form.platform === '기타' && (
+                  <input
+                    type="text"
+                    name="platform"
+                    placeholder="Platform 입력"
+                    value={otherData.platform}
+                    onChange={handleOtherChange}
+                    className="form-input other-input"
+                  />
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="sw_version">S/W Version</label>
+                <select
+                  id="sw_version"
                   name="sw_version"
-                  placeholder="버전 입력"
-                  value={otherData.sw_version}
-                  onChange={handleOtherChange}
-                  className="form-input other-input"
-                />
-              )}
+                  value={form.sw_version}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="">버전을 선택하세요</option>
+                  {versionOptions.map((v) => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+                {form.sw_version === '기타' && (
+                  <input
+                    type="text"
+                    name="sw_version"
+                    placeholder="버전 입력"
+                    value={otherData.sw_version}
+                    onChange={handleOtherChange}
+                    className="form-input other-input"
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="os">OS</label>
-              <select
-                id="os"
-                name="os"
-                value={form.os}
-                onChange={handleChange}
-                className="form-select"
-              >
-                <option value="">OS를 선택하세요</option>
-                {osOptions.map((o) => (
-                  <option key={o} value={o}>{o}</option>
-                ))}
-              </select>
-              {form.os === '기타' && (
-                <input
-                  type="text"
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="os">OS</label>
+                <select
+                  id="os"
                   name="os"
-                  placeholder="OS 입력"
-                  value={otherData.os}
-                  onChange={handleOtherChange}
-                  className="form-input other-input"
-                />
-              )}
+                  value={form.os}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="">OS를 선택하세요</option>
+                  {osOptions.map((o) => (
+                    <option key={o} value={o}>{o}</option>
+                  ))}
+                </select>
+                {form.os === '기타' && (
+                  <input
+                    type="text"
+                    name="os"
+                    placeholder="OS 입력"
+                    value={otherData.os}
+                    onChange={handleOtherChange}
+                    className="form-input other-input"
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="files">첨부 파일</label>
-            <DragDropFileUpload
-              files={files}
-              setFiles={setFiles}
-              filePreviews={filePreviews}
-              setFilePreviews={setFilePreviews}
-              maxFiles={5}
-              maxSize={10 * 1024 * 1024}
-              acceptedTypes={[
-                'image/*',
-                'application/pdf',
-                'text/*',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-              ]}
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="files">첨부 파일</label>
+              <DragDropFileUpload
+                files={files}
+                setFiles={setFiles}
+                filePreviews={filePreviews}
+                setFilePreviews={setFilePreviews}
+                maxFiles={5}
+                maxSize={10 * 1024 * 1024}
+                acceptedTypes={[
+                  'image/*',
+                  'application/pdf',
+                  'text/*',
+                  'application/msword',
+                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                  'application/vnd.ms-excel',
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]}
+              />
+            </div>
 
-          <div className="form-actions">
-            <button
-              type="button"
-              onClick={() => navigate('/my-tickets')}
-              className="btn-secondary"
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={loading}
-            >
-              {loading ? '등록 중...' : '티켓 등록'}
-            </button>
-          </div>
-        </form>
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={() => navigate('/my-tickets')}
+                className="btn-secondary"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={loading}
+              >
+                {loading ? '등록 중...' : '티켓 등록'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </UserLayout>
   );
 };
 

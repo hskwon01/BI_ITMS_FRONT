@@ -1,9 +1,6 @@
 .ticket-detail-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  background: #f6f8fc;
-  min-height: 100vh;
+  padding: 2rem;
+  background: #fff;
 }
 
 .ticket-header {

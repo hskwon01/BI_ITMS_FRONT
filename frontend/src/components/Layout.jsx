@@ -16,7 +16,6 @@ const Layout = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        console.log("decodedToken!!!!", decodedToken);
         setUserRole(decodedToken.role);
         const name = decodedToken.name || '사용자';
         setUserName(name + '님');

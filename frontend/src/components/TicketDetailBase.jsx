@@ -3,6 +3,8 @@ import axios from 'axios';
 import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles, assignTicket, updateTicketStatus } from '../api/ticket';
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
+import AdminLayout from './AdminLayout';
+import UserLayout from './UserLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -356,10 +358,11 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   };
 
   const [currentUserId, setCurrentUserId] = useState(null);
-  const decoded = jwtDecode(token);
+  
   useEffect(() => {
     if (token) {
       try {
+        const decoded = jwtDecode(token);
         setCurrentUserId(decoded.id); // JWT에 있는 사용자 ID 키 확인 필요 (보통 'id' 또는 'user_id')
       } catch (err) {
         console.error("JWT 디코딩 실패", err);
@@ -401,13 +404,16 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   if (!ticket) return null;
 
+  const Layout = role === 'admin' ? AdminLayout : UserLayout;
+  
   return (
-    <div className="ticket-detail-container">
-      {toast.show && (
-        <div className={`toast-notification ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
+    <Layout>
+      <div className="ticket-detail-container">
+        {toast.show && (
+          <div className={`toast-notification ${toast.type}`}>
+            {toast.message}
+          </div>
+        )}
 
       {modalState.show && (
         <div className="modal-overlay">
@@ -875,6 +881,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
       
     </div>
+    </Layout>
+    
   );
 };
 
