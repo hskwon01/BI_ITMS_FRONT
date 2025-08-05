@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
 import { Link } from 'react-router-dom';
+import AdminLayout from '../components/AdminLayout';
 import '../css/AdminTicketListPage.css';
 
 const statusList = ['접수', '진행중', '답변 완료', '종결'];
@@ -77,11 +78,12 @@ const AdminTicketListPage = () => {
   };
 
   return (
-    <div className="admin-ticket-list-container">
-      <div className="admin-ticket-header">
-        <h1>고객 티켓 관리</h1>
-        <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
-      </div>
+    <AdminLayout>
+      <div className="admin-ticket-list-container">
+        <div className="admin-ticket-header">
+          <h1>고객 티켓 관리</h1>
+          <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
+        </div>
 
       <div className="admin-ticket-stats">
         <div className="admin-ticket-stat-card total">
@@ -166,8 +168,9 @@ const AdminTicketListPage = () => {
         {filteredTickets.length === 0 && (
           <div className="admin-ticket-empty">검색 결과가 없습니다.</div>
         )}
+              </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -72,7 +72,7 @@ const RegisterPage = () => {
       await register(form); // company도 함께 전송됨
       showToast('회원가입이 완료되었습니다!', 'success');
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 2000);
     } catch (err) {
       const errorMessage = err.response?.data?.message || '회원가입에 실패했습니다. 입력값을 확인해주세요.';
@@ -179,7 +179,7 @@ const RegisterPage = () => {
         </button>
         <div className="register-simple-footer">
           <span>이미 계정이 있으신가요? </span>
-          <Link to="/login" className="register-simple-link">로그인</Link>
+          <Link to="/" className="register-simple-link">로그인</Link>
         </div>
       </form>
     </div>

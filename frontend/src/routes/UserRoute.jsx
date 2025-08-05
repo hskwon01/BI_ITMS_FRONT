@@ -6,7 +6,7 @@ const UserRoute = ({ children }) => {
   const token = localStorage.getItem('token');
 
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   try {
@@ -17,7 +17,7 @@ const UserRoute = ({ children }) => {
     }
   } catch (error) {
     console.error("Invalid token:", error);
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
   
   // 'admin' 역할인 경우에만 관리자 대시보드로 리디렉션합니다.

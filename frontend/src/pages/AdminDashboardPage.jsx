@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboardStats, autoCloseTickets } from '../api/dashboard';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import AdminLayout from '../components/AdminLayout';
 import '../css/AdminDashboardPage.css';
 
 const COLORS = ['#ffd43b', '#67cd4e', '#7c83fd', '#868e96'];
@@ -76,12 +77,13 @@ const AdminDashboardPage = () => {
   ];
 
   return (
-    <div className="admin-dashboard-container">
-      {toast.show && (
-        <div className={`toast-notification ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
+    <AdminLayout>
+      <div className="admin-dashboard-container">
+        {toast.show && (
+          <div className={`toast-notification ${toast.type}`}>
+            {toast.message}
+          </div>
+        )}
 
       {showConfirmModal && (
         <div className="modal-overlay">
@@ -220,6 +222,7 @@ const AdminDashboardPage = () => {
         </div>
       </div>
     </div>
+    </AdminLayout>
   );
 };
 

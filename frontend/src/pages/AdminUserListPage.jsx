@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCustomers, approveUser } from '../api/user';
+import AdminLayout from '../components/AdminLayout';
 import '../css/AdminUserListPage.css';
 
 import axios from 'axios';
@@ -75,11 +76,12 @@ const AdminUserListPage = () => {
   }
 
   return (
-    <div className="admin-user-list-container">
-      <div className="admin-user-header">
-        <h1>고객 계정 관리</h1>
-        <p className="admin-user-desc">가입한 고객 계정을 관리하고 승인합니다.</p>
-      </div>
+    <AdminLayout>
+      <div className="admin-user-list-container">
+        <div className="admin-user-header">
+          <h1>고객 계정 관리</h1>
+          <p className="admin-user-desc">가입한 고객 계정을 관리하고 승인합니다.</p>
+        </div>
 
       <div className="admin-user-stats">
         <div className="admin-user-stat-card total">
@@ -147,6 +149,7 @@ const AdminUserListPage = () => {
         )}
       </div>
     </div>
+    </AdminLayout>
   );
 };
 

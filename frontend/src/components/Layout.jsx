@@ -16,14 +16,13 @@ const Layout = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        console.log("decodedToken!!!!", decodedToken);
         setUserRole(decodedToken.role);
         const name = decodedToken.name || '사용자';
         setUserName(name + '님');
       } catch (error) {
         console.error("Invalid token, logging out:", error);
         localStorage.clear();
-        navigate('/login');
+        navigate('/');
       }
     } else {
       setUserRole(null);
@@ -33,7 +32,7 @@ const Layout = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/login');
+    navigate('/');
   };
 
   const toggleMenu = () => {

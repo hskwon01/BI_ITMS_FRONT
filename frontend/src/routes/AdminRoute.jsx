@@ -6,7 +6,7 @@ const AdminRoute = ({ children }) => {
   const token = localStorage.getItem('token');
 
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   try {
@@ -17,8 +17,8 @@ const AdminRoute = ({ children }) => {
     }
   } catch (error) {
     console.error("Invalid token:", error);
-    // 디코딩 실패 시 로그인 페이지로
-    return <Navigate to="/login" />;
+    // 디코딩 실패 시 홈페이지로
+    return <Navigate to="/" />;
   }
   
   // 역할이 'admin'이 아니면 접근 거부 (예: 일반 사용자 티켓 페이지로 리디렉션)
