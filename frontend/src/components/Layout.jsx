@@ -90,7 +90,7 @@ const Layout = () => {
         <div className="navbar-left">
           <Link to="/" className="navbar-brand-area">
             <img src={process.env.PUBLIC_URL + '/metanet-logo.jpg'} alt="logo" className="navbar-logo" />
-            <span className="navbar-brand">ITMS</span>
+            <span className="navbar-brand">ITSM</span>
           </Link>
         </div>
 
