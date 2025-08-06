@@ -504,6 +504,7 @@
   max-width: 400px;
   width: 90%;
   animation: slideUp 0.3s ease-out;
+  padding: 16px;
 }
 
 .modal-header {
@@ -519,7 +520,7 @@
 }
 
 .confirm-modal .modal-content {
-  padding: 1.5rem;
+  padding: 0px;
 }
 
 .confirm-modal .modal-content p {
