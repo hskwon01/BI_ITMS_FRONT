@@ -83,8 +83,8 @@ const HomePage = () => {
           <li>로딩 중...</li> // 또는 null
           )}              
               <li><Link to="/notices">공지사항</Link></li>
-              <li><Link to="/inquiries">문의사항</Link></li>
-              <li><Link to="/news">신규소식</Link></li>
+              <li><a href="https://www.ibm.com/docs/en/webmethods-integration" target="_blank" rel="noopener noreferrer">공식문서</a></li>
+              <li><Link to="/tickets/sr">SR 답변</Link></li>              
               <li><Link to="/quotes">견적</Link></li>
             </ul>
           </div>
