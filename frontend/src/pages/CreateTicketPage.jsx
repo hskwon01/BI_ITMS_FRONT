@@ -6,6 +6,7 @@ import UserLayout from '../components/UserLayout';
 import '../css/CreateTicketPage.css';
 
 const CreateTicketPage = () => {
+  const [ticketType, setTicketType] = useState('SR'); // 'SR' or 'SM'
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -14,6 +15,7 @@ const CreateTicketPage = () => {
     platform: '',
     sw_version: '',
     os: '',
+    client_company: '',
   });
   const [otherData, setOtherData] = useState({
     product: '',
@@ -43,6 +45,7 @@ const CreateTicketPage = () => {
   const iChainVersionOptions = ['4', '5', '기타'];
   const osOptions = ['Red Hat Enterprise Linux', 'Windows Server (Microsoft)', 'CentOS', 'openSUSE', 'z/Linux', '기타'];
   const platformOptions = ['On Premises', 'AWS', 'Microsoft Azure', 'Google Cloud Platform', '기타'];
+  const clientCompanyOptions = ['Glovis', 'MnM', 'ASC Korea', '기타'];
 
   const versionOptions = form.product === 'iChain' ? iChainVersionOptions : defaultVersionOptions;
 
@@ -90,9 +93,8 @@ const CreateTicketPage = () => {
       };
 
       const ticketData = {
-        title: form.title,
-        description: form.description,
-        urgency: form.urgency,
+        ...form,
+        ticket_type: ticketType,
         product: getFinalValue('product'),
         platform: getFinalValue('platform'),
         sw_version: getFinalValue('sw_version'),
@@ -126,6 +128,21 @@ const CreateTicketPage = () => {
             <p className="create-ticket-desc">새로운 기술 지원 티켓을 등록하세요</p>
           </div>
 
+          <div className="ticket-type-selector">
+            <button
+              className={`ticket-type-btn ${ticketType === 'SR' ? 'active' : ''}`}
+              onClick={() => setTicketType('SR')}
+            >
+              SR 티켓
+            </button>
+            <button
+              className={`ticket-type-btn ${ticketType === 'SM' ? 'active' : ''}`}
+              onClick={() => setTicketType('SM')}
+            >
+              SM 티켓
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="create-ticket-form">
             <div className="form-group">
               <label htmlFor="title">제목 *</label>
@@ -155,132 +172,173 @@ const CreateTicketPage = () => {
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="urgency">긴급도 *</label>
-                <select
-                  id="urgency"
-                  name="urgency"
-                  value={form.urgency}
-                  onChange={handleChange}
-                  className="form-select"
-                  required
-                >
-                  <option value="">긴급도를 선택하세요</option>
-                  <option value="낮음">낮음</option>
-                  <option value="보통">보통</option>
-                  <option value="높음">높음</option>
-                </select>
-              </div>
+            {ticketType === 'SR' ? (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="urgency">긴급도 *</label>
+                    <select
+                      id="urgency"
+                      name="urgency"
+                      value={form.urgency}
+                      onChange={handleChange}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">긴급도를 선택하세요</option>
+                      <option value="낮음">낮음</option>
+                      <option value="보통">보통</option>
+                      <option value="높음">높음</option>
+                    </select>
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="product">관련 제품</label>
-                <select
-                  id="product"
-                  name="product"
-                  value={form.product}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="">제품을 선택하세요</option>
-                  {productOptions.map((p) => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
-                {form.product === '기타' && (
-                  <input
-                    type="text"
-                    name="product"
-                    placeholder="제품명 입력"
-                    value={otherData.product}
-                    onChange={handleOtherChange}
-                    className="form-input other-input"
-                  />
-                )}
-              </div>
-            </div>
+                  <div className="form-group">
+                    <label htmlFor="product">관련 제품</label>
+                    <select
+                      id="product"
+                      name="product"
+                      value={form.product}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="">제품을 선택하세요</option>
+                      {productOptions.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                    {form.product === '기타' && (
+                      <input
+                        type="text"
+                        name="product"
+                        placeholder="제품명 입력"
+                        value={otherData.product}
+                        onChange={handleOtherChange}
+                        className="form-input other-input"
+                      />
+                    )}
+                  </div>
+                </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="platform">Platform</label>
-                <select
-                  id="platform"
-                  name="platform"
-                  value={form.platform}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="">Platform을 선택하세요</option>
-                  {platformOptions.map((p) => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
-                {form.platform === '기타' && (
-                  <input
-                    type="text"
-                    name="platform"
-                    placeholder="Platform 입력"
-                    value={otherData.platform}
-                    onChange={handleOtherChange}
-                    className="form-input other-input"
-                  />
-                )}
-              </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="platform">Platform</label>
+                    <select
+                      id="platform"
+                      name="platform"
+                      value={form.platform}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="">Platform을 선택하세요</option>
+                      {platformOptions.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                    {form.platform === '기타' && (
+                      <input
+                        type="text"
+                        name="platform"
+                        placeholder="Platform 입력"
+                        value={otherData.platform}
+                        onChange={handleOtherChange}
+                        className="form-input other-input"
+                      />
+                    )}
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="sw_version">S/W Version</label>
-                <select
-                  id="sw_version"
-                  name="sw_version"
-                  value={form.sw_version}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="">버전을 선택하세요</option>
-                  {versionOptions.map((v) => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </select>
-                {form.sw_version === '기타' && (
-                  <input
-                    type="text"
-                    name="sw_version"
-                    placeholder="버전 입력"
-                    value={otherData.sw_version}
-                    onChange={handleOtherChange}
-                    className="form-input other-input"
-                  />
-                )}
-              </div>
-            </div>
+                  <div className="form-group">
+                    <label htmlFor="sw_version">S/W Version</label>
+                    <select
+                      id="sw_version"
+                      name="sw_version"
+                      value={form.sw_version}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="">버전을 선택하세요</option>
+                      {versionOptions.map((v) => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                    {form.sw_version === '기타' && (
+                      <input
+                        type="text"
+                        name="sw_version"
+                        placeholder="버전 입력"
+                        value={otherData.sw_version}
+                        onChange={handleOtherChange}
+                        className="form-input other-input"
+                      />
+                    )}
+                  </div>
+                </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="os">OS</label>
-                <select
-                  id="os"
-                  name="os"
-                  value={form.os}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="">OS를 선택하세요</option>
-                  {osOptions.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                  ))}
-                </select>
-                {form.os === '기타' && (
-                  <input
-                    type="text"
-                    name="os"
-                    placeholder="OS 입력"
-                    value={otherData.os}
-                    onChange={handleOtherChange}
-                    className="form-input other-input"
-                  />
-                )}
-              </div>
-            </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="os">OS</label>
+                    <select
+                      id="os"
+                      name="os"
+                      value={form.os}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="">OS를 선택하세요</option>
+                      {osOptions.map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
+                    {form.os === '기타' && (
+                      <input
+                        type="text"
+                        name="os"
+                        placeholder="OS 입력"
+                        value={otherData.os}
+                        onChange={handleOtherChange}
+                        className="form-input other-input"
+                      />
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : ( // SM Ticket Form
+              <>
+                <div className="form-row">
+                    <div className="form-group">
+                        <label htmlFor="urgency">긴급도 *</label>
+                        <select
+                        id="urgency"
+                        name="urgency"
+                        value={form.urgency}
+                        onChange={handleChange}
+                        className="form-select"
+                        required
+                        >
+                        <option value="">긴급도를 선택하세요</option>
+                        <option value="낮음">낮음</option>
+                        <option value="보통">보통</option>
+                        <option value="높음">높음</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="client_company">고객사 *</label>
+                        <select
+                        id="client_company"
+                        name="client_company"
+                        value={form.client_company}
+                        onChange={handleChange}
+                        className="form-select"
+                        required
+                        >
+                        <option value="">고객사를 선택하세요</option>
+                        {clientCompanyOptions.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
+                        </select>
+                    </div>
+                </div>
+              </>
+            )}
 
             <div className="form-group">
               <label htmlFor="files">첨부 파일</label>

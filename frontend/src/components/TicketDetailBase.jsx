@@ -503,22 +503,31 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         </div>
 
         <div className="ticket-meta-grid">
-          <div className="meta-item">
-            <span className="meta-label">관련 제품:</span>
-            <span className="meta-value">{ticket.product}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">S/W Version:</span>
-            <span className="meta-value">{ticket.sw_version}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">OS:</span>
-            <span className="meta-value">{ticket.os}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">Platform:</span>
-            <span className="meta-value">{ticket.platform}</span>
-          </div>
+          {ticket.ticket_type === 'SR' ? (
+            <>
+              <div className="meta-item">
+                <span className="meta-label">관련 제품:</span>
+                <span className="meta-value">{ticket.product}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">S/W Version:</span>
+                <span className="meta-value">{ticket.sw_version}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">OS:</span>
+                <span className="meta-value">{ticket.os}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">Platform:</span>
+                <span className="meta-value">{ticket.platform}</span>
+              </div>
+            </>
+          ) : (
+            <div className="meta-item">
+              <span className="meta-label">고객사:</span>
+              <span className="meta-value">{ticket.client_company}</span>
+            </div>
+          )}
           <div className="meta-item">
             <span className="meta-label">담당자:</span>
             <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
