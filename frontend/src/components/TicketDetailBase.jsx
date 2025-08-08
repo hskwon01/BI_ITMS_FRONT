@@ -3,8 +3,7 @@ import axios from 'axios';
 import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles, assignTicket, updateTicketStatus } from '../api/ticket';
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
-import AdminLayout from './AdminLayout';
-import UserLayout from './UserLayout';
+import CommonLayout from './CommonLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -404,10 +403,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   if (!ticket) return null;
 
-  const Layout = role === 'admin' ? AdminLayout : UserLayout;
-  
   return (
-    <Layout>
+    <CommonLayout>
       <div className="ticket-detail-container">
         {toast.show && (
           <div className={`toast-notification ${toast.type}`}>
@@ -528,6 +525,10 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               <span className="meta-value">{ticket.client_company}</span>
             </div>
           )}
+          <div className="meta-item">
+            <span className="meta-label">등록자:</span>
+            <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
+          </div>
           <div className="meta-item">
             <span className="meta-label">담당자:</span>
             <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
@@ -890,7 +891,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
       
     </div>
-    </Layout>
+    </CommonLayout>
     
   );
 };

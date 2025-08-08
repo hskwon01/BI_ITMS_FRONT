@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { UserProvider } from './contexts/UserContext';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
@@ -15,33 +16,32 @@ import AdminTicketDetailPage from './pages/AdminTicketDetailPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminTeamListPage from './pages/AdminTeamListPage';
 
-
 const App = () => (
-  <BrowserRouter>
-    <Routes>
-      {/* 홈 페이지 */}
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+  <UserProvider>
+    <BrowserRouter>
+      <Routes>
+        {/* 홈 페이지 */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-      {/* 고객용 - UserLayout 사용 */}
-      <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
-      <Route path="/my-tickets/create" element={<UserRoute><CreateTicketPage /></UserRoute>} />
-      <Route path="/my-tickets/:id" element={<UserRoute><TicketDetailPage /></UserRoute>} />
-      <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
+        {/* 고객용 - CommonLayout 사용 */}
+        <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
+        <Route path="/my-tickets/create" element={<UserRoute><CreateTicketPage /></UserRoute>} />
+        <Route path="/my-tickets/:id" element={<UserRoute><TicketDetailPage /></UserRoute>} />
+        <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
 
-      {/* 관리자 & 기술지원팀용 - Layout 없이 직접 라우팅 */}
-      {/* <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage /></AdminRoute>} /> */}
-      
-      <Route path="/admin/tickets"element={<AdminRoute><AdminTicketListPage ticketType="SR" /></AdminRoute>}/>
-      <Route path="/admin/tickets/sm" element={<AdminRoute><AdminTicketListPage ticketType="SM" /></AdminRoute>}/>
-      <Route path="/admin/tickets/:id" element={<AdminRoute><AdminTicketDetailPage /></AdminRoute>} />
-      <Route path="/admin/customer" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
-      <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} />
-      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
-    </Routes>
-  </BrowserRouter>
+        {/* 관리자 & 기술지원팀용 - CommonLayout 사용 */}
+        <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage ticketType="SR" /></AdminRoute>}/>
+        <Route path="/admin/tickets/sm" element={<AdminRoute><AdminTicketListPage ticketType="SM" /></AdminRoute>}/>
+        <Route path="/admin/tickets/:id" element={<AdminRoute><AdminTicketDetailPage /></AdminRoute>} />
+        <Route path="/admin/customer" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
+        <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} />
+        <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+      </Routes>
+    </BrowserRouter>
+  </UserProvider>
 );
 
 export default App;

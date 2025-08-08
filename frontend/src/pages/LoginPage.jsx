@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login, getMe } from '../api/auth';
 import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 import '../css/LoginPage.css';
 
 const LoginPage = () => {
@@ -9,6 +10,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const navigate = useNavigate();
+  const { login: loginUser } = useUser();
 
   const showToast = (message, type = 'error') => {
     setToast({ show: true, message, type });
@@ -28,6 +30,9 @@ const LoginPage = () => {
       const token = res.data.token;  
       localStorage.setItem('token', token);
       const me = await getMe();
+      
+      // UserContext에 사용자 정보 업데이트
+      loginUser(me);
 
       if (me.data.role === 'admin' || me.data.role === 'itsm_team') {
         navigate('/home');

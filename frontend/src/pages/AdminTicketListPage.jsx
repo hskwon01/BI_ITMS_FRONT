@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
 import { Link } from 'react-router-dom';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/AdminTicketListPage.css';
 
 const statusList = ['접수', '진행중', '답변 완료', '종결'];
@@ -79,7 +79,7 @@ const AdminTicketListPage = ({ ticketType }) => {
   };
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-ticket-list-container">
         <div className="admin-ticket-header">
           <h1>{ticketType === "SM" ? "SM 고객 티켓 관리" : "SR 고객 티켓 관리"}</h1>
@@ -171,7 +171,7 @@ const AdminTicketListPage = ({ ticketType }) => {
         )}
               </div>
       </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 

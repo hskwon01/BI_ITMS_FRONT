@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyTickets, getUnreadCounts } from '../api/ticket';
-import UserLayout from '../components/UserLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/MyTicketListPage.css';
 
 const MyTicketListPage = () => {
@@ -89,7 +89,7 @@ useEffect(() => {
   };
 
   return (
-    <UserLayout>
+    <CommonLayout>
       <div className="my-ticket-list-container">
         <div className="my-ticket-header">
           <h1>내 티켓 목록</h1>
@@ -202,7 +202,7 @@ useEffect(() => {
           )}
         </div>
       </div>
-    </UserLayout>
+    </CommonLayout>
   );
 };
 
