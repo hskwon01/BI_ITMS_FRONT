@@ -18,7 +18,7 @@ const AdminTicketListPage = ({ ticketType }) => {
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      const res = await getAllTickets(token, { type: ticketType });
+      const res = await getAllTickets(token, { ...filters, type: ticketType });
       setAllTickets(res.data);
       setFilteredTickets(res.data);
       setLoading(false);
@@ -28,6 +28,7 @@ const AdminTicketListPage = ({ ticketType }) => {
 
   useEffect(() => {
     let filtered = allTickets;
+
     if (filters.keyword) {
       filtered = filtered.filter(ticket =>
         ticket.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -41,7 +42,6 @@ const AdminTicketListPage = ({ ticketType }) => {
     }
 
     const fetchUnreadCounts = async () => {
-      const token = localStorage.getItem('token');
       const res = await getAdminUnreadCounts(token); // 새 API 호출
       const map = {};
       res.data.forEach(r => {

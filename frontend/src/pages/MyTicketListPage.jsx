@@ -5,54 +5,68 @@ import UserLayout from '../components/UserLayout';
 import '../css/MyTicketListPage.css';
 
 const MyTicketListPage = () => {
-  const [tickets, setTickets] = useState([]);
-  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '' });
-  const [unreadMap, setUnreadMap] = useState({});
-  const [loading, setLoading] = useState(true);
-
   const token = localStorage.getItem('token');
+  const [allTickets, setAllTickets] = useState([]);
+  const [filteredTickets, setFilteredTickets] = useState([]);
+  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '' });
+  const [loading, setLoading] = useState(true);
+  const [unreadMap, setUnreadMap] = useState({});
 
-  const fetchTickets = async () => {
+  // 1. 전체 티켓 목록을 처음 한 번만 가져오는 useEffect
+useEffect(() => {
+  const fetchAllTickets = async () => {
+    setLoading(true);
+    const res = await getMyTickets(token, filters);
+    setAllTickets(res.data); // 전체 티켓 원본 저장
+    setLoading(false);
+  };
+  fetchAllTickets();
+}, [token]);
+
+// 2. filters가 바뀔 때 필터링만 프론트에서 수행
+useEffect(() => {
+  // 필터링 처리
+  let filtered = allTickets;
+
+  if (filters.keyword) {
+    filtered = filtered.filter(ticket =>
+      ticket.title.toLowerCase().includes(filters.keyword.toLowerCase())
+    );
+  }
+  if (filters.status) {
+    filtered = filtered.filter(ticket => ticket.status === filters.status);
+  }
+  if (filters.urgency) {
+    filtered = filtered.filter(ticket => ticket.urgency === filters.urgency);
+  }
+
+  // 미확인 댓글 수 가져오기
+  const fetchUnreadCounts = async () => {
     try {
-      setLoading(true);
-      const res = await getMyTickets(token, filters);
-      setTickets(res.data);
-    } catch {
-      alert('티켓 목록 불러오기 실패');
-    } finally {
-      setLoading(false);
+      const res = await getUnreadCounts(token);
+      const map = {};
+      res.data.forEach(r => {
+        map[r.ticket_id] = Number(r.unread_count);
+      });
+      setUnreadMap(map);
+    } catch (err) {
+      console.error("미확인 댓글 수 불러오기 실패", err);
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchTickets();
-
-      try {
-        const res = await getUnreadCounts(token);
-        const map = {};
-        res.data.forEach(r => {
-          map[r.ticket_id] = Number(r.unread_count);
-        });
-        setUnreadMap(map);
-      } catch (err) {
-        console.error("미확인 댓글 수 불러오기 실패", err);
-      }
-    };
-
-    fetchData();
-  }, [filters]);
+  fetchUnreadCounts();
+  setFilteredTickets(filtered);
+}, [filters, allTickets]);
 
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
   const getStatusCount = (status) => {
-    return tickets.filter(ticket => ticket.status === status).length;
+    return allTickets.filter(ticket => ticket.status === status).length;
   };
 
   const getUrgencyCount = (urgency) => {
-    return tickets.filter(ticket => ticket.urgency === urgency).length;
+    return allTickets.filter(ticket => ticket.urgency === urgency).length;
   };
 
   const getStatusClass = (status) => {
@@ -85,7 +99,7 @@ const MyTicketListPage = () => {
         <div className="my-ticket-stats">
           <div className="my-ticket-stat-card total">
             <div className="stat-label">전체</div>
-            <div className="stat-value">{tickets.length}</div>
+            <div className="stat-value">{allTickets.length}</div>
           </div>
           <div className="my-ticket-stat-card received">
             <div className="stat-label">접수</div>
@@ -141,9 +155,9 @@ const MyTicketListPage = () => {
         <div className="my-ticket-table-wrapper">
           {loading ? (
             <div className="my-ticket-loading">로딩 중...</div>
-          ) : tickets.length === 0 ? (
+          ) : filteredTickets.length === 0 ? (
             <div className="my-ticket-empty">
-              등록된 티켓이 없습니다.
+              {allTickets.length === 0 ? '등록된 티켓이 없습니다.' : '검색 조건에 맞는 티켓이 없습니다.'}
             </div>
           ) : (
             <table className="my-ticket-table">
@@ -157,7 +171,7 @@ const MyTicketListPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {tickets.map(ticket => (
+                {filteredTickets.map(ticket => (
                   <tr key={ticket.id}>
                     <td className="title-cell">
                       <Link to={`/my-tickets/${ticket.id}`} className="my-ticket-link">
