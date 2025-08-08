@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createTicket, uploadTicketFiles } from '../api/ticket';
 import { useNavigate } from 'react-router-dom';
 import DragDropFileUpload from '../components/DragDropFileUpload';
-import UserLayout from '../components/UserLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/CreateTicketPage.css';
 
 const CreateTicketPage = () => {
@@ -114,7 +114,7 @@ const CreateTicketPage = () => {
   };
 
   return (
-    <UserLayout>
+    <CommonLayout>
       <div className="create-ticket-container">
         {toast.show && (
           <div className={`toast-notification ${toast.type}`}>
@@ -380,7 +380,7 @@ const CreateTicketPage = () => {
           </form>
         </div>
       </div>
-    </UserLayout>
+    </CommonLayout>
   );
 };
 
