@@ -1,0 +1,181 @@
+/* AdminAccessRequestPage.css */
+
+.admin-access-request-container {
+  padding: 2rem;
+  background: #fff;
+}
+
+.admin-access-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.admin-access-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3652;
+  margin-bottom: 0.5rem;
+}
+
+.admin-access-desc {
+  color: #7b8190;
+  font-size: 1.05rem;
+}
+
+.admin-access-table-wrapper {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(80, 80, 160, 0.07);
+  padding: 1.5rem 1rem;
+  overflow-x: auto;
+}
+
+/* 필터 바 */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px 4px;
+}
+
+.filter-bar label {
+  color: #7b8190;
+  font-weight: 600;
+}
+
+.select-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #f6f8fc;
+  color: #2d3652;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 36px 10px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select-control:focus {
+  outline: none;
+  border-color: #7c83fd;
+  box-shadow: 0 0 0 3px rgba(124, 131, 253, 0.15);
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-wrapper::after {
+  content: '\25BE'; /* ▼ */
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7b8190;
+  pointer-events: none;
+}
+
+.admin-access-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.admin-access-table th,
+.admin-access-table td {
+  padding: 1rem 0.7rem;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.admin-access-table th {
+  color: #7b8190;
+  font-weight: 700;
+  border-bottom: 2px solid #e2e8f0;
+  background: #f8f9fa;
+}
+
+.admin-access-table td {
+  border-bottom: 1px solid #f1f3f4;
+  color: #2d3652;
+}
+
+.user-email {
+  font-weight: 600;
+  color: #7c83fd;
+}
+
+.user-name {
+  font-weight: 600;
+}
+
+.user-company {
+  color: #7b8190;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn.approve {
+  background: #4caf50;
+  color: #fff;
+}
+
+.action-btn.approve:hover {
+  background: #45a049;
+}
+
+.action-btn.reject {
+  background: #f44336;
+  color: #fff;
+}
+
+.action-btn.reject:hover {
+  background: #da190b;
+}
+
+/* 비활성/블러 처리 */
+.action-btn:disabled,
+.action-btn.disabled {
+  opacity: 0.6;
+  filter: blur(0.4px) grayscale(40%);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.admin-access-empty {
+  text-align: center;
+  color: #7b8190;
+  padding: 2rem 0;
+  font-size: 1.1rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #7b8190;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 1rem;
+}
