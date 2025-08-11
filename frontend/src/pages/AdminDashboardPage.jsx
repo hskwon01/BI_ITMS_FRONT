@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getDashboardStats, autoCloseTickets } from '../api/dashboard';
-import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { getDashboardStats, autoCloseTickets, getTrends } from '../api/dashboard';
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import CommonLayout from '../components/CommonLayout';
 import '../css/AdminDashboardPage.css';
 
@@ -8,6 +8,9 @@ const COLORS = ['#ffd43b', '#67cd4e', '#7c83fd', '#868e96'];
 
 const AdminDashboardPage = () => {
   const [stats, setStats] = useState(null);
+  const [trends, setTrends] = useState([]);
+  const [days, setDays] = useState(30);
+  const [type, setType] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [autoClosing, setAutoClosing] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
@@ -15,19 +18,24 @@ const AdminDashboardPage = () => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchAll = async () => {
       try {
         setLoading(true);
-        const res = await getDashboardStats(token);
-        setStats(res.data);
+        const params = { days, type: type === 'ALL' ? undefined : type };
+        const [s, t] = await Promise.all([
+          getDashboardStats(token, params),
+          getTrends(token, params),
+        ]);
+        setStats(s.data);
+        setTrends(t.data);
       } catch {
         showToast('통계 조회 실패', 'error');
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
-  }, []);
+    fetchAll();
+  }, [days, type]);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -124,6 +132,25 @@ const AdminDashboardPage = () => {
         <p className="admin-dashboard-desc">시스템 현황을 한눈에 확인하세요</p>
       </div>
 
+      <div className="admin-dashboard-filters">
+        <div className="filter-group">
+          <label>기간</label>
+          <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
+            <option value={7}>최근 7일</option>
+            <option value={30}>최근 30일</option>
+            <option value={90}>최근 90일</option>
+          </select>
+        </div>
+        <div className="filter-group">
+          <label>유형</label>
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="ALL">전체</option>
+            <option value="SR">SR</option>
+            <option value="SM">SM</option>
+          </select>
+        </div>
+      </div>
+
       <div className="admin-dashboard-stats">
         <div className="admin-dashboard-stat-card total">
           <div className="stat-icon">📋</div>
@@ -210,6 +237,21 @@ const AdminDashboardPage = () => {
                 ))}
               </Bar>
             </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="admin-dashboard-charts">
+        <div className="chart-container" style={{ gridColumn: '1 / -1' }}>
+          <h3>일자별 티켓 생성 추이</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={trends}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#7c83fd" strokeWidth={2} dot={false} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
