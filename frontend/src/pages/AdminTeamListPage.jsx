@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getTeam, createTeamMember } from '../api/user';
 import { jwtDecode } from 'jwt-decode';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/AdminUserListPage.css'; // 기존 CSS 재활용
 
 const AdminTeamListPage = () => {
@@ -55,11 +55,15 @@ const AdminTeamListPage = () => {
   };
 
   if (loading) {
-    return <div className="loading-spinner">로딩 중...</div>;
+    return (
+      <CommonLayout>
+        <div className="loading-spinner">로딩 중...</div>
+      </CommonLayout>
+    );
   }
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-user-list-container">
         <div className="admin-user-header">
           <h1>팀 멤버 관리</h1>
@@ -118,7 +122,7 @@ const AdminTeamListPage = () => {
         </div>
       )}
     </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 

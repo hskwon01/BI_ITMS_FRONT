@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMe } from '../api/auth';
+import CommonLayout from '../components/CommonLayout';
 import '../css/HomePage.css';
-
-// Metanet 로고 이미지 경로
-const metanetLogo = process.env.PUBLIC_URL + '/metanet-logo.jpg';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -22,17 +20,6 @@ const HomePage = () => {
     };
     fetchMe();
   }, []);
-
-  const handleLogoClick = () => {
-    const token = localStorage.getItem('token');
-    if (token && me) {
-      // 토큰이 있고 사용자 정보가 있으면 /home으로 이동
-      navigate('/home');
-    } else {
-      // 토큰이 없거나 만료되었으면 /로 이동
-      navigate('/');
-    }
-  };
 
   // ITSM 관련 샘플 데이터
   const announcements = [
@@ -57,180 +44,114 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="homepage">
-      {/* 상단 헤더 */}
-      <header className="header">
-          <div className="main-header">
-                       <div className="logo-section">
-              <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-                <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
-                 <div className="logo-text">
-                   <h1 className="logo">ITSM <span className="company-tag">by rockPLACE</span></h1>
-                 </div>
-              </div>
+    <CommonLayout>
+      {/* 메인 히어로 섹션 */}
+      <section className="hero-section">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1>RockPLACE의 통합 IT 서비스 관리 플랫폼</h1>
+            <p className="hero-subtitle">
+              빠르고 안정적인 IT 서비스 요청과 지원을 위한 통합 ITSM 시스템입니다.
+            </p>
+            <div className="hero-actions">
+              <Link to="/my-tickets/create" className="primary-btn">
+                티켓 생성하기
+              </Link>
+              <Link to="/my-tickets" className="secondary-btn">
+                내 티켓 보기
+              </Link>
             </div>
-         </div>
-        <nav className="main-nav">
-          <div className="nav-center">
-            <ul>
-              {me ? (
-                me?.data?.role === 'admin' || me?.data?.role === 'itsm_team' ? (
-                <li><Link to="/admin/tickets">고객 티켓</Link></li>
-              ) : (
-              <li><Link to="/my-tickets">내 티켓</Link></li>
-            )
-          ) : (
-          <li>로딩 중...</li> // 또는 null
-          )}              
-              <li><Link to="/notices">공지사항</Link></li>
-              <li><a href="https://www.ibm.com/docs/en/webmethods-integration" target="_blank" rel="noopener noreferrer">공식문서</a></li>
-              <li><Link to="/tickets/sr">SR 답변</Link></li>              
-              <li><Link to="/quotes">견적</Link></li>
-            </ul>
           </div>
-          <div className="nav-right">
-            {me && (
-              <button 
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  window.location.href = '/';
-                }} 
-                className="logout-btn"
-              >
-                로그아웃
-              </button>
-            )}
-          </div>
-        </nav>
-      </header>
-
-      {/* 메인 컨텐츠 영역 */}
-      <main className="main-content">
-        <div className="content-wrapper">
-          {/* 메인 배너와 사용자 정보 영역 */}
-          <div className="banner-user-section">
-            {/* 메인 배너 */}
-            <div className="main-banner">
-              <div className="banner-content">
-                <h2>통합 IT 관리 시스템</h2>
-                <h1>ITSM</h1>
-                <p>IT Service Management</p>
-                <p className="banner-subtitle">
-                  효율적인 IT 서비스 관리와 모니터링을 위한 통합 플랫폼입니다.
-                </p>
-                <div className="banner-action">
-                  <Link to="/my-tickets/create" className="banner-btn">
-                    티켓 생성하기
-                  </Link>
-                </div>
+          <div className="hero-illustration">
+            <div className="illustration-container">
+              <div className="tech-icons">
+                <div className="icon server">🖥️</div>
+                <div className="icon cloud">☁️</div>
+                <div className="icon support">🛠️</div>
+                <div className="icon monitor">📊</div>
               </div>
-            </div>
-
-            {/* 사용자 정보 카드 */}
-            <div className="user-info-card">
-              {me ? (
-                <div className="user-info-content">
-                  <div className="user-avatar">
-                    <div className="avatar-circle">
-                      {me?.data?.name ? me.data.name.charAt(0).toUpperCase() : 'U'}
+              <div className="main-screen">
+                <div className="screen-content">
+                  <div className="screen-header">ITSM Dashboard</div>
+                  <div className="screen-body">
+                    <div className="metric-card">
+                      <span className="metric-number">24</span>
+                      <span className="metric-label">Active Tickets</span>
+                    </div>
+                    <div className="metric-card">
+                      <span className="metric-number">98%</span>
+                      <span className="metric-label">SLA</span>
                     </div>
                   </div>
-                  <div className="user-details">
-                    <h3 className="user-name">{me?.data?.name || '사용자'} 님</h3>
-                    <p className="user-email">{me?.data?.email || '이메일 없음'}</p>
-                    <p className="user-role">
-                      {me?.data?.role === 'admin' ? '관리자' : 
-                       me?.data?.role === 'itsm_team' ? '기술지원팀' : '일반 사용자'}
-                    </p>
-                    <p className="user-company">{me?.data?.company_name || '회사 정보 없음'}</p>
-                  </div>
-                     <div className="user-actions">
-                     <Link to="/profile" className="profile-link">마이 페이지</Link>
-                   </div>
                 </div>
-              ) : (
-                <div className="user-info-content">
-                  <div className="user-avatar">
-                    <div className="avatar-circle">
-                      ?
-                    </div>
-                  </div>
-                  <div className="user-details">
-                    <h3 className="user-name">로그인이 필요합니다</h3>
-                    <p className="user-email">서비스를 이용하려면 로그인해주세요</p>
-                  </div>
-                  <div className="user-actions">
-                    <Link to="/" className="login-link">로그인하기</Link>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 하단 뉴스/공지사항 섹션 */}
-        <div className="news-section">
-          <div className="news-container">
-            {/* 공지사항 */}
-            <div className="news-box">
-              <div className="news-header">
-                <h3>공지사항</h3>
-                <div className="news-actions">
-                  <span className="more-icon">...</span>
-                  <span className="plus-icon">+</span>
-                </div>
-              </div>
-              <div className="news-list">
-                {announcements.map(item => (
-                  <div key={item.id} className="news-item">
-                    <span className="news-title">{item.title}</span>
-                    <span className="news-date">{item.date}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ITSM 뉴스 */}
-            <div className="news-box">
-              <div className="news-header">
-                <h3>문의사항</h3>
-                <div className="news-actions">
-                  <span className="more-icon">...</span>
-                  <span className="plus-icon">+</span>
-                </div>
-              </div>
-              <div className="news-list">
-                {news.map(item => (
-                  <div key={item.id} className="news-item">
-                    <span className="news-title">{item.title}</span>
-                    <span className="news-date">{item.date}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 서비스 소식 */}
-            <div className="news-box">
-              <div className="news-header">
-                <h3>서비스 소식</h3>
-                <div className="news-actions">
-                  <span className="more-icon">...</span>
-                  <span className="plus-icon">+</span>
-                </div>
-              </div>
-              <div className="news-list">
-                {serviceNews.map(item => (
-                  <div key={item.id} className="news-item">
-                    <span className="news-title">{item.title}</span>
-                    <span className="news-date">{item.date}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* 서비스 카드 섹션 */}
+      <section className="services-section">
+        <div className="services-grid">
+          <div className="service-card">
+            <div className="service-icon">📋</div>
+            <h3>티켓 관리</h3>
+            <p>IT 서비스 요청과 이슈를 체계적으로 관리하고 추적합니다.</p>
+          </div>
+          <div className="service-card">
+            <div className="service-icon">📊</div>
+            <h3>대시보드</h3>
+            <p>실시간 서비스 현황과 성과 지표를 한눈에 확인합니다.</p>
+          </div>
+          <div className="service-card">
+            <div className="service-icon">🛠️</div>
+            <h3>기술 지원</h3>
+            <p>전문 기술팀의 빠른 응답과 해결을 제공합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 뉴스/공지사항 섹션 */}
+      <section className="news-section">
+        <div className="news-grid">
+          <div className="news-card">
+            <h3>공지사항</h3>
+            <div className="news-list">
+              {announcements.map(item => (
+                <div key={item.id} className="news-item">
+                  <span className="news-title">{item.title}</span>
+                  <span className="news-date">{item.date}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="news-card">
+            <h3>문의사항</h3>
+            <div className="news-list">
+              {news.map(item => (
+                <div key={item.id} className="news-item">
+                  <span className="news-title">{item.title}</span>
+                  <span className="news-date">{item.date}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="news-card">
+            <h3>서비스 소식</h3>
+            <div className="news-list">
+              {serviceNews.map(item => (
+                <div key={item.id} className="news-item">
+                  <span className="news-title">{item.title}</span>
+                  <span className="news-date">{item.date}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </CommonLayout>
   );
 };
 

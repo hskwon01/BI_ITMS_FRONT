@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboardStats, autoCloseTickets } from '../api/dashboard';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/AdminDashboardPage.css';
 
 const COLORS = ['#ffd43b', '#67cd4e', '#7c83fd', '#868e96'];
@@ -54,9 +54,11 @@ const AdminDashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="admin-dashboard-container">
-        <div className="loading-spinner">로딩 중...</div>
-      </div>
+      <CommonLayout>
+        <div className="admin-dashboard-container">
+          <div className="loading-spinner">로딩 중...</div>
+        </div>
+      </CommonLayout>
     );
   }
 
@@ -77,7 +79,7 @@ const AdminDashboardPage = () => {
   ];
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-dashboard-container">
         {toast.show && (
           <div className={`toast-notification ${toast.type}`}>
@@ -222,7 +224,7 @@ const AdminDashboardPage = () => {
         </div>
       </div>
     </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
 import { Link } from 'react-router-dom';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/AdminTicketListPage.css';
 
 const statusList = ['접수', '진행중', '답변 완료', '종결'];
 const urgencyList = ['낮음', '보통', '높음'];
 
-const AdminTicketListPage = () => {
+const AdminTicketListPage = ({ ticketType }) => {
   const token = localStorage.getItem('token');
   const [allTickets, setAllTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
@@ -18,16 +18,17 @@ const AdminTicketListPage = () => {
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      const res = await getAllTickets(token, {});
+      const res = await getAllTickets(token, { ...filters, type: ticketType });
       setAllTickets(res.data);
       setFilteredTickets(res.data);
       setLoading(false);
     };
     fetch();
-  }, [token]);
+  }, [token, ticketType]);
 
   useEffect(() => {
     let filtered = allTickets;
+
     if (filters.keyword) {
       filtered = filtered.filter(ticket =>
         ticket.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -39,8 +40,8 @@ const AdminTicketListPage = () => {
     if (filters.urgency) {
       filtered = filtered.filter(ticket => ticket.urgency === filters.urgency);
     }
+
     const fetchUnreadCounts = async () => {
-      const token = localStorage.getItem('token');
       const res = await getAdminUnreadCounts(token); // 새 API 호출
       const map = {};
       res.data.forEach(r => {
@@ -78,10 +79,10 @@ const AdminTicketListPage = () => {
   };
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-ticket-list-container">
         <div className="admin-ticket-header">
-          <h1>고객 티켓 관리</h1>
+          <h1>{ticketType === "SM" ? "SM 고객 티켓 관리" : "SR 고객 티켓 관리"}</h1>
           <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
         </div>
 
@@ -170,7 +171,7 @@ const AdminTicketListPage = () => {
         )}
               </div>
       </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 

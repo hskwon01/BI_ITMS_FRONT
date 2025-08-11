@@ -34,7 +34,7 @@ const AdminLayout = ({ children }) => {
             <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <img src={metanetLogo} alt="Rockplace Logo" className="metanet-logo" />
               <div className="logo-text">
-                <h1 className="logo">ITSM <span className="company-tag">by rockPLACE</span></h1>
+                <h1 className="logo">ITSM <span className="company-tag">by RockPLACE</span></h1>
               </div>
             </div>
           </div>
@@ -44,7 +44,10 @@ const AdminLayout = ({ children }) => {
           <div className="nav-center">
             <ul>
               <li className={location.pathname === '/admin/tickets' ? 'active' : ''}>
-                <Link to="/admin/tickets">티켓관리</Link>
+                <Link to="/admin/tickets">SR티켓</Link>
+              </li>
+              <li className={location.pathname === '/admin/tickets/sm' ? 'active' : ''}>
+                <Link to="/admin/tickets/sm">SM티켓</Link>
               </li>
               <li className={location.pathname === '/admin/customer' ? 'active' : ''}>
                 <Link to="/admin/customer">고객관리</Link>

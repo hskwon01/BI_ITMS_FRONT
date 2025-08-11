@@ -3,8 +3,7 @@ import axios from 'axios';
 import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles, assignTicket, updateTicketStatus } from '../api/ticket';
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
-import AdminLayout from './AdminLayout';
-import UserLayout from './UserLayout';
+import CommonLayout from './CommonLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -404,10 +403,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   if (!ticket) return null;
 
-  const Layout = role === 'admin' ? AdminLayout : UserLayout;
-  
   return (
-    <Layout>
+    <CommonLayout>
       <div className="ticket-detail-container">
         {toast.show && (
           <div className={`toast-notification ${toast.type}`}>
@@ -503,21 +500,34 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         </div>
 
         <div className="ticket-meta-grid">
+          {ticket.ticket_type === 'SR' ? (
+            <>
+              <div className="meta-item">
+                <span className="meta-label">관련 제품:</span>
+                <span className="meta-value">{ticket.product}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">S/W Version:</span>
+                <span className="meta-value">{ticket.sw_version}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">OS:</span>
+                <span className="meta-value">{ticket.os}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">Platform:</span>
+                <span className="meta-value">{ticket.platform}</span>
+              </div>
+            </>
+          ) : (
+            <div className="meta-item">
+              <span className="meta-label">고객사:</span>
+              <span className="meta-value">{ticket.client_company}</span>
+            </div>
+          )}
           <div className="meta-item">
-            <span className="meta-label">관련 제품:</span>
-            <span className="meta-value">{ticket.product}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">S/W Version:</span>
-            <span className="meta-value">{ticket.sw_version}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">OS:</span>
-            <span className="meta-value">{ticket.os}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">Platform:</span>
-            <span className="meta-value">{ticket.platform}</span>
+            <span className="meta-label">등록자:</span>
+            <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
           </div>
           <div className="meta-item">
             <span className="meta-label">담당자:</span>
@@ -881,7 +891,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
       
     </div>
-    </Layout>
+    </CommonLayout>
     
   );
 };

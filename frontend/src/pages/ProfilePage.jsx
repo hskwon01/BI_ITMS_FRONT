@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import PasswordVerification from '../components/PasswordVerification';
 import ProfileLayout from '../components/ProfileLayout'; // 새로 생성할 컴포넌트
-import UserLayout from '../components/UserLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/ProfilePage.css';
 
 const ProfilePage = () => {
   const [isVerified, setIsVerified] = useState(false);
 
   return (
-    <UserLayout>
+    <CommonLayout>
       <div className="profile-page-container">
         <div className="profile-form-wrapper">
           {!isVerified ? (
@@ -21,7 +21,7 @@ const ProfilePage = () => {
           )}
         </div>
       </div>
-    </UserLayout>
+    </CommonLayout>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login, getMe } from '../api/auth';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 import '../css/LoginPage.css';
 
 const LoginPage = () => {
@@ -10,6 +11,7 @@ const LoginPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const navigate = useNavigate();
   const location = useLocation();
+  const { login: loginUser } = useUser();
 
   const showToast = (message, type = 'error') => {
     setToast({ show: true, message, type });
@@ -31,16 +33,14 @@ const LoginPage = () => {
       const me = await getMe();
       const params = new URLSearchParams(location.search);
       const next = params.get('next');
+      // UserContext에 사용자 정보 업데이트
+      loginUser(me);
 
       if (next) {
         navigate(next);
         return;
       }
-      if (me.data.role === 'admin' || me.data.role === 'itsm_team') {
-        navigate('/home');
-      } else {
-        navigate('/home');
-      }
+      navigate('/home');
     } catch (err) {
       console.error('로그인 에러:', err);
       console.error('에러 응답:', err.response);

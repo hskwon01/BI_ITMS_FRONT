@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCustomers, approveUser } from '../api/user';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import '../css/AdminUserListPage.css';
 
 import axios from 'axios';
@@ -69,14 +69,16 @@ const AdminUserListPage = () => {
 
   if (loading) {
     return (
-      <div className="admin-user-list-container">
-        <div className="loading-spinner">로딩 중...</div>
-      </div>
+      <CommonLayout>
+        <div className="admin-user-list-container">
+          <div className="loading-spinner">로딩 중...</div>
+        </div>
+      </CommonLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-user-list-container">
         <div className="admin-user-header">
           <h1>고객 계정 관리</h1>
@@ -149,7 +151,7 @@ const AdminUserListPage = () => {
         )}
       </div>
     </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 
