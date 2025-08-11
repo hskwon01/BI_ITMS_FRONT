@@ -89,6 +89,7 @@ const NoticesPage = () => {
         {loading ? (
           <div>불러오는 중...</div>
         ) : (
+          <>
           <table className="notices-table">
             <thead>
               <tr>
@@ -119,6 +120,7 @@ const NoticesPage = () => {
             <span style={{ alignSelf:'center', color:'#6b7280' }}>{page} / {Math.max(1, Math.ceil(total/pageSize))}</span>
             <button className="btn" disabled={page>=Math.ceil(total/pageSize)} onClick={()=>setPage(p=>p+1)}>다음</button>
           </div>
+          </>
         )}
       </div>
     </CommonLayout>

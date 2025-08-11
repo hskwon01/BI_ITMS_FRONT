@@ -75,16 +75,6 @@ const CreateTicketPage = () => {
     setMessage('');
 
     try {
-      const uploadedFiles = [];
-      for (const file of files) {
-        const res = await uploadTicketFiles(file, token);
-        uploadedFiles.push({
-          public_id: res.data.public_id,
-          url: res.data.url,
-          originalname: file.name,
-        });
-      }
-
       const getFinalValue = (fieldName) => {
         if (form[fieldName] === '기타') {
           return `기타(${otherData[fieldName]})`;
@@ -92,17 +82,25 @@ const CreateTicketPage = () => {
         return form[fieldName];
       };
 
-      const ticketData = {
-        ...form,
-        ticket_type: ticketType,
-        product: getFinalValue('product'),
-        platform: getFinalValue('platform'),
-        sw_version: getFinalValue('sw_version'),
-        os: getFinalValue('os'),
-        files: uploadedFiles,
-      };
+      // FormData를 사용하여 파일과 데이터를 함께 전송
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('description', form.description);
+      formData.append('urgency', form.urgency);
+      formData.append('product', getFinalValue('product'));
+      formData.append('platform', getFinalValue('platform'));
+      formData.append('sw_version', getFinalValue('sw_version'));
+      formData.append('os', getFinalValue('os'));
+      formData.append('client_company', form.client_company);
+      formData.append('ticket_type', ticketType);
 
-      await createTicket(ticketData, token);
+      // 파일들을 FormData에 추가
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      // createTicket API 호출 시 FormData 사용
+      await createTicket(formData, token);
       showToast('티켓이 성공적으로 등록되었습니다.');
       navigate('/my-tickets');
     } catch (error) {
