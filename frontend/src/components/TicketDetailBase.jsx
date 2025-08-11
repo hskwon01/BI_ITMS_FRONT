@@ -255,6 +255,14 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     }
   };
 
+  const getTicketTypeColor = (ticketType) => {
+    switch (ticketType) {
+      case 'SM': return 'sm';
+      case 'SR': return 'sr';
+      default: return 'default';
+    }
+  };
+
   const handleImageClick = (imageUrl, filename) => {
     setSelectedImage({ url: imageUrl, filename });
     setShowImageModal(true);
@@ -478,6 +486,9 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           <div className="ticket-header-row">
             <h2>{ticket.title}</h2>
             <div className="ticket-meta">
+              <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
+                {ticket.ticket_type}
+              </span>
               <span className={`status-badge ${getStatusColor(ticket.status)}`}>
                 {ticket.status}
               </span>

@@ -151,6 +151,19 @@
 .urgency-badge.medium { background: #fffbe6; color: #bfa100; }
 .urgency-badge.low { background: #e6ffe6; color: #38a169; }
 
+.ticket-type-badge {
+  padding: 0.3rem 0.9rem;
+  border-radius: 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.ticket-type-badge.sm { background: #e6f3ff; color: #2563eb; }
+.ticket-type-badge.sr { background: #fff0e6; color: #ea580c; }
+
 .ticket-date {
   color: #7b8190;
   font-size: 0.9rem;

@@ -34,8 +34,7 @@ const CommonLayout = memo(({ children }) => {
 
     if (user?.data?.role === 'admin' || user?.data?.role === 'itsm_team') {
       return [
-        { path: '/admin/tickets', label: 'SR티켓', active: location.pathname === '/admin/tickets' },
-        { path: '/admin/tickets/sm', label: 'SM티켓', active: location.pathname === '/admin/tickets/sm' },
+        { path: '/admin/tickets', label: '티켓 관리', active: location.pathname === '/admin/tickets' },
         { path: '/admin/customer', label: '고객관리', active: location.pathname === '/admin/customer' },
         { path: '/admin/team', label: '팀관리', active: location.pathname === '/admin/team' },
         { path: '/admin/access-requests', label: '접근요청', active: location.pathname === '/admin/access-requests' },

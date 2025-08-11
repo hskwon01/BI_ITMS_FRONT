@@ -8,7 +8,7 @@ const MyTicketListPage = () => {
   const token = localStorage.getItem('token');
   const [allTickets, setAllTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
-  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '' });
+  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '', ticket_type: '' });
   const [loading, setLoading] = useState(true);
   const [unreadMap, setUnreadMap] = useState({});
 
@@ -32,6 +32,9 @@ useEffect(() => {
     filtered = filtered.filter(ticket =>
       ticket.title.toLowerCase().includes(filters.keyword.toLowerCase())
     );
+  }
+  if (filters.ticket_type) {
+    filtered = filtered.filter(ticket => ticket.ticket_type === filters.ticket_type);
   }
   if (filters.status) {
     filtered = filtered.filter(ticket => ticket.status === filters.status);
@@ -69,6 +72,10 @@ useEffect(() => {
     return allTickets.filter(ticket => ticket.urgency === urgency).length;
   };
 
+  const getTicketTypeCount = (ticketType) => {
+    return allTickets.filter(ticket => ticket.ticket_type === ticketType).length;
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
       case '접수': return 'received';
@@ -88,6 +95,14 @@ useEffect(() => {
     }
   };
 
+  const getTicketTypeClass = (ticketType) => {
+    switch (ticketType) {
+      case 'SM': return 'sm';
+      case 'SR': return 'sr';
+      default: return '';
+    }
+  };
+
   return (
     <CommonLayout>
       <div className="my-ticket-list-container">
@@ -100,6 +115,14 @@ useEffect(() => {
           <div className="my-ticket-stat-card total">
             <div className="stat-label">전체</div>
             <div className="stat-value">{allTickets.length}</div>
+          </div>
+          <div className="my-ticket-stat-card sm">
+            <div className="stat-label">SM</div>
+            <div className="stat-value">{getTicketTypeCount('SM')}</div>
+          </div>
+          <div className="my-ticket-stat-card sr">
+            <div className="stat-label">SR</div>
+            <div className="stat-value">{getTicketTypeCount('SR')}</div>
           </div>
           <div className="my-ticket-stat-card received">
             <div className="stat-label">접수</div>
@@ -127,6 +150,16 @@ useEffect(() => {
             onChange={handleChange}
             className="my-ticket-search"
           />
+          <select
+            name="ticket_type"
+            value={filters.ticket_type}
+            onChange={handleChange}
+            className="my-ticket-select"
+          >
+            <option value="">전체 타입</option>
+            <option value="SM">SM</option>
+            <option value="SR">SR</option>
+          </select>
           <select
             name="status"
             value={filters.status}
@@ -164,6 +197,7 @@ useEffect(() => {
               <thead>
                 <tr>
                   <th>제목</th>
+                  <th>티켓 타입</th>
                   <th>상태</th>
                   <th>긴급도</th>
                   <th>담당자</th>
@@ -182,6 +216,11 @@ useEffect(() => {
                           {unreadMap[ticket.id]}
                         </span>
                       )}
+                    </td>
+                    <td>
+                      <span className={`ticket-type-badge ${getTicketTypeClass(ticket.ticket_type)}`}>
+                        {ticket.ticket_type}
+                      </span>
                     </td>
                     <td>
                       <span className={`status-badge ${getStatusClass(ticket.status)}`}>
