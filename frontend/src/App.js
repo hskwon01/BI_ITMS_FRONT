@@ -18,6 +18,7 @@ import AdminTeamListPage from './pages/AdminTeamListPage';
 import RequestAccessPage from './pages/RequestAccessPage';
 import MagicLoginProcessor from './pages/MagicLoginProcessor';
 import AdminAccessRequestPage from './pages/AdminAccessRequestPage';
+import NoticesPage from './pages/NoticesPage';
 
 const App = () => (
   <UserProvider>
@@ -30,6 +31,7 @@ const App = () => (
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/request-access" element={<RequestAccessPage />} />
         <Route path="/magic-login" element={<MagicLoginProcessor />} />
+        <Route path="/notices" element={<NoticesPage />} />
 
         {/* 고객용 - CommonLayout 사용 */}
         <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
