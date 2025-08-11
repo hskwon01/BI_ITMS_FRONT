@@ -4,13 +4,18 @@ const API = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
 });
 
-export const createTicket = (ticketData, token) =>
-  API.post('/tickets', ticketData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
+export const createTicket = (ticketData, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  
+  // FormData인 경우 Content-Type을 설정하지 않음 (브라우저가 자동으로 설정)
+  if (!(ticketData instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+  
+  return API.post('/tickets', ticketData, { headers });
+};
 
 export const getMyTickets = (token, filters = {}) => {
   const params = new URLSearchParams(filters).toString();
@@ -84,17 +89,6 @@ export const uploadTicketFiles = (file, token) => {
   const formData = new FormData();
   formData.append('file', file);
   return API.post('/users/upload/ticket', formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-};
-
-export const uploadReplyFiles = (file, token) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  return API.post('/users/upload/reply', formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data',

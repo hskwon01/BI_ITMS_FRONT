@@ -11,15 +11,20 @@ const NoticesPage = () => {
   const [editing, setEditing] = useState(null);
   const [keyword, setKeyword] = useState('');
   const { user } = useUser();
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const pageSize = 10;
 
   const load = async () => {
     setLoading(true);
-    const res = await fetchNotices({ keyword });
-    setList(res.data);
+    const offset = (page - 1) * pageSize;
+    const res = await fetchNotices({ keyword, limit: pageSize, offset });
+    setList(res.data.items || []);
+    setTotal(res.data.total || 0);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [page]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +62,7 @@ const NoticesPage = () => {
 
         <div className="notices-toolbar">
           <div className="notices-search">
-            <input placeholder="제목/내용 검색" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+            <input placeholder="제목/내용 검색" value={keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e)=>{ if(e.key==='Enter'){ setPage(1); load(); } }} />
           </div>
           {(user?.data?.role === 'admin' || user?.data?.role === 'itsm_team') && (
             <button className="btn btn-primary" onClick={() => { setEditing(null); setForm({ title: '', content: '', is_pinned: false }); }}>
@@ -84,6 +89,7 @@ const NoticesPage = () => {
         {loading ? (
           <div>불러오는 중...</div>
         ) : (
+          <>
           <table className="notices-table">
             <thead>
               <tr>
@@ -109,6 +115,12 @@ const NoticesPage = () => {
               ))}
             </tbody>
           </table>
+          <div style={{ display:'flex', justifyContent:'center', gap:8, marginTop:12 }}>
+            <button className="btn" disabled={page===1} onClick={()=>setPage(p=>p-1)}>이전</button>
+            <span style={{ alignSelf:'center', color:'#6b7280' }}>{page} / {Math.max(1, Math.ceil(total/pageSize))}</span>
+            <button className="btn" disabled={page>=Math.ceil(total/pageSize)} onClick={()=>setPage(p=>p+1)}>다음</button>
+          </div>
+          </>
         )}
       </div>
     </CommonLayout>

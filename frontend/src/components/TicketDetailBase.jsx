@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, uploadReplyFiles, assignTicket, updateTicketStatus } from '../api/ticket';
+import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateReply, deleteReply, assignTicket, updateTicketStatus } from '../api/ticket';
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
 import CommonLayout from './CommonLayout';
@@ -163,24 +163,14 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     try {
       setSubmitting(true);
       
-      // 1. 파일들을 Cloudinary에 업로드
-      const uploadedFiles = [];
-      for (const file of replyFiles) {
-        const res = await uploadReplyFiles(file, token); 
-        uploadedFiles.push({
-          public_id: res.data.public_id,
-          url: res.data.url, // 백엔드에서 반환하는 Cloudinary URL 필드명에 맞게 수정
-          originalname: file.name,
-        });
-      }
+      const formData = new FormData();
+      formData.append('message', message);
+      replyFiles.forEach(file => {
+        formData.append('files', file);
+      });
 
-      // 2. 댓글 정보와 Cloudinary 파일 URL을 함께 전송
-      const replyData = {
-        message: message,
-        files: uploadedFiles, // Cloudinary URL 목록
-      };
+      await postReply(ticketId, formData, token);
       
-      await postReply(ticketId, replyData, token);
       setMessage('');
       setReplyFiles([]);
       setReplyFilePreviews([]);
@@ -556,17 +546,17 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                     // 이미지 파일 미리보기
                     <div className="image-file">
                       <img
-                        src={f.url}
+                        src={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
                         alt={f.originalname}
                         className="file-image"
-                        onClick={() => handleImageClick(f.url, f.originalname)}
+                        onClick={() => handleImageClick(`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`, f.originalname)}
                         style={{ cursor: 'pointer' }}
                       />
                       <div className="file-info">
                         <div className="file-name">{f.originalname}</div>
                         <div className="file-actions">
                           <a
-                            href={f.url}
+                            href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
                             target="_blank"
                             rel="noreferrer"
                             className="file-link"
@@ -604,7 +594,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                       <div className="document-actions">
                         {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
                           <a
-                            href={f.url}
+                            href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
                             target="_blank"
                             rel="noreferrer"
                             className="document-link"
@@ -614,7 +604,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                           </a>
                         )}
                         <a
-                          href={f.url}
+                          href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
                           download={f.originalname}
                           className="document-download"
                           title="다운로드"
@@ -693,7 +683,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                 <div className="reply-files">
                   <div className="file-grid">
                     {reply.files.map(f => (
-                      <div key={f.filename} className="file-item">
+                      <div key={f.public_id || f.originalname} className="file-item">
                         {isImageFile(f.originalname) ? (
                           // 이미지 파일 미리보기
                           <div className="image-file">
