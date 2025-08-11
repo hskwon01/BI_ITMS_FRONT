@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMe } from '../api/auth';
+import { getDashboardStats } from '../api/dashboard';
 import CommonLayout from '../components/CommonLayout';
 import '../css/HomePage.css';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     const fetchMe = async () => {
       try {
         const res = await getMe();
         setMe(res);
+        const role = res?.data?.role;
+        const token = localStorage.getItem('token');
+        if (token && (role === 'admin' || role === 'itsm_team')) {
+          try {
+            const s = await getDashboardStats(token, { days: 30 });
+            setStats(s.data);
+          } catch (e) {
+            setStats(null);
+          }
+        } else {
+          setStats(null);
+        }
       } catch (error) {
         // 토큰이 만료되었거나 없는 경우
         setMe(null);
+        setStats(null);
       }
     };
     fetchMe();
@@ -75,11 +90,15 @@ const HomePage = () => {
                   <div className="screen-header">ITSM Dashboard</div>
                   <div className="screen-body">
                     <div className="metric-card">
-                      <span className="metric-number">24</span>
+                      <span className="metric-number">
+                        {stats ? (Number(stats.전체티켓 || 0) - Number(stats.종결 || 0)) : '--'}
+                      </span>
                       <span className="metric-label">Active Tickets</span>
                     </div>
                     <div className="metric-card">
-                      <span className="metric-number">98%</span>
+                      <span className="metric-number">
+                        {stats ? `${Math.round(((Number(stats.답변완료 || 0) + Number(stats.종결 || 0)) / (Number(stats.전체티켓 || 0) || 1)) * 100)}%` : '--'}
+                      </span>
                       <span className="metric-label">SLA</span>
                     </div>
                   </div>
