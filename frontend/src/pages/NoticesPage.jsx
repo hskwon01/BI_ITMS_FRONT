@@ -23,11 +23,14 @@ const NoticesPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (editing) {
-      await updateNotice(editing.id, form);
-    } else {
-      await createNotice(form);
+    const formData = new FormData();
+    formData.append('title', form.title);
+    formData.append('content', form.content);
+    formData.append('is_pinned', form.is_pinned);
+    if (form.files && form.files.length) {
+      [...form.files].forEach((f) => formData.append('files', f));
     }
+    if (editing) await updateNotice(editing.id, formData); else await createNotice(formData);
     setForm({ title: '', content: '', is_pinned: false });
     setEditing(null);
     load();
@@ -67,6 +70,7 @@ const NoticesPage = () => {
           <div className="notice-editor">
             <div className="row"><input placeholder="제목" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
             <div className="row"><textarea placeholder="내용" rows={6} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} required /></div>
+            <div className="row"><input type="file" multiple onChange={(e) => setForm({ ...form, files: e.target.files })} /></div>
             <div className="row inline">
               <label><input type="checkbox" checked={form.is_pinned} onChange={(e) => setForm({ ...form, is_pinned: e.target.checked })} /> 상단 고정</label>
               <div style={{ marginLeft: 'auto', display: 'flex', gap: '.5rem' }}>
