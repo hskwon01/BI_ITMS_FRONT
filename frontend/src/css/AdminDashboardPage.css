@@ -3,6 +3,22 @@
   background: #fff;
 }
 
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.dashboard-main { display: flex; flex-direction: column; gap: 2rem; }
+.dashboard-side { position: sticky; top: 80px; height: fit-content; }
+
+.admin-dashboard-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
 .admin-dashboard-header {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -31,6 +47,34 @@
   font-weight: 600;
 }
 
+/* 필터 셀렉트/체크 스타일 - 주변 카드 톤과 일치 */
+.filter-group select {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  background: #f8f9fb;
+  color: #2d3652;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  outline: none;
+  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.filter-group select:hover {
+  background: #f3f4f6;
+}
+
+.filter-group select:focus {
+  border-color: #7c83fd;
+  box-shadow: 0 0 0 3px rgba(124, 131, 253, 0.2);
+}
+
+.filter-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #7c83fd;
+}
+
 .admin-dashboard-header h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -44,11 +88,9 @@
 }
 
 .admin-dashboard-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
 .admin-dashboard-stat-card {
@@ -108,40 +150,25 @@
   margin-bottom: 2rem;
 }
 
+
+/* SLA 자동 종결 버튼 - 브랜드 톤(보라/인디고)으로 조정 */
 .auto-close-btn {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #7c83fd 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 0.9rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.2);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.auto-close-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.auto-close-btn:hover:not(:disabled)::before {
-  left: 100%;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
 }
 
 .auto-close-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff5252 0%, #ff6b6b 100%);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.3);
+  filter: brightness(1.03);
 }
 
 .auto-close-btn:disabled {
@@ -185,12 +212,8 @@
   }
 }
 
-.admin-dashboard-charts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
+.admin-dashboard-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.admin-dashboard-charts .chart-container.full { grid-column: 1 / -1; }
 
 .chart-container {
   background: #fff;
@@ -208,8 +231,7 @@
 }
 
 .admin-dashboard-summary {
-  display: flex;
-  justify-content: center;
+  display: none;
 }
 
 .summary-card {
@@ -267,20 +289,16 @@
 }
 
 @media (max-width: 900px) {
+  .admin-dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-side { position: static; }
   .admin-dashboard-stats {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: repeat(2, 1fr);
   }
-  .admin-dashboard-charts {
-    grid-template-columns: 1fr;
-  }
+  .admin-dashboard-charts { grid-template-columns: 1fr; }
   .chart-container {
     padding: 1rem;
   }
-  .summary-card {
-    min-width: auto;
-    width: 100%;
-  }
+  .summary-card { min-width: auto; width: 100%; }
 } 
 
 .modal-overlay {

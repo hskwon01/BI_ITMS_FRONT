@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, autoCloseTickets, getTrends } from '../api/dashboard';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import CommonLayout from '../components/CommonLayout';
@@ -15,7 +16,9 @@ const AdminDashboardPage = () => {
   const [autoClosing, setAutoClosing] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -29,13 +32,32 @@ const AdminDashboardPage = () => {
         setStats(s.data);
         setTrends(t.data);
       } catch {
-        showToast('통계 조회 실패', 'error');
+        setStats(null);
+        setTrends([]);
+        setTimeout(() => setToast({ show: true, message: '통계 조회 실패', type: 'error' }), 0);
       } finally {
         setLoading(false);
       }
     };
     fetchAll();
   }, [days, type]);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const id = setInterval(() => {
+      const params = { days, type: type === 'ALL' ? undefined : type };
+      Promise.all([
+        getDashboardStats(token, params),
+        getTrends(token, params),
+      ])
+        .then(([s, t]) => {
+          setStats(s.data);
+          setTrends(t.data);
+        })
+        .catch(() => setToast({ show: true, message: '자동 새로고침 실패', type: 'error' }));
+    }, 60000);
+    return () => clearInterval(id);
+  }, [autoRefresh, days, type]);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -78,6 +100,8 @@ const AdminDashboardPage = () => {
     { name: '답변 완료', value: Number(stats.답변완료) },
     { name: '종결', value: Number(stats.종결) }
   ];
+  const hasNonZeroPie = pieData.some(d => d.value > 0);
+  const pieRenderData = hasNonZeroPie ? pieData.filter(d => d.value > 0) : pieData;
 
   const barData = [
     { name: '접수', value: Number(stats.접수) },
@@ -87,6 +111,11 @@ const AdminDashboardPage = () => {
   ];
 
   const nf = new Intl.NumberFormat('ko-KR');
+
+  const navigateToList = (statusLabel) => {
+    const path = type === 'SM' ? '/admin/tickets/sm' : '/admin/tickets';
+    navigate(`${path}?status=${encodeURIComponent(statusLabel)}`);
+  };
 
   return (
     <CommonLayout>
@@ -132,89 +161,100 @@ const AdminDashboardPage = () => {
         <p className="admin-dashboard-desc">시스템 현황을 한눈에 확인하세요</p>
       </div>
 
-      <div className="admin-dashboard-filters">
-        <div className="filter-group">
-          <label>기간</label>
-          <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
-            <option value={7}>최근 7일</option>
-            <option value={30}>최근 30일</option>
-            <option value={90}>최근 90일</option>
-          </select>
+      <div className="admin-dashboard-toolbar">
+        <div className="admin-dashboard-filters">
+          <div className="filter-group">
+            <label>기간</label>
+            <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
+              <option value={7}>최근 7일</option>
+              <option value={30}>최근 30일</option>
+              <option value={90}>최근 90일</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>유형</label>
+            <select value={type} onChange={(e) => setType(e.target.value)}>
+              <option value="ALL">전체</option>
+              <option value="SR">SR</option>
+              <option value="SM">SM</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>자동 새로고침</label>
+            <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
+          </div>
         </div>
-        <div className="filter-group">
-          <label>유형</label>
-          <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="ALL">전체</option>
-            <option value="SR">SR</option>
-            <option value="SM">SM</option>
-          </select>
+        <div className="admin-dashboard-actions">
+          <button 
+            className="auto-close-btn"
+            onClick={() => setShowConfirmModal(true)}
+            disabled={autoClosing}
+          >
+            {autoClosing ? '처리 중...' : 'SLA 자동 종결 실행'}
+          </button>
         </div>
       </div>
 
-      <div className="admin-dashboard-stats">
-        <div className="admin-dashboard-stat-card total">
-          <div className="stat-icon">📋</div>
-          <div className="stat-content">
-            <div className="stat-label">전체 티켓</div>
-            <div className="stat-value">{nf.format(Number(stats.전체티켓 || 0))}</div>
+      <div className="admin-dashboard-grid">
+        <div className="dashboard-main">
+          <div className="admin-dashboard-stats">
+            <div className="admin-dashboard-stat-card total">
+              <div className="stat-icon">📋</div>
+              <div className="stat-content">
+                <div className="stat-label">전체 티켓</div>
+                <div className="stat-value">{nf.format(Number(stats.전체티켓 || 0))}</div>
+              </div>
+            </div>
+            <div className="admin-dashboard-stat-card received">
+              <div className="stat-icon">📥</div>
+              <div className="stat-content">
+                <div className="stat-label">접수</div>
+                <div className="stat-value">{nf.format(Number(stats.접수 || 0))}</div>
+              </div>
+            </div>
+            <div className="admin-dashboard-stat-card in-progress">
+              <div className="stat-icon">🔧</div>
+              <div className="stat-content">
+                <div className="stat-label">진행중</div>
+                <div className="stat-value">{nf.format(Number(stats.진행중 || 0))}</div>
+              </div>
+            </div>
+            <div className="admin-dashboard-stat-card answered">
+              <div className="stat-icon">✅</div>
+              <div className="stat-content">
+                <div className="stat-label">답변 완료</div>
+                <div className="stat-value">{nf.format(Number(stats.답변완료 || 0))}</div>
+              </div>
+            </div>
+            <div className="admin-dashboard-stat-card closed">
+              <div className="stat-icon">📁</div>
+              <div className="stat-content">
+                <div className="stat-label">종결</div>
+                <div className="stat-value">{nf.format(Number(stats.종결 || 0))}</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="admin-dashboard-stat-card received">
-          <div className="stat-icon">📥</div>
-          <div className="stat-content">
-            <div className="stat-label">접수</div>
-            <div className="stat-value">{nf.format(Number(stats.접수 || 0))}</div>
-          </div>
-        </div>
-        <div className="admin-dashboard-stat-card in-progress">
-          <div className="stat-icon">🔧</div>
-          <div className="stat-content">
-            <div className="stat-label">진행중</div>
-            <div className="stat-value">{nf.format(Number(stats.진행중 || 0))}</div>
-          </div>
-        </div>
-        <div className="admin-dashboard-stat-card answered">
-          <div className="stat-icon">✅</div>
-          <div className="stat-content">
-            <div className="stat-label">답변 완료</div>
-            <div className="stat-value">{nf.format(Number(stats.답변완료 || 0))}</div>
-          </div>
-        </div>
-        <div className="admin-dashboard-stat-card closed">
-          <div className="stat-icon">📁</div>
-          <div className="stat-content">
-            <div className="stat-label">종결</div>
-            <div className="stat-value">{nf.format(Number(stats.종결 || 0))}</div>
-          </div>
-        </div>
-      </div>
 
-      <div className="admin-dashboard-actions">
-        <button 
-          className="auto-close-btn"
-          onClick={() => setShowConfirmModal(true)}
-          disabled={autoClosing}
-        >
-          {autoClosing ? '처리 중...' : 'SLA 자동 종결 실행'}
-        </button>
-      </div>
-
-      <div className="admin-dashboard-charts">
+          <div className="admin-dashboard-charts">
         <div className="chart-container">
           <h3>티켓 상태 분포</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie 
-                data={pieData} 
+                data={pieRenderData} 
                 dataKey="value" 
                 nameKey="name" 
                 cx="50%" 
                 cy="50%" 
-                outerRadius={100} 
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={100}
+                labelLine={false}
+                label={({ name, percent, value }) => {
+                  if (!value || percent < 0.03) return '';
+                  return `${name} ${(percent * 100).toFixed(0)}%`;
+                }}
               >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                {pieRenderData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ cursor: 'pointer' }} onClick={() => navigateToList(entry.name)} />
                 ))}
               </Pie>
               <Tooltip />
@@ -233,16 +273,16 @@ const AdminDashboardPage = () => {
               <Tooltip />
               <Bar dataKey="value" fill="#ffd43b">
                 {barData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ cursor: 'pointer' }} onClick={() => navigateToList(entry.name)} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+          </div>
 
-      <div className="admin-dashboard-charts">
-        <div className="chart-container" style={{ gridColumn: '1 / -1' }}>
+          <div className="admin-dashboard-charts">
+        <div className="chart-container full">
           <h3>일자별 티켓 생성 추이</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={trends}>
@@ -255,21 +295,23 @@ const AdminDashboardPage = () => {
           </ResponsiveContainer>
         </div>
       </div>
+        </div>
 
-      <div className="admin-dashboard-summary">
-        <div className="summary-card">
-          <h3>사용자 현황</h3>
-          <div className="summary-stats">
-            <div className="summary-item">
-              <span className="summary-label">고객 수:</span>
-              <span className="summary-value">{nf.format(Number(stats.고객수 || 0))}</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-label">관리자 수:</span>
-              <span className="summary-value">{nf.format(Number(stats.관리자수 || 0))}</span>
+        <aside className="dashboard-side">
+          <div className="summary-card">
+            <h3>사용자 현황</h3>
+            <div className="summary-stats">
+              <div className="summary-item">
+                <span className="summary-label">고객 수:</span>
+                <span className="summary-value">{nf.format(Number(stats.고객수 || 0))}</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label">관리자 수:</span>
+                <span className="summary-value">{nf.format(Number(stats.관리자수 || 0))}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
     </CommonLayout>
