@@ -1,11 +1,11 @@
 import React from 'react';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import AdminAccessRequestList from '../components/AdminAccessRequestList';
 import '../css/AdminAccessRequestPage.css'; // CSS 파일 임포트
 
 const AdminAccessRequestPage = () => {
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-access-request-container">
         <div className="admin-access-header">
           <h1>사용자 접근 요청 관리</h1>
@@ -13,7 +13,7 @@ const AdminAccessRequestPage = () => {
         </div>
         <AdminAccessRequestList />
       </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 
