@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboardStats, autoCloseTickets } from '../api/dashboard';
-import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import CommonLayout from '../components/CommonLayout';
 import '../css/AdminDashboardPage.css';
 
@@ -21,7 +21,7 @@ const AdminDashboardPage = () => {
         const res = await getDashboardStats(token);
         setStats(res.data);
       } catch {
-        alert('통계 조회 실패');
+        showToast('통계 조회 실패', 'error');
       } finally {
         setLoading(false);
       }
@@ -78,6 +78,8 @@ const AdminDashboardPage = () => {
     { name: '종결', value: Number(stats.종결) }
   ];
 
+  const nf = new Intl.NumberFormat('ko-KR');
+
   return (
     <CommonLayout>
       <div className="admin-dashboard-container">
@@ -127,35 +129,35 @@ const AdminDashboardPage = () => {
           <div className="stat-icon">📋</div>
           <div className="stat-content">
             <div className="stat-label">전체 티켓</div>
-            <div className="stat-value">{stats.전체티켓}</div>
+            <div className="stat-value">{nf.format(Number(stats.전체티켓 || 0))}</div>
           </div>
         </div>
         <div className="admin-dashboard-stat-card received">
           <div className="stat-icon">📥</div>
           <div className="stat-content">
             <div className="stat-label">접수</div>
-            <div className="stat-value">{stats.접수}</div>
+            <div className="stat-value">{nf.format(Number(stats.접수 || 0))}</div>
           </div>
         </div>
         <div className="admin-dashboard-stat-card in-progress">
           <div className="stat-icon">🔧</div>
           <div className="stat-content">
             <div className="stat-label">진행중</div>
-            <div className="stat-value">{stats.진행중}</div>
+            <div className="stat-value">{nf.format(Number(stats.진행중 || 0))}</div>
           </div>
         </div>
         <div className="admin-dashboard-stat-card answered">
           <div className="stat-icon">✅</div>
           <div className="stat-content">
             <div className="stat-label">답변 완료</div>
-            <div className="stat-value">{stats.답변완료}</div>
+            <div className="stat-value">{nf.format(Number(stats.답변완료 || 0))}</div>
           </div>
         </div>
         <div className="admin-dashboard-stat-card closed">
           <div className="stat-icon">📁</div>
           <div className="stat-content">
             <div className="stat-label">종결</div>
-            <div className="stat-value">{stats.종결}</div>
+            <div className="stat-value">{nf.format(Number(stats.종결 || 0))}</div>
           </div>
         </div>
       </div>
@@ -173,38 +175,42 @@ const AdminDashboardPage = () => {
       <div className="admin-dashboard-charts">
         <div className="chart-container">
           <h3>티켓 상태 분포</h3>
-          <PieChart width={400} height={300}>
-            <Pie 
-              data={pieData} 
-              dataKey="value" 
-              nameKey="name" 
-              cx="50%" 
-              cy="50%" 
-              outerRadius={100} 
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie 
+                data={pieData} 
+                dataKey="value" 
+                nameKey="name" 
+                cx="50%" 
+                cy="50%" 
+                outerRadius={100} 
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
 
         <div className="chart-container">
           <h3>티켓 상태별 개수</h3>
-          <BarChart width={400} height={300} data={barData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" fill="#ffd43b">
-              {barData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Bar>
-          </BarChart>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="value" fill="#ffd43b">
+                {barData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -214,11 +220,11 @@ const AdminDashboardPage = () => {
           <div className="summary-stats">
             <div className="summary-item">
               <span className="summary-label">고객 수:</span>
-              <span className="summary-value">{stats.고객수}</span>
+              <span className="summary-value">{nf.format(Number(stats.고객수 || 0))}</span>
             </div>
             <div className="summary-item">
               <span className="summary-label">관리자 수:</span>
-              <span className="summary-value">{stats.관리자수}</span>
+              <span className="summary-value">{nf.format(Number(stats.관리자수 || 0))}</span>
             </div>
           </div>
         </div>
