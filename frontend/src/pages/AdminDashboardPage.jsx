@@ -100,6 +100,8 @@ const AdminDashboardPage = () => {
     { name: '답변 완료', value: Number(stats.답변완료) },
     { name: '종결', value: Number(stats.종결) }
   ];
+  const hasNonZeroPie = pieData.some(d => d.value > 0);
+  const pieRenderData = hasNonZeroPie ? pieData.filter(d => d.value > 0) : pieData;
 
   const barData = [
     { name: '접수', value: Number(stats.접수) },
@@ -236,15 +238,19 @@ const AdminDashboardPage = () => {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie 
-                data={pieData} 
+                data={pieRenderData} 
                 dataKey="value" 
                 nameKey="name" 
                 cx="50%" 
                 cy="50%" 
-                outerRadius={100} 
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={100}
+                labelLine={false}
+                label={({ name, percent, value }) => {
+                  if (!value || percent < 0.03) return '';
+                  return `${name} ${(percent * 100).toFixed(0)}%`;
+                }}
               >
-                {pieData.map((entry, index) => (
+                {pieRenderData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ cursor: 'pointer' }} onClick={() => navigateToList(entry.name)} />
                 ))}
               </Pie>
