@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import '../css/AdminTicketListPage.css';
 
@@ -9,11 +9,21 @@ const urgencyList = ['낮음', '보통', '높음'];
 
 const AdminTicketListPage = ({ ticketType }) => {
   const token = localStorage.getItem('token');
+  const location = useLocation();
   const [allTickets, setAllTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '' });
   const [loading, setLoading] = useState(true);
   const [adminUnreadMap, setAdminUnreadMap] = useState({});
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const status = params.get('status') || '';
+    if (status && status !== filters.status) {
+      setFilters((prev) => ({ ...prev, status }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   useEffect(() => {
     const fetch = async () => {
