@@ -44,10 +44,7 @@ const AdminLayout = ({ children }) => {
           <div className="nav-center">
             <ul>
               <li className={location.pathname === '/admin/tickets' ? 'active' : ''}>
-                <Link to="/admin/tickets">SR티켓</Link>
-              </li>
-              <li className={location.pathname === '/admin/tickets/sm' ? 'active' : ''}>
-                <Link to="/admin/tickets/sm">SM티켓</Link>
+                <Link to="/admin/tickets">티켓 관리</Link>
               </li>
               <li className={location.pathname === '/admin/customer' ? 'active' : ''}>
                 <Link to="/admin/customer">고객관리</Link>

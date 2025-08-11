@@ -38,8 +38,7 @@ const App = () => (
         <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
 
         {/* 관리자 & 기술지원팀용 */}
-        <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage ticketType="SR" /></AdminRoute>}/>
-        <Route path="/admin/tickets/sm" element={<AdminRoute><AdminTicketListPage ticketType="SM" /></AdminRoute>}/>
+        <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage /></AdminRoute>}/>
         <Route path="/admin/tickets/:id" element={<AdminRoute><AdminTicketDetailPage /></AdminRoute>} />
         <Route path="/admin/customer" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
         <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} />

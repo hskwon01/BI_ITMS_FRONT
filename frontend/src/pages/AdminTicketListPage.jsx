@@ -6,13 +6,14 @@ import '../css/AdminTicketListPage.css';
 
 const statusList = ['접수', '진행중', '답변 완료', '종결'];
 const urgencyList = ['낮음', '보통', '높음'];
+const ticketTypeList = ['SM', 'SR'];
 
-const AdminTicketListPage = ({ ticketType }) => {
+const AdminTicketListPage = () => {
   const token = localStorage.getItem('token');
   const location = useLocation();
   const [allTickets, setAllTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
-  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '' });
+  const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '', ticket_type: '' });
   const [loading, setLoading] = useState(true);
   const [adminUnreadMap, setAdminUnreadMap] = useState({});
 
@@ -28,13 +29,13 @@ const AdminTicketListPage = ({ ticketType }) => {
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      const res = await getAllTickets(token, { ...filters, type: ticketType });
+      const res = await getAllTickets(token, filters);
       setAllTickets(res.data);
       setFilteredTickets(res.data);
       setLoading(false);
     };
     fetch();
-  }, [token, ticketType]);
+  }, [token, filters]);
 
   useEffect(() => {
     let filtered = allTickets;
@@ -43,6 +44,9 @@ const AdminTicketListPage = ({ ticketType }) => {
       filtered = filtered.filter(ticket =>
         ticket.title.toLowerCase().includes(filters.keyword.toLowerCase())
       );
+    }
+    if (filters.ticket_type) {
+      filtered = filtered.filter(ticket => ticket.ticket_type === filters.ticket_type);
     }
     if (filters.status) {
       filtered = filtered.filter(ticket => ticket.status === filters.status);
@@ -69,6 +73,8 @@ const AdminTicketListPage = ({ ticketType }) => {
 
   const getStatusCount = (status) => allTickets.filter(ticket => ticket.status === status).length;
 
+  const getTicketTypeCount = (ticketType) => allTickets.filter(ticket => ticket.ticket_type === ticketType).length;
+
   const getStatusColor = (status) => {
     switch (status) {
       case '접수': return 'received';
@@ -88,11 +94,19 @@ const AdminTicketListPage = ({ ticketType }) => {
     }
   };
 
+  const getTicketTypeColor = (ticketType) => {
+    switch (ticketType) {
+      case 'SM': return 'sm';
+      case 'SR': return 'sr';
+      default: return 'default';
+    }
+  };
+
   return (
     <CommonLayout>
       <div className="admin-ticket-list-container">
         <div className="admin-ticket-header">
-          <h1>{ticketType === "SM" ? "SM 고객 티켓 관리" : "SR 고객 티켓 관리"}</h1>
+          <h1>티켓 관리</h1>
           <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
         </div>
 
@@ -101,22 +115,46 @@ const AdminTicketListPage = ({ ticketType }) => {
           <div className="stat-label">전체</div>
           <div className="stat-value">{allTickets.length}</div>
         </div>
-        {statusList.map(status => (
-          <div className={`admin-ticket-stat-card ${getStatusColor(status)}`} key={status}>
-            <div className="stat-label">{status}</div>
-            <div className="stat-value">{getStatusCount(status)}</div>
-          </div>
-        ))}
+        <div className="admin-ticket-stat-card sm">
+          <div className="stat-label">SM</div>
+          <div className="stat-value">{getTicketTypeCount('SM')}</div>
+        </div>
+        <div className="admin-ticket-stat-card sr">
+          <div className="stat-label">SR</div>
+          <div className="stat-value">{getTicketTypeCount('SR')}</div>
+        </div>
+        <div className="admin-ticket-stat-card received">
+          <div className="stat-label">접수</div>
+          <div className="stat-value">{getStatusCount('접수')}</div>
+        </div>
+        <div className="admin-ticket-stat-card in-progress">
+          <div className="stat-label">진행중</div>
+          <div className="stat-value">{getStatusCount('진행중')}</div>
+        </div>
+        <div className="admin-ticket-stat-card answered">
+          <div className="stat-label">답변완료</div>
+          <div className="stat-value">{getStatusCount('답변 완료')}</div>
+        </div>
+        <div className="admin-ticket-stat-card closed">
+          <div className="stat-label">종결</div>
+          <div className="stat-value">{getStatusCount('종결')}</div>
+        </div>
       </div>
 
       <div className="admin-ticket-filters">
         <input
           name="keyword"
-          placeholder="제목으로 검색"
+          placeholder="제목, 고객명, 담당자로 검색..."
           value={filters.keyword}
           onChange={handleChange}
           className="admin-ticket-search"
         />
+        <select name="ticket_type" value={filters.ticket_type} onChange={handleChange} className="admin-ticket-select">
+          <option value="">모든 타입</option>
+          {ticketTypeList.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
         <select name="status" value={filters.status} onChange={handleChange} className="admin-ticket-select">
           <option value="">모든 상태</option>
           {statusList.map(status => (
@@ -136,6 +174,7 @@ const AdminTicketListPage = ({ ticketType }) => {
           <thead>
             <tr>
               <th>제목</th>
+              <th>티켓 타입</th>
               <th>상태</th>
               <th>긴급도</th>
               <th>고객</th>
@@ -158,6 +197,11 @@ const AdminTicketListPage = ({ ticketType }) => {
                   )}
                 </td>
                 <td>
+                  <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
+                    {ticket.ticket_type}
+                  </span>
+                </td>
+                <td>
                   <span className={`status-badge ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
                 </td>
                 <td>
@@ -176,11 +220,8 @@ const AdminTicketListPage = ({ ticketType }) => {
             ))}
           </tbody>
         </table>
-        {filteredTickets.length === 0 && (
-          <div className="admin-ticket-empty">검색 결과가 없습니다.</div>
-        )}
-              </div>
       </div>
+    </div>
     </CommonLayout>
   );
 };
