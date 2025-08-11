@@ -15,6 +15,9 @@ import AdminTicketListPage from './pages/AdminTicketListPage';
 import AdminTicketDetailPage from './pages/AdminTicketDetailPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminTeamListPage from './pages/AdminTeamListPage';
+import RequestAccessPage from './pages/RequestAccessPage';
+import MagicLoginProcessor from './pages/MagicLoginProcessor';
+import AdminAccessRequestPage from './pages/AdminAccessRequestPage';
 
 const App = () => (
   <UserProvider>
@@ -25,6 +28,8 @@ const App = () => (
         <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/request-access" element={<RequestAccessPage />} />
+        <Route path="/magic-login" element={<MagicLoginProcessor />} />
 
         {/* 고객용 - CommonLayout 사용 */}
         <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
@@ -32,13 +37,14 @@ const App = () => (
         <Route path="/my-tickets/:id" element={<UserRoute><TicketDetailPage /></UserRoute>} />
         <Route path="/profile" element={<UserRoute><ProfilePage /></UserRoute>} />
 
-        {/* 관리자 & 기술지원팀용 - CommonLayout 사용 */}
+        {/* 관리자 & 기술지원팀용 */}
         <Route path="/admin/tickets" element={<AdminRoute><AdminTicketListPage ticketType="SR" /></AdminRoute>}/>
         <Route path="/admin/tickets/sm" element={<AdminRoute><AdminTicketListPage ticketType="SM" /></AdminRoute>}/>
         <Route path="/admin/tickets/:id" element={<AdminRoute><AdminTicketDetailPage /></AdminRoute>} />
         <Route path="/admin/customer" element={<AdminRoute><AdminUserListPage /></AdminRoute>} />
         <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} />
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+        <Route path="/admin/access-requests" element={<AdminRoute><AdminAccessRequestPage /></AdminRoute>} />
       </Routes>
     </BrowserRouter>
   </UserProvider>
