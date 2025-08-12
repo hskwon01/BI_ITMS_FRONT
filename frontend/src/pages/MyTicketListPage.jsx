@@ -233,12 +233,12 @@ useEffect(() => {
                     <td className="title-cell">
                       <Link to={`/my-tickets/${ticket.id}`} className="my-ticket-link">
                         {ticket.title}
+                        {unreadMap[ticket.id] > 0 && (
+                          <span className="unread-badge">
+                            {unreadMap[ticket.id]}
+                          </span>
+                        )}
                       </Link>
-                      {unreadMap[ticket.id] > 0 && (
-                        <span className="unread-badge">
-                          {unreadMap[ticket.id]}
-                        </span>
-                      )}
                     </td>
                     <td>
                       <span className={`ticket-type-badge ${getTicketTypeClass(ticket.ticket_type)}`}>

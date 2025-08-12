@@ -204,10 +204,11 @@
   font-weight: 600;
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
-  margin-left: 0.5rem;
-  display: inline-block;
+  margin-left: 0.3rem;
+  display: inline;
   min-width: 20px;
   text-align: center;
+  vertical-align: middle;
 }
 
 .status-badge {

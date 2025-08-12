@@ -219,12 +219,12 @@ const AdminTicketListPage = () => {
                   <td className="title-cell">
                     <Link to={`/admin/tickets/${ticket.id}`} className="admin-ticket-link">
                       {ticket.title}
+                      {adminUnreadMap[ticket.id] > 0 && (
+                        <span className="unread-badge">
+                          {adminUnreadMap[ticket.id]}
+                        </span>
+                      )}
                     </Link>
-                    {adminUnreadMap[ticket.id] > 0 && (
-                      <span className="unread-badge">
-                        {adminUnreadMap[ticket.id]}
-                      </span>
-                    )}
                   </td>
                   <td>
                     <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
