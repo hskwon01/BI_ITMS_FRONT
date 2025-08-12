@@ -39,13 +39,19 @@ export const getTimeAgo = (dateString, currentTime = new Date()) => {
 
 export const formatDateTime = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  
+  // 날짜 부분
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  // 시간 부분
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? '오후' : '오전';
+  const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
+  
+  return `${year}년 ${month}월 ${day}일\n${ampm} ${String(displayHours).padStart(2, '0')}:${minutes}`;
 };
 
 export const formatDateOnly = (dateString) => {
