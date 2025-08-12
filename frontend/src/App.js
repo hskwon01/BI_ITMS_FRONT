@@ -19,6 +19,9 @@ import RequestAccessPage from './pages/RequestAccessPage';
 import MagicLoginProcessor from './pages/MagicLoginProcessor';
 import AdminAccessRequestPage from './pages/AdminAccessRequestPage';
 import NoticesPage from './pages/NoticesPage';
+import NoticeDetailPage from './pages/NoticeDetailPage';
+import NoticeEditPage from './pages/NoticeEditPage';
+import NoticeCreatePage from './pages/NoticeCreatePage';
 
 const App = () => (
   <UserProvider>
@@ -32,7 +35,10 @@ const App = () => (
         <Route path="/request-access" element={<RequestAccessPage />} />
         <Route path="/magic-login" element={<MagicLoginProcessor />} />
         <Route path="/notices" element={<NoticesPage />} />
-
+        <Route path="/notices/create" element={<NoticeCreatePage />} />
+        <Route path="/notices/:id" element={<NoticeDetailPage />} />
+        <Route path="/notices/:id/edit" element={<NoticeEditPage />} />
+        
         {/* 고객용 - CommonLayout 사용 */}
         <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
         <Route path="/my-tickets/create" element={<UserRoute><CreateTicketPage /></UserRoute>} />
