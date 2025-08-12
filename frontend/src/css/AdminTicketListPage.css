@@ -137,12 +137,15 @@
 
 .admin-ticket-table th:first-child,
 .admin-ticket-table td:first-child {
-  width: 40%;
+  width: 20%;
 }
 
 .admin-ticket-table td.title-cell {
   word-break: break-word;
-  white-space: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
 }
 
 .admin-ticket-link {
@@ -229,4 +232,54 @@
   .admin-ticket-table-wrapper {
     padding: 1rem 0.3rem;
   }
+}
+
+/* 시간 경과 표시 스타일 */
+.date-time-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 120px;
+}
+
+.date-time {
+  font-size: 0.85rem;
+  color: #2d3652;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+
+.time-ago {
+  font-size: 0.8rem;
+  color: #7b8190;
+  font-weight: 400;
+}
+
+/* 오래된 티켓 스타일 */
+.admin-ticket-table tr.old {
+  background-color: #fff7ed;
+}
+
+.admin-ticket-table tr.old:hover {
+  background-color: #fed7aa;
+}
+
+.admin-ticket-table tr.very-old {
+  background-color: #fef2f2;
+}
+
+.admin-ticket-table tr.very-old:hover {
+  background-color: #fecaca;
+}
+
+.admin-ticket-table tr.old .date-time,
+.admin-ticket-table tr.very-old .date-time {
+  color: #2d3652;
+  font-weight: 600;
+}
+
+.admin-ticket-table tr.old .time-ago,
+.admin-ticket-table tr.very-old .time-ago {
+  color: #dc2626;
+  font-weight: 500;
 } 
