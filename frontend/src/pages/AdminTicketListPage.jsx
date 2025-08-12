@@ -193,56 +193,64 @@ const AdminTicketListPage = () => {
       </div>
 
       <div className="admin-ticket-table-wrapper">
-        <table className="admin-ticket-table">
-          <thead>
-            <tr>
-              <th>제목</th>
-              <th>티켓 타입</th>
-              <th>상태</th>
-              <th>긴급도</th>
-              <th>고객</th>
-              <th>회사</th>
-              <th>등록일</th>
-              <th>담당자</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTickets.map(ticket => (
-              <tr key={ticket.id} className={getTicketAgeClass(ticket.created_at)}>
-                <td className="title-cell">
-                  <Link to={`/admin/tickets/${ticket.id}`} className="admin-ticket-link">
-                    {ticket.title}
-                  </Link>
-                  {adminUnreadMap[ticket.id] > 0 && (
-                    <span className="unread-badge">
-                      {adminUnreadMap[ticket.id]}
-                    </span>
-                  )}
-                </td>
-                <td>
-                  <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
-                    {ticket.ticket_type}
-                  </span>
-                </td>
-                <td>
-                  <span className={`status-badge ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
-                </td>
-                <td>
-                  <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>{ticket.urgency}</span>
-                </td>
-                <td>{ticket.customer_name}</td>
-                <td>{ticket.company_name}</td>
-                <td>
-                  <div className="date-time-container">
-                    <div className="date-time">{formatDateTime(ticket.created_at)}</div>
-                    <div className="time-ago">{getTimeAgo(ticket.created_at, currentTime)}</div>
-                  </div>
-                </td>
-                <td>{ticket.assignee_name || '미배정'}</td>
+        {loading ? (
+          <div className="admin-ticket-loading">로딩 중...</div>
+        ) : filteredTickets.length === 0 ? (
+          <div className="admin-ticket-empty">
+            {allTickets.length === 0 ? '등록된 티켓이 없습니다.' : '검색 조건에 맞는 티켓이 없습니다.'}
+          </div>
+        ) : (
+          <table className="admin-ticket-table">
+            <thead>
+              <tr>
+                <th>제목</th>
+                <th>티켓 타입</th>
+                <th>상태</th>
+                <th>긴급도</th>
+                <th>고객</th>
+                <th>회사</th>
+                <th>등록일</th>
+                <th>담당자</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredTickets.map(ticket => (
+                <tr key={ticket.id} className={getTicketAgeClass(ticket.created_at)}>
+                  <td className="title-cell">
+                    <Link to={`/admin/tickets/${ticket.id}`} className="admin-ticket-link">
+                      {ticket.title}
+                    </Link>
+                    {adminUnreadMap[ticket.id] > 0 && (
+                      <span className="unread-badge">
+                        {adminUnreadMap[ticket.id]}
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
+                      {ticket.ticket_type}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`status-badge ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
+                  </td>
+                  <td>
+                    <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>{ticket.urgency}</span>
+                  </td>
+                  <td>{ticket.customer_name}</td>
+                  <td>{ticket.company_name}</td>
+                  <td>
+                    <div className="date-time-container">
+                      <div className="date-time">{formatDateTime(ticket.created_at)}</div>
+                      <div className="time-ago">{getTimeAgo(ticket.created_at, currentTime)}</div>
+                    </div>
+                  </td>
+                  <td>{ticket.assignee_name || '미배정'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
     </CommonLayout>
