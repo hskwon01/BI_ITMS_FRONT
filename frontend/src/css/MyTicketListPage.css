@@ -262,3 +262,51 @@
   font-weight: bold;
   vertical-align: middle;
 }
+
+/* 시간 경과 표시 스타일 */
+.date-time-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.date-time {
+  font-size: 0.9rem;
+  color: #2d3652;
+  font-weight: 500;
+}
+
+.time-ago {
+  font-size: 0.8rem;
+  color: #7b8190;
+  font-weight: 400;
+}
+
+/* 오래된 티켓 스타일 */
+.my-ticket-table tr.old {
+  background-color: #fff7ed;
+}
+
+.my-ticket-table tr.old:hover {
+  background-color: #fed7aa;
+}
+
+.my-ticket-table tr.very-old {
+  background-color: #fef2f2;
+}
+
+.my-ticket-table tr.very-old:hover {
+  background-color: #fecaca;
+}
+
+.my-ticket-table tr.old .date-time,
+.my-ticket-table tr.very-old .date-time {
+  color: #2d3652;
+  font-weight: 600;
+}
+
+.my-ticket-table tr.old .time-ago,
+.my-ticket-table tr.very-old .time-ago {
+  color: #dc2626;
+  font-weight: 500;
+}

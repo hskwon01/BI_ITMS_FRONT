@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyTickets, getUnreadCounts } from '../api/ticket';
 import CommonLayout from '../components/CommonLayout';
+import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
 import '../css/MyTicketListPage.css';
 
 const MyTicketListPage = () => {
@@ -11,6 +12,7 @@ const MyTicketListPage = () => {
   const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '', ticket_type: '' });
   const [loading, setLoading] = useState(true);
   const [unreadMap, setUnreadMap] = useState({});
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // 1. 전체 티켓 목록을 처음 한 번만 가져오는 useEffect
 useEffect(() => {
@@ -57,8 +59,20 @@ useEffect(() => {
     }
   };
   fetchUnreadCounts();
+  // 등록일이 오래된 순으로 정렬
+  filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  
   setFilteredTickets(filtered);
 }, [filters, allTickets]);
+
+// 실시간 시간 업데이트
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 60000); // 1분마다 업데이트
+
+  return () => clearInterval(timer);
+}, []);
 
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -101,6 +115,15 @@ useEffect(() => {
       case 'SR': return 'sr';
       default: return '';
     }
+  };
+
+  const getTicketAgeClass = (createdAt) => {
+    if (isVeryOldTicket(createdAt)) {
+      return 'very-old';
+    } else if (isOldTicket(createdAt)) {
+      return 'old';
+    }
+    return '';
   };
 
   return (
@@ -206,7 +229,7 @@ useEffect(() => {
               </thead>
               <tbody>
                 {filteredTickets.map(ticket => (
-                  <tr key={ticket.id}>
+                  <tr key={ticket.id} className={getTicketAgeClass(ticket.created_at)}>
                     <td className="title-cell">
                       <Link to={`/my-tickets/${ticket.id}`} className="my-ticket-link">
                         {ticket.title}
@@ -233,7 +256,12 @@ useEffect(() => {
                       </span>
                     </td>
                     <td>{ticket.assignee_name || '미배정'}</td>
-                    <td>{new Date(ticket.created_at).toLocaleString()}</td>
+                    <td>
+                      <div className="date-time-container">
+                        <div className="date-time">{formatDateTime(ticket.created_at)}</div>
+                        <div className="time-ago">{getTimeAgo(ticket.created_at, currentTime)}</div>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
