@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
 import { Link, useLocation } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
+import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
 import '../css/AdminTicketListPage.css';
 
 const statusList = ['접수', '진행중', '답변 완료', '종결'];
@@ -16,6 +17,7 @@ const AdminTicketListPage = () => {
   const [filters, setFilters] = useState({ status: '', urgency: '', keyword: '', ticket_type: '' });
   const [loading, setLoading] = useState(true);
   const [adminUnreadMap, setAdminUnreadMap] = useState({});
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -64,8 +66,20 @@ const AdminTicketListPage = () => {
       setAdminUnreadMap(map);
     };
     fetchUnreadCounts();
+    // 등록일이 오래된 순으로 정렬
+    filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    
     setFilteredTickets(filtered);
   }, [filters, allTickets]);
+
+  // 실시간 시간 업데이트
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // 1분마다 업데이트
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -100,6 +114,15 @@ const AdminTicketListPage = () => {
       case 'SR': return 'sr';
       default: return 'default';
     }
+  };
+
+  const getTicketAgeClass = (createdAt) => {
+    if (isVeryOldTicket(createdAt)) {
+      return 'very-old';
+    } else if (isOldTicket(createdAt)) {
+      return 'old';
+    }
+    return '';
   };
 
   return (
@@ -185,7 +208,7 @@ const AdminTicketListPage = () => {
           </thead>
           <tbody>
             {filteredTickets.map(ticket => (
-              <tr key={ticket.id}>
+              <tr key={ticket.id} className={getTicketAgeClass(ticket.created_at)}>
                 <td className="title-cell">
                   <Link to={`/admin/tickets/${ticket.id}`} className="admin-ticket-link">
                     {ticket.title}
@@ -210,10 +233,10 @@ const AdminTicketListPage = () => {
                 <td>{ticket.customer_name}</td>
                 <td>{ticket.company_name}</td>
                 <td>
-                  {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
-                    year: 'numeric', month: 'short', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                  })}
+                  <div className="date-time-container">
+                    <div className="date-time">{formatDateTime(ticket.created_at)}</div>
+                    <div className="time-ago">{getTimeAgo(ticket.created_at, currentTime)}</div>
+                  </div>
                 </td>
                 <td>{ticket.assignee_name || '미배정'}</td>
               </tr>
