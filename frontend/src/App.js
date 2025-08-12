@@ -22,6 +22,10 @@ import NoticesPage from './pages/NoticesPage';
 import NoticeDetailPage from './pages/NoticeDetailPage';
 import NoticeEditPage from './pages/NoticeEditPage';
 import NoticeCreatePage from './pages/NoticeCreatePage';
+import AdminProductsPage from './pages/AdminProductsPage';
+import QuotesPage from './pages/QuotesPage';
+import QuoteCreatePage from './pages/QuoteCreatePage';
+import QuoteDetailPage from './pages/QuoteDetailPage';
 
 const App = () => (
   <UserProvider>
@@ -38,6 +42,9 @@ const App = () => (
         <Route path="/notices/create" element={<NoticeCreatePage />} />
         <Route path="/notices/:id" element={<NoticeDetailPage />} />
         <Route path="/notices/:id/edit" element={<NoticeEditPage />} />
+        <Route path="/quotes" element={<QuotesPage />} />
+        <Route path="/quotes/create" element={<QuoteCreatePage />} />
+        <Route path="/quotes/:id" element={<QuoteDetailPage />} />
         
         {/* 고객용 - CommonLayout 사용 */}
         <Route path="/my-tickets" element={<UserRoute><MyTicketListPage /></UserRoute>} />
@@ -52,6 +59,7 @@ const App = () => (
         <Route path="/admin/team" element={<AdminRoute><AdminTeamListPage /></AdminRoute>} />
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/admin/access-requests" element={<AdminRoute><AdminAccessRequestPage /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
       </Routes>
     </BrowserRouter>
   </UserProvider>

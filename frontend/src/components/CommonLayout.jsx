@@ -37,6 +37,7 @@ const CommonLayout = memo(({ children }) => {
         { path: '/admin/tickets', label: '티켓 관리', active: location.pathname === '/admin/tickets' },
         { path: '/admin/customer', label: '고객관리', active: location.pathname === '/admin/customer' },
         { path: '/admin/team', label: '팀관리', active: location.pathname === '/admin/team' },
+        { path: '/admin/products', label: '제품관리', active: location.pathname === '/admin/products' },
         { path: '/admin/access-requests', label: '접근요청', active: location.pathname === '/admin/access-requests' },
         { path: '/admin/dashboard', label: '대시보드', active: location.pathname === '/admin/dashboard' }
       ];
@@ -44,6 +45,7 @@ const CommonLayout = memo(({ children }) => {
       return [
         { path: '/my-tickets', label: '내 티켓', active: location.pathname === '/my-tickets' },
         { path: '/my-tickets/create', label: '티켓 작성', active: location.pathname === '/my-tickets/create' },
+        { path: '/quotes', label: '견적 관리', active: location.pathname.startsWith('/quotes') },
         { path: '/profile', label: '내 정보', active: location.pathname === '/profile' }
       ];
     }

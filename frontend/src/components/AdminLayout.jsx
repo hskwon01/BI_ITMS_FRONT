@@ -52,6 +52,9 @@ const AdminLayout = ({ children }) => {
               <li className={location.pathname === '/admin/team' ? 'active' : ''}>
                 <Link to="/admin/team">팀관리</Link>
               </li>
+              <li className={location.pathname === '/admin/products' ? 'active' : ''}>
+                <Link to="/admin/products">제품관리</Link>
+              </li>
               <li className={location.pathname === '/admin/access-requests' ? 'active' : ''}>
                 <Link to="/admin/access-requests">접근요청</Link>
               </li>

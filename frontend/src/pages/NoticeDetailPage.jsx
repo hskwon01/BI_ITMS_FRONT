@@ -170,10 +170,10 @@ const NoticeDetailPage = () => {
           {canManage && (
             <div className="notice-manage-actions">
               <Link to={`/notices/${id}/edit`} className="btn btn-primary">
-                <i className="icon">✏️</i> 수정
+                수정
               </Link>
               <button onClick={handleDelete} className="btn btn-danger">
-                <i className="icon">🗑️</i> 삭제
+                삭제
               </button>
             </div>
           )}

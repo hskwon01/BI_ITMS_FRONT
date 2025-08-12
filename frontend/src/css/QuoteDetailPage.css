@@ -1,0 +1,436 @@
+/* 견적 상세 페이지 스타일 */
+.quote-detail-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.quote-header {
+  margin-bottom: 2rem;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  color: #d1d5db;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.quote-title-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.quote-title-section h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3652;
+  margin: 0;
+  flex: 1;
+}
+
+.quote-status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-draft {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* 버튼 스타일 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #d97706;
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #059669;
+}
+
+/* 정보 섹션 */
+.quote-info-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(80,80,160,.07);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item span {
+  color: #2d3652;
+  font-size: 1rem;
+}
+
+.info-item span.expired {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.notes-section {
+  border-top: 1px solid #f1f3f4;
+  padding-top: 1.5rem;
+}
+
+.notes-section label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.notes-content {
+  color: #2d3652;
+  line-height: 1.6;
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* 견적 항목 섹션 */
+.quote-items-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(80,80,160,.07);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.quote-items-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3652;
+  margin: 0 0 1.5rem 0;
+}
+
+.items-table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.items-table th {
+  background: #f8f9fb;
+  color: #2d3652;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #2d3652;
+  margin-bottom: 0.25rem;
+}
+
+.item-description {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.total-price {
+  font-weight: 600;
+  color: #059669;
+}
+
+.total-section {
+  background: #f8f9fb;
+  padding: 1.5rem;
+  text-align: right;
+  border-top: 2px solid #e5e7eb;
+}
+
+.total-amount {
+  font-size: 1.3rem;
+  color: #2d3652;
+}
+
+.total-amount strong {
+  color: #059669;
+  font-size: 1.5rem;
+}
+
+.no-items {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+}
+
+/* 관리자 액션 섹션 */
+.admin-actions-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(80,80,160,.07);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-left: 4px solid #6366f1;
+}
+
+.admin-actions-section h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3652;
+  margin: 0 0 1rem 0;
+}
+
+.status-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* 하단 네비게이션 */
+.bottom-nav {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* 로딩 및 에러 */
+.loading,
+.error {
+  text-align: center;
+  padding: 4rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #ef4444;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .quote-detail-container {
+    padding: 1rem;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .header-actions {
+    justify-content: flex-end;
+  }
+  
+  .quote-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .quote-title-section h1 {
+    font-size: 1.5rem;
+  }
+  
+  .quote-info-section,
+  .quote-items-section,
+  .admin-actions-section {
+    padding: 1.5rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .items-table-container {
+    overflow-x: auto;
+  }
+  
+  .items-table {
+    min-width: 600px;
+  }
+  
+  .status-actions {
+    flex-direction: column;
+  }
+  
+  .total-amount {
+    font-size: 1.1rem;
+  }
+  
+  .total-amount strong {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quote-detail-container {
+    padding: 0.5rem;
+  }
+  
+  .quote-info-section,
+  .quote-items-section,
+  .admin-actions-section {
+    padding: 1rem;
+  }
+  
+  .quote-title-section h1 {
+    font-size: 1.3rem;
+  }
+  
+  .btn {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+  }
+}
