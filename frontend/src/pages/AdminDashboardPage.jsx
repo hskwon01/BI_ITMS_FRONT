@@ -17,6 +17,7 @@ const AdminDashboardPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -31,6 +32,7 @@ const AdminDashboardPage = () => {
         ]);
         setStats(s.data);
         setTrends(t.data);
+        setLastUpdated(new Date());
       } catch {
         setStats(null);
         setTrends([]);
@@ -53,6 +55,7 @@ const AdminDashboardPage = () => {
         .then(([s, t]) => {
           setStats(s.data);
           setTrends(t.data);
+          setLastUpdated(new Date());
         })
         .catch(() => setToast({ show: true, message: '자동 새로고침 실패', type: 'error' }));
     }, 60000);
@@ -133,9 +136,20 @@ const AdminDashboardPage = () => {
               <h3>⚠️ SLA 자동 종결 확인</h3>
             </div>
             <div className="modal-content">
-              <p>답변 완료된 티켓 중 7일간 고객 응답이 없는 티켓을 자동으로 종결 처리하시겠습니까?</p>
+              <div className="sla-explanation">
+                <h4>📋 SLA 자동 종결 정책</h4>
+                <ul>
+                  <li><strong>대상 티켓:</strong> 상태가 "답변 완료"인 티켓</li>
+                  <li><strong>기준 기간:</strong> 답변 완료 후 7일간 고객 응답 없음</li>
+                  <li><strong>처리 결과:</strong> 해당 티켓들이 "종결" 상태로 변경</li>
+                  <li><strong>목적:</strong> 서비스 수준 협약(SLA) 준수 및 효율적인 티켓 관리</li>
+                </ul>
+              </div>
+              <div className="confirmation-question">
+                <p><strong>위 조건에 해당하는 티켓들을 자동으로 종결 처리하시겠습니까?</strong></p>
+              </div>
               <div className="modal-warning">
-                <span>⚠️ 이 작업은 되돌릴 수 없습니다.</span>
+                <span>⚠️ 이 작업은 되돌릴 수 없습니다. 신중히 결정해 주세요.</span>
               </div>
             </div>
             <div className="modal-actions">
@@ -157,8 +171,14 @@ const AdminDashboardPage = () => {
       )}
       
       <div className="admin-dashboard-header">
-        <h1>관리자 대시보드</h1>
-        <p className="admin-dashboard-desc">시스템 현황을 한눈에 확인하세요</p>
+        <div className="dashboard-title-section">
+          <h1>📊 관리자 대시보드</h1>
+          <p className="admin-dashboard-desc">IT 서비스 관리 현황을 한눈에 확인하세요</p>
+          <div className="last-updated">
+            <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
+            {autoRefresh && <span className="auto-refresh-indicator">🔄 자동 새로고침 활성</span>}
+          </div>
+        </div>
       </div>
 
       <div className="admin-dashboard-toolbar">
@@ -185,13 +205,25 @@ const AdminDashboardPage = () => {
           </div>
         </div>
         <div className="admin-dashboard-actions">
-          <button 
-            className="auto-close-btn"
-            onClick={() => setShowConfirmModal(true)}
-            disabled={autoClosing}
-          >
-            {autoClosing ? '처리 중...' : 'SLA 자동 종결 실행'}
-          </button>
+          <div className="sla-auto-close-section">
+            <button 
+              className="auto-close-btn"
+              onClick={() => setShowConfirmModal(true)}
+              disabled={autoClosing}
+            >
+              {autoClosing ? '처리 중...' : 'SLA 자동 종결 실행'}
+            </button>
+            <div className="sla-info-tooltip">
+              <span className="info-icon">ℹ️</span>
+              <div className="tooltip-content">
+                <h4>SLA 자동 종결이란?</h4>
+                <p>• 답변 완료 상태인 티켓 중</p>
+                <p>• 7일간 고객 응답이 없는 티켓을</p>
+                <p>• 자동으로 종결 처리하는 기능</p>
+                <p>• 서비스 수준 협약(SLA) 준수</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

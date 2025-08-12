@@ -418,4 +418,176 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* SLA 자동 종결 섹션 스타일 */
+.sla-auto-close-section {
+  position: relative;
+  display: inline-block;
+}
+
+.sla-info-tooltip {
+  position: relative;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.info-icon {
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.info-icon:hover {
+  opacity: 1;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2d3652;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #2d3652;
+}
+
+.sla-info-tooltip:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #ffd43b;
+}
+
+.tooltip-content p {
+  margin: 4px 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* 대시보드 헤더 개선 */
+.dashboard-title-section {
+  text-align: center;
+}
+
+.last-updated {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.auto-refresh-indicator {
+  color: #10b981;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 확인 모달 개선 */
+.sla-explanation {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.sla-explanation h4 {
+  margin: 0 0 12px 0;
+  color: #2d3652;
+  font-size: 1rem;
+}
+
+.sla-explanation ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.sla-explanation li {
+  margin: 8px 0;
+  padding-left: 0;
+  position: relative;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.sla-explanation li::before {
+  content: '•';
+  color: #6366f1;
+  font-size: 1.2rem;
+  position: absolute;
+  left: -16px;
+}
+
+.confirmation-question {
+  background: #e0f2fe;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #0288d1;
+  margin-bottom: 16px;
+}
+
+.confirmation-question p {
+  margin: 0;
+  color: #01579b;
+  font-size: 0.95rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .sla-auto-close-section {
+    display: block;
+    text-align: center;
+  }
+  
+  .tooltip-content {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    top: auto;
+    transform: none;
+    min-width: auto;
+    margin-bottom: 0;
+  }
+  
+  .tooltip-content::after {
+    display: none;
+  }
+  
+  .last-updated {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 } 

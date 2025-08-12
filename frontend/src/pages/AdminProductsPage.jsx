@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import AdminLayout from '../components/AdminLayout';
+import CommonLayout from '../components/CommonLayout';
 import { fetchProducts, createProduct, updateProduct, deleteProduct, fetchCategories } from '../api/products';
 import { useUser } from '../contexts/UserContext';
 import '../css/AdminProductsPage.css';
@@ -144,19 +144,19 @@ const AdminProductsPage = () => {
   // 권한 확인
   if (!user?.data || (user.data.role !== 'admin' && user.data.role !== 'itsm_team')) {
     return (
-      <AdminLayout>
+      <CommonLayout>
         <div className="admin-products-container">
           <div className="access-denied">
             <h2>접근 권한이 없습니다</h2>
             <p>이 페이지는 관리자만 접근할 수 있습니다.</p>
           </div>
         </div>
-      </AdminLayout>
+      </CommonLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <CommonLayout>
       <div className="admin-products-container">
         <div className="admin-products-header">
           <h1>제품 관리</h1>
@@ -384,7 +384,7 @@ const AdminProductsPage = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </CommonLayout>
   );
 };
 
