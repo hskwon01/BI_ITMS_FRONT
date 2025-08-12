@@ -1164,6 +1164,137 @@
   box-shadow: 0 4px 12px rgba(124, 131, 253, 0.2);
 }
 
+/* 진행도 단계 표시 */
+.ticket-progress-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.ticket-progress-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #3b82f6;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  gap: 1rem;
+}
+
+.progress-steps::before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  right: 30px;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 3px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.progress-step.completed .step-icon {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.progress-step.current .step-icon {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.step-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.progress-step.completed .step-title {
+  color: #16a34a;
+}
+
+.progress-step.current .step-title {
+  color: #3b82f6;
+}
+
+.step-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.step-date {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  font-style: italic;
+  background: #f9fafb;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+/* 진행도 단계 연결선 */
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background: #16a34a;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .ticket-meta {
@@ -1222,5 +1353,33 @@
   
   .reply-files .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .progress-steps {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .progress-steps::before {
+    display: none;
+  }
+  
+  .progress-step {
+    flex-direction: row;
+    text-align: left;
+    gap: 1rem;
+  }
+  
+  .step-icon {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  
+  .step-content {
+    align-items: flex-start;
+  }
+  
+  .progress-step:not(:last-child)::after {
+    display: none;
   }
 } 

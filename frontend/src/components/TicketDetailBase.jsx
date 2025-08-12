@@ -485,12 +485,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>
                 {ticket.urgency}
               </span>
-              <span className="ticket-date">
-                {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
-                  year: 'numeric', month: 'long', day: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                })}
-              </span>
             </div>
           </div>
         </div>
@@ -498,6 +492,48 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         <div className="ticket-description">
           <h3>내용</h3>
           <p>{ticket.description}</p>
+        </div>
+
+        {/* 진행도 단계 표시 */}
+        <div className="ticket-progress-section">
+          <h3>진행 상황</h3>
+          <div className="progress-steps">
+            <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''}`}>
+              <div className="step-icon">📝</div>
+              <div className="step-content">
+                <div className="step-title">접수</div>
+                <div className="step-description">티켓이 등록되었습니다</div>
+                {ticket.status === '접수' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+              </div>
+            </div>
+            
+            <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
+              <div className="step-icon">⚙️</div>
+              <div className="step-content">
+                <div className="step-title">진행중</div>
+                <div className="step-description">담당자가 처리 중입니다</div>
+                {ticket.status === '진행중' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+              </div>
+            </div>
+            
+            <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
+              <div className="step-icon">✅</div>
+              <div className="step-content">
+                <div className="step-title">답변 완료</div>
+                <div className="step-description">답변이 완료되었습니다</div>
+                {ticket.status === '답변 완료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+              </div>
+            </div>
+            
+            <div className={`progress-step ${ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '종결' ? 'current' : ''}`}>
+              <div className="step-icon">🏁</div>
+              <div className="step-content">
+                <div className="step-title">종결</div>
+                <div className="step-description">티켓이 종결되었습니다</div>
+                {ticket.status === '종결' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="ticket-meta-grid">
@@ -533,6 +569,15 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           <div className="meta-item">
             <span className="meta-label">담당자:</span>
             <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">등록일:</span>
+            <span className="meta-value">
+              {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+              })}
+            </span>
           </div>
         </div>
 
