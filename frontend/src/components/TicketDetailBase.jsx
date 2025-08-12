@@ -4,6 +4,7 @@ import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateRe
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
 import CommonLayout from './CommonLayout';
+import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -401,8 +402,10 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   if (!ticket) return null;
 
+  const Layout = role === 'admin' ? AdminLayout : CommonLayout;
+  
   return (
-    <CommonLayout>
+    <Layout>
       <div className="ticket-detail-container">
         {toast.show && (
           <div className={`toast-notification ${toast.type}`}>
@@ -937,7 +940,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
       
     </div>
-    </CommonLayout>
+    </Layout>
     
   );
 };

@@ -7,3 +7,4 @@ export const updateProduct = (id, data) => API.put(`/products/${id}`, data);
 export const deleteProduct = (id) => API.delete(`/products/${id}`);
 export const fetchCategories = () => API.get('/products/categories');
 
+

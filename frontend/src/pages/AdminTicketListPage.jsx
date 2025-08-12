@@ -1,7 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getAllTickets, getAdminUnreadCounts } from '../api/ticket';
 import { Link, useLocation } from 'react-router-dom';
-import CommonLayout from '../components/CommonLayout';
+import { 
+  FiSearch, 
+  FiFilter, 
+  FiClock, 
+  FiUser, 
+  FiBriefcase,
+  FiMessageSquare,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiXCircle
+} from 'react-icons/fi';
+
 import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
 import '../css/AdminTicketListPage.css';
 
@@ -126,70 +137,52 @@ const AdminTicketListPage = () => {
   };
 
   return (
-    <CommonLayout>
-      <div className="admin-ticket-list-container">
+    <div className="admin-ticket-list-container">
         <div className="admin-ticket-header">
           <h1>티켓 관리</h1>
           <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
         </div>
 
-      <div className="admin-ticket-stats">
-        <div className="admin-ticket-stat-card total">
-          <div className="stat-label">전체</div>
-          <div className="stat-value">{allTickets.length}</div>
-        </div>
-        <div className="admin-ticket-stat-card sm">
-          <div className="stat-label">SM</div>
-          <div className="stat-value">{getTicketTypeCount('SM')}</div>
-        </div>
-        <div className="admin-ticket-stat-card sr">
-          <div className="stat-label">SR</div>
-          <div className="stat-value">{getTicketTypeCount('SR')}</div>
-        </div>
-        <div className="admin-ticket-stat-card received">
-          <div className="stat-label">접수</div>
-          <div className="stat-value">{getStatusCount('접수')}</div>
-        </div>
-        <div className="admin-ticket-stat-card in-progress">
-          <div className="stat-label">진행중</div>
-          <div className="stat-value">{getStatusCount('진행중')}</div>
-        </div>
-        <div className="admin-ticket-stat-card answered">
-          <div className="stat-label">답변완료</div>
-          <div className="stat-value">{getStatusCount('답변 완료')}</div>
-        </div>
-        <div className="admin-ticket-stat-card closed">
-          <div className="stat-label">종결</div>
-          <div className="stat-value">{getStatusCount('종결')}</div>
-        </div>
-      </div>
+
 
       <div className="admin-ticket-filters">
-        <input
-          name="keyword"
-          placeholder="제목, 고객명, 담당자로 검색..."
-          value={filters.keyword}
-          onChange={handleChange}
-          className="admin-ticket-search"
-        />
-        <select name="ticket_type" value={filters.ticket_type} onChange={handleChange} className="admin-ticket-select">
-          <option value="">모든 타입</option>
-          {ticketTypeList.map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-        <select name="status" value={filters.status} onChange={handleChange} className="admin-ticket-select">
-          <option value="">모든 상태</option>
-          {statusList.map(status => (
-            <option key={status} value={status}>{status}</option>
-          ))}
-        </select>
-        <select name="urgency" value={filters.urgency} onChange={handleChange} className="admin-ticket-select">
-          <option value="">모든 긴급도</option>
-          {urgencyList.map(urgency => (
-            <option key={urgency} value={urgency}>{urgency}</option>
-          ))}
-        </select>
+        <div className="search-container">
+          <FiSearch className="search-icon" />
+          <input
+            name="keyword"
+            placeholder="제목, 고객명, 담당자로 검색..."
+            value={filters.keyword}
+            onChange={handleChange}
+            className="admin-ticket-search"
+          />
+        </div>
+        <div className="filter-controls">
+          <div className="filter-group">
+            <FiFilter className="filter-icon" />
+            <select name="ticket_type" value={filters.ticket_type} onChange={handleChange} className="admin-ticket-select">
+              <option value="">모든 타입</option>
+              {ticketTypeList.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <select name="status" value={filters.status} onChange={handleChange} className="admin-ticket-select">
+              <option value="">모든 상태</option>
+              {statusList.map(status => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <select name="urgency" value={filters.urgency} onChange={handleChange} className="admin-ticket-select">
+              <option value="">모든 긴급도</option>
+              {urgencyList.map(urgency => (
+                <option key={urgency} value={urgency}>{urgency}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       <div className="admin-ticket-table-wrapper">
@@ -232,13 +225,29 @@ const AdminTicketListPage = () => {
                     </span>
                   </td>
                   <td>
-                    <span className={`status-badge ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
+                    <span className={`status-badge ${getStatusColor(ticket.status)}`}>
+                      {ticket.status === '접수' && <FiMessageSquare />}
+                      {ticket.status === '진행중' && <FiAlertCircle />}
+                      {ticket.status === '답변 완료' && <FiCheckCircle />}
+                      {ticket.status === '종결' && <FiXCircle />}
+                      {ticket.status}
+                    </span>
                   </td>
                   <td>
                     <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>{ticket.urgency}</span>
                   </td>
-                  <td>{ticket.customer_name}</td>
-                  <td>{ticket.company_name}</td>
+                  <td>
+                    <div className="customer-info">
+                      <FiUser className="info-icon" />
+                      <span>{ticket.customer_name}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="company-info">
+                      <FiBriefcase className="info-icon" />
+                      <span>{ticket.company_name}</span>
+                    </div>
+                  </td>
                   <td>
                     <div className="date-time-container">
                       <div className="date-time">{formatDateTime(ticket.created_at)}</div>
@@ -253,7 +262,6 @@ const AdminTicketListPage = () => {
         )}
       </div>
     </div>
-    </CommonLayout>
   );
 };
 

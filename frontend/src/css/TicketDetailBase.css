@@ -1,6 +1,8 @@
 .ticket-detail-container {
   padding: 2rem;
-  background: #fff;
+  background: #f4f5f7;
+  min-height: 100%;
+  border-radius: 8px;
 }
 
 .ticket-header {
@@ -20,7 +22,7 @@
 .ticket-header h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   margin: 0;
 }
 
@@ -30,27 +32,27 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  background: #fff;
+  background: white;
   padding: 0.8rem 1.2rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(80, 80, 160, 0.1);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dfe1e6;
 }
 
 .status-label {
   font-weight: 600;
-  color: #2d3652;
+  color: #172b4d;
   font-size: 0.9rem;
   white-space: nowrap;
 }
 
 .status-select {
   padding: 0.5rem 1rem;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #dfe1e6;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #2d3652;
+  color: #172b4d;
   background: #f8f9fa;
   cursor: pointer;
   transition: all 0.2s;
@@ -59,7 +61,7 @@
 
 .status-select:focus {
   outline: none;
-  border-color: #7c83fd;
+  border-color: #0052cc;
   background: #fff;
 }
 
@@ -106,12 +108,12 @@
 }
 
 .ticket-info-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(80, 80, 160, 0.08);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dfe1e6;
 }
 
 .ticket-title-section {
@@ -121,7 +123,7 @@
 .ticket-title-section h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   margin: 0 0 1rem 0;
 }
 
@@ -174,13 +176,13 @@
   padding: 1.5rem;
   background: #f8f9fa;
   border-radius: 12px;
-  border-left: 4px solid #7c83fd;
+  border-left: 4px solid #0052cc;
 }
 
 .ticket-description h3 {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2d3652;
+  color: #172b4d;
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
@@ -623,18 +625,18 @@
 }
 
 .replies-section {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(80, 80, 160, 0.08);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dfe1e6;
   overflow: hidden; /* 자식 요소가 넘치지 않도록 */
 }
 
 .replies-section h3 {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   margin: 0 0 1.5rem 0;
 }
 
@@ -643,18 +645,18 @@
 }
 
 .reply-card {
-  background: #fff;
-  border-radius: 16px;
+  background: white;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
-  border-left: 4px solid #e2e8f0;
-  border: 1px solid #e2e8f0;
+  border-left: 4px solid #dfe1e6;
+  border: 1px solid #dfe1e6;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .reply-card.admin-reply {
   background: #f8f9ff;
-  border-left-color: #7c83fd;
+  border-left-color: #0052cc;
   border: 1px solid #e9eafc;
 }
 
@@ -675,7 +677,7 @@
 
 .author-name {
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   font-size: 1rem;
 }
 
@@ -689,9 +691,9 @@
 }
 
 .author-role.admin {
-  background: #e9eafc;
-  color: #7c83fd;
-  border: 1px solid #d1d5fd;
+  background: #deebff;
+  color: #0052cc;
+  border: 1px solid #b3d4fc;
 }
 
 .author-role.customer {
@@ -720,7 +722,7 @@
 }
 
 .reply-form {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #dfe1e6;
   padding-top: 1.5rem;
 }
 
@@ -733,7 +735,7 @@
   max-width: 100%; /* 추가: 부모 요소 너비를 넘지 않도록 */
   min-height: 120px;
   padding: 1rem;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #dfe1e6;
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
@@ -744,13 +746,13 @@
 
 .reply-textarea:focus {
   outline: none;
-  border-color: #7c83fd;
+  border-color: #0052cc;
 }
 
 /* 파일 업로드 관련 스타일은 DragDropFileUpload.css에서 관리 */
 
 .submit-btn {
-  background: #7c83fd;
+  background: #0052cc;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -762,9 +764,9 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #6b73fd;
+  background: #0747a6;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 131, 253, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
 }
 
 .submit-btn:disabled {

@@ -2,10 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, autoCloseTickets, getTrends } from '../api/dashboard';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
-import CommonLayout from '../components/CommonLayout';
+import { 
+  FiTarget, 
+  FiBarChart2, 
+  FiTrello, 
+  FiTrendingUp, 
+  FiRefreshCw, 
+  FiUsers, 
+  FiUserCheck,
+  FiFileText,
+  FiSettings
+} from 'react-icons/fi';
+
 import '../css/AdminDashboardPage.css';
 
-const COLORS = ['#ffd43b', '#67cd4e', '#7c83fd', '#868e96'];
+const COLORS = ['#0052CC', '#36B37E', '#FF8B00', '#FF5630', '#6554C0'];
 
 const AdminDashboardPage = () => {
   const [stats, setStats] = useState(null);
@@ -18,6 +29,7 @@ const AdminDashboardPage = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [selectedView, setSelectedView] = useState('overview'); // overview, kanban, analytics
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -87,11 +99,9 @@ const AdminDashboardPage = () => {
 
   if (loading) {
     return (
-      <CommonLayout>
-        <div className="admin-dashboard-container">
-          <div className="loading-spinner">로딩 중...</div>
-        </div>
-      </CommonLayout>
+      <div className="jira-dashboard-container">
+        <div className="loading-spinner">로딩 중...</div>
+      </div>
     );
   }
 
@@ -120,157 +130,57 @@ const AdminDashboardPage = () => {
     navigate(`${path}?status=${encodeURIComponent(statusLabel)}`);
   };
 
-  return (
-    <CommonLayout>
-      <div className="admin-dashboard-container">
-        {toast.show && (
-          <div className={`toast-notification ${toast.type}`}>
-            {toast.message}
+  const renderOverview = () => (
+    <div className="jira-overview">
+      <div className="jira-stats-grid">
+        <div className="jira-stat-card total">
+          <div className="stat-header">
+            <div className="stat-icon">
+              <FiBarChart2 />
+            </div>
+            <div className="stat-badge">전체</div>
           </div>
-        )}
-
-      {showConfirmModal && (
-        <div className="modal-overlay">
-          <div className="confirm-modal">
-            <div className="modal-header">
-              <h3>⚠️ SLA 자동 종결 확인</h3>
-            </div>
-            <div className="modal-content">
-              <div className="sla-explanation">
-                <h4>📋 SLA 자동 종결 정책</h4>
-                <ul>
-                  <li><strong>대상 티켓:</strong> 상태가 "답변 완료"인 티켓</li>
-                  <li><strong>기준 기간:</strong> 답변 완료 후 7일간 고객 응답 없음</li>
-                  <li><strong>처리 결과:</strong> 해당 티켓들이 "종결" 상태로 변경</li>
-                  <li><strong>목적:</strong> 서비스 수준 협약(SLA) 준수 및 효율적인 티켓 관리</li>
-                </ul>
-              </div>
-              <div className="confirmation-question">
-                <p><strong>위 조건에 해당하는 티켓들을 자동으로 종결 처리하시겠습니까?</strong></p>
-              </div>
-              <div className="modal-warning">
-                <span>⚠️ 이 작업은 되돌릴 수 없습니다. 신중히 결정해 주세요.</span>
-              </div>
-            </div>
-            <div className="modal-actions">
-              <button 
-                className="modal-btn cancel"
-                onClick={() => setShowConfirmModal(false)}
-              >
-                취소
-              </button>
-              <button 
-                className="modal-btn confirm"
-                onClick={handleAutoClose}
-              >
-                확인
-              </button>
-            </div>
-          </div>
+          <div className="stat-number">{nf.format(Number(stats.전체티켓 || 0))}</div>
+          <div className="stat-label">티켓</div>
         </div>
-      )}
-      
-      <div className="admin-dashboard-header">
-        <div className="dashboard-title-section">
-          <h1>📊 관리자 대시보드</h1>
-          <p className="admin-dashboard-desc">IT 서비스 관리 현황을 한눈에 확인하세요</p>
-          <div className="last-updated">
-            <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
-            {autoRefresh && <span className="auto-refresh-indicator">🔄 자동 새로고침 활성</span>}
+        <div className="jira-stat-card received">
+          <div className="stat-header">
+            <div className="stat-icon">📥</div>
+            <div className="stat-badge">접수</div>
           </div>
+          <div className="stat-number">{nf.format(Number(stats.접수 || 0))}</div>
+          <div className="stat-label">대기 중</div>
+        </div>
+        <div className="jira-stat-card in-progress">
+          <div className="stat-header">
+            <div className="stat-icon">🔧</div>
+            <div className="stat-badge">진행</div>
+          </div>
+          <div className="stat-number">{nf.format(Number(stats.진행중 || 0))}</div>
+          <div className="stat-label">처리 중</div>
+        </div>
+        <div className="jira-stat-card answered">
+          <div className="stat-header">
+            <div className="stat-icon">✅</div>
+            <div className="stat-badge">완료</div>
+          </div>
+          <div className="stat-number">{nf.format(Number(stats.답변완료 || 0))}</div>
+          <div className="stat-label">답변 완료</div>
+        </div>
+        <div className="jira-stat-card closed">
+          <div className="stat-header">
+            <div className="stat-icon">📁</div>
+            <div className="stat-badge">종결</div>
+          </div>
+          <div className="stat-number">{nf.format(Number(stats.종결 || 0))}</div>
+          <div className="stat-label">해결됨</div>
         </div>
       </div>
 
-      <div className="admin-dashboard-toolbar">
-        <div className="admin-dashboard-filters">
-          <div className="filter-group">
-            <label>기간</label>
-            <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
-              <option value={7}>최근 7일</option>
-              <option value={30}>최근 30일</option>
-              <option value={90}>최근 90일</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>유형</label>
-            <select value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="ALL">전체</option>
-              <option value="SR">SR</option>
-              <option value="SM">SM</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>자동 새로고침</label>
-            <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
-          </div>
-        </div>
-        <div className="admin-dashboard-actions">
-          <div className="sla-auto-close-section">
-            <button 
-              className="auto-close-btn"
-              onClick={() => setShowConfirmModal(true)}
-              disabled={autoClosing}
-            >
-              {autoClosing ? '처리 중...' : 'SLA 자동 종결 실행'}
-            </button>
-            <div className="sla-info-tooltip">
-              <span className="info-icon">ℹ️</span>
-              <div className="tooltip-content">
-                <h4>SLA 자동 종결이란?</h4>
-                <p>• 답변 완료 상태인 티켓 중</p>
-                <p>• 7일간 고객 응답이 없는 티켓을</p>
-                <p>• 자동으로 종결 처리하는 기능</p>
-                <p>• 서비스 수준 협약(SLA) 준수</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="admin-dashboard-grid">
-        <div className="dashboard-main">
-          <div className="admin-dashboard-stats">
-            <div className="admin-dashboard-stat-card total">
-              <div className="stat-icon">📋</div>
-              <div className="stat-content">
-                <div className="stat-label">전체 티켓</div>
-                <div className="stat-value">{nf.format(Number(stats.전체티켓 || 0))}</div>
-              </div>
-            </div>
-            <div className="admin-dashboard-stat-card received">
-              <div className="stat-icon">📥</div>
-              <div className="stat-content">
-                <div className="stat-label">접수</div>
-                <div className="stat-value">{nf.format(Number(stats.접수 || 0))}</div>
-              </div>
-            </div>
-            <div className="admin-dashboard-stat-card in-progress">
-              <div className="stat-icon">🔧</div>
-              <div className="stat-content">
-                <div className="stat-label">진행중</div>
-                <div className="stat-value">{nf.format(Number(stats.진행중 || 0))}</div>
-              </div>
-            </div>
-            <div className="admin-dashboard-stat-card answered">
-              <div className="stat-icon">✅</div>
-              <div className="stat-content">
-                <div className="stat-label">답변 완료</div>
-                <div className="stat-value">{nf.format(Number(stats.답변완료 || 0))}</div>
-              </div>
-            </div>
-            <div className="admin-dashboard-stat-card closed">
-              <div className="stat-icon">📁</div>
-              <div className="stat-content">
-                <div className="stat-label">종결</div>
-                <div className="stat-value">{nf.format(Number(stats.종결 || 0))}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="admin-dashboard-charts">
-        <div className="chart-container">
+      <div className="jira-charts-section">
+        <div className="jira-chart-card">
           <h3>티켓 상태 분포</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie 
                 data={pieRenderData} 
@@ -278,7 +188,7 @@ const AdminDashboardPage = () => {
                 nameKey="name" 
                 cx="50%" 
                 cy="50%" 
-                outerRadius={100}
+                outerRadius={80}
                 labelLine={false}
                 label={({ name, percent, value }) => {
                   if (!value || percent < 0.03) return '';
@@ -295,7 +205,88 @@ const AdminDashboardPage = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-container">
+        <div className="jira-chart-card">
+          <h3>일자별 생성 추이</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={trends}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#0052CC" strokeWidth={3} dot={{ fill: '#0052CC', strokeWidth: 2, r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderKanban = () => (
+    <div className="jira-kanban">
+      <div className="kanban-columns">
+        <div className="kanban-column received">
+          <div className="column-header">
+            <div className="column-title">📥 접수</div>
+            <div className="column-count">{Number(stats.접수 || 0)}</div>
+          </div>
+          <div className="column-content" onClick={() => navigateToList('접수')}>
+            <div className="kanban-placeholder">
+              <div className="placeholder-icon">
+              <FiTrello />
+            </div>
+              <div className="placeholder-text">접수된 티켓 보기</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="kanban-column in-progress">
+          <div className="column-header">
+            <div className="column-title">🔧 진행중</div>
+            <div className="column-count">{Number(stats.진행중 || 0)}</div>
+          </div>
+          <div className="column-content" onClick={() => navigateToList('진행중')}>
+            <div className="kanban-placeholder">
+              <div className="placeholder-icon">⚡</div>
+              <div className="placeholder-text">진행중인 티켓 보기</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="kanban-column answered">
+          <div className="column-header">
+            <div className="column-title">✅ 답변 완료</div>
+            <div className="column-count">{Number(stats.답변완료 || 0)}</div>
+          </div>
+          <div className="column-content" onClick={() => navigateToList('답변 완료')}>
+            <div className="kanban-placeholder">
+              <div className="placeholder-icon">📝</div>
+              <div className="placeholder-text">답변 완료된 티켓 보기</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="kanban-column closed">
+          <div className="column-header">
+            <div className="column-title">📁 종결</div>
+            <div className="column-count">{Number(stats.종결 || 0)}</div>
+          </div>
+          <div className="column-content" onClick={() => navigateToList('종결')}>
+            <div className="kanban-placeholder">
+              <div className="placeholder-icon">
+              <FiTarget />
+            </div>
+              <div className="placeholder-text">종결된 티켓 보기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAnalytics = () => (
+    <div className="jira-analytics">
+      <div className="analytics-grid">
+        <div className="analytics-card">
           <h3>티켓 상태별 개수</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={barData}>
@@ -303,7 +294,7 @@ const AdminDashboardPage = () => {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="value" fill="#ffd43b">
+              <Bar dataKey="value" fill="#0052CC">
                 {barData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ cursor: 'pointer' }} onClick={() => navigateToList(entry.name)} />
                 ))}
@@ -311,42 +302,157 @@ const AdminDashboardPage = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-          </div>
 
-          <div className="admin-dashboard-charts">
-        <div className="chart-container full">
-          <h3>일자별 티켓 생성 추이</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line type="monotone" dataKey="value" stroke="#7c83fd" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-        </div>
-
-        <aside className="dashboard-side">
-          <div className="summary-card">
-            <h3>사용자 현황</h3>
-            <div className="summary-stats">
-              <div className="summary-item">
-                <span className="summary-label">고객 수:</span>
-                <span className="summary-value">{nf.format(Number(stats.고객수 || 0))}</span>
+        <div className="analytics-card">
+          <h3>사용자 현황</h3>
+          <div className="user-stats">
+            <div className="user-stat-item">
+              <div className="user-stat-icon">
+              <FiUsers />
+            </div>
+              <div className="user-stat-content">
+                <div className="user-stat-number">{nf.format(Number(stats.고객수 || 0))}</div>
+                <div className="user-stat-label">고객</div>
               </div>
-              <div className="summary-item">
-                <span className="summary-label">관리자 수:</span>
-                <span className="summary-value">{nf.format(Number(stats.관리자수 || 0))}</span>
+            </div>
+            <div className="user-stat-item">
+              <div className="user-stat-icon">
+              <FiUserCheck />
+            </div>
+              <div className="user-stat-content">
+                <div className="user-stat-number">{nf.format(Number(stats.관리자수 || 0))}</div>
+                <div className="user-stat-label">관리자</div>
               </div>
             </div>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
-    </CommonLayout>
+  );
+
+  return (
+    <div className="jira-dashboard-container">
+        {toast.show && (
+          <div className={`jira-toast ${toast.type}`}>
+            {toast.message}
+          </div>
+        )}
+
+        {showConfirmModal && (
+          <div className="jira-modal-overlay">
+            <div className="jira-modal">
+              <div className="modal-header">
+                <h3>⚠️ SLA 자동 종결 확인</h3>
+              </div>
+              <div className="modal-content">
+                <div className="sla-explanation">
+                  <h4><FiFileText /> SLA 자동 종결 정책</h4>
+                  <ul>
+                    <li><strong>대상 티켓:</strong> 상태가 "답변 완료"인 티켓</li>
+                    <li><strong>기준 기간:</strong> 답변 완료 후 7일간 고객 응답 없음</li>
+                    <li><strong>처리 결과:</strong> 해당 티켓들이 "종결" 상태로 변경</li>
+                    <li><strong>목적:</strong> 서비스 수준 협약(SLA) 준수 및 효율적인 티켓 관리</li>
+                  </ul>
+                </div>
+                <div className="confirmation-question">
+                  <p><strong>위 조건에 해당하는 티켓들을 자동으로 종결 처리하시겠습니까?</strong></p>
+                </div>
+                <div className="modal-warning">
+                  <span>⚠️ 이 작업은 되돌릴 수 없습니다. 신중히 결정해 주세요.</span>
+                </div>
+              </div>
+              <div className="modal-actions">
+                <button 
+                  className="modal-btn cancel"
+                  onClick={() => setShowConfirmModal(false)}
+                >
+                  취소
+                </button>
+                <button 
+                  className="modal-btn confirm"
+                  onClick={handleAutoClose}
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <div className="jira-header">
+          <div className="jira-title-section">
+            <h1><FiTarget /> ITMS 관리자 대시보드</h1>
+            <div className="jira-status">
+              <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
+              {autoRefresh && <span className="auto-refresh-badge"><FiRefreshCw /> 자동 새로고침</span>}
+            </div>
+          </div>
+        </div>
+
+        <div className="jira-toolbar">
+          <div className="jira-view-tabs">
+            <button 
+              className={`view-tab ${selectedView === 'overview' ? 'active' : ''}`}
+              onClick={() => setSelectedView('overview')}
+            >
+              <FiBarChart2 /> 개요
+            </button>
+            <button 
+              className={`view-tab ${selectedView === 'kanban' ? 'active' : ''}`}
+              onClick={() => setSelectedView('kanban')}
+            >
+              <FiTrello /> 칸반 보드
+            </button>
+            <button 
+              className={`view-tab ${selectedView === 'analytics' ? 'active' : ''}`}
+              onClick={() => setSelectedView('analytics')}
+            >
+              <FiTrendingUp /> 분석
+            </button>
+          </div>
+
+          <div className="jira-controls">
+            <div className="jira-filters">
+              <div className="filter-group">
+                <label>기간</label>
+                <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
+                  <option value={7}>7일</option>
+                  <option value={30}>30일</option>
+                  <option value={90}>90일</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>유형</label>
+                <select value={type} onChange={(e) => setType(e.target.value)}>
+                  <option value="ALL">전체</option>
+                  <option value="SR">SR</option>
+                  <option value="SM">SM</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>자동 새로고침</label>
+                <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
+              </div>
+            </div>
+            
+            <div className="jira-actions">
+              <button 
+                className="jira-action-btn sla-btn"
+                onClick={() => setShowConfirmModal(true)}
+                disabled={autoClosing}
+              >
+                {autoClosing ? '처리 중...' : 'SLA 자동 종결'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="jira-content">
+          {selectedView === 'overview' && renderOverview()}
+          {selectedView === 'kanban' && renderKanban()}
+          {selectedView === 'analytics' && renderAnalytics()}
+        </div>
+      </div>
   );
 };
 
