@@ -381,7 +381,7 @@ const AdminDashboardPage = () => {
         
         <div className="jira-header">
           <div className="jira-title-section">
-            <h1><FiTarget /> ITMS 관리자 대시보드</h1>
+            <h1>ITMS 관리자 대시보드</h1>
             <div className="jira-status">
               <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
               {autoRefresh && <span className="auto-refresh-badge"><FiRefreshCw /> 자동 새로고침</span>}

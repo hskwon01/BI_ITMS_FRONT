@@ -288,3 +288,4 @@ const QuoteDetailPage = () => {
 export default QuoteDetailPage;
 
 
+

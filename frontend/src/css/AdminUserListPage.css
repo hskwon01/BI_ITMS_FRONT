@@ -22,49 +22,48 @@
 
 .admin-user-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .admin-user-stat-card {
   background: white;
-  border: 1px solid #dfe1e6;
-  border-radius: 8px;
-  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem;
   text-align: center;
   transition: all 0.2s;
 }
 
 .admin-user-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #0052cc;
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .admin-user-stat-card .stat-label {
-  font-size: 0.9rem;
-  color: #6b778c;
-  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.3rem;
   font-weight: 500;
 }
 
 .admin-user-stat-card .stat-value {
-  font-size: 2rem;
-  color: #172b4d;
-  font-weight: 700;
+  font-size: 1.5rem;
+  color: #111827;
+  font-weight: 600;
 }
 
 .admin-user-stat-card.total {
-  border-left: 4px solid #0052cc;
+  background: #f8fafc;
 }
 
 .admin-user-stat-card.approved {
-  border-left: 4px solid #36b37e;
+  background: #f0fdf4;
 }
 
 .admin-user-stat-card.pending {
-  border-left: 4px solid #ff8b00;
+  background: #fffbeb;
 }
 
 .admin-user-search {
@@ -73,6 +72,7 @@
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 2rem;
+  box-sizing: border-box;
 }
 
 .search-input {
@@ -84,6 +84,7 @@
   background: white;
   color: #172b4d;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
