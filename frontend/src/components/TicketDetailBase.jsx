@@ -4,6 +4,7 @@ import { getTicketDetail, postReply, deleteTicketFile, deleteReplyFile, updateRe
 import { getAssignees } from '../api/user';
 import DragDropFileUpload from './DragDropFileUpload';
 import CommonLayout from './CommonLayout';
+import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
 
@@ -401,14 +402,17 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
   if (!ticket) return null;
 
-  return (
-    <CommonLayout>
-      <div className="ticket-detail-container">
-        {toast.show && (
-          <div className={`toast-notification ${toast.type}`}>
-            {toast.message}
-          </div>
-        )}
+  // 관리자용은 AdminRoute에서 레이아웃을 제공하므로 여기서는 레이아웃을 사용하지 않음
+  // 사용자용은 여기서 CommonLayout을 제공
+  const Layout = role === 'admin' ? null : CommonLayout;
+  
+    const content = (
+    <div className={role === 'admin' ? 'admin-ticket-wrapper' : 'ticket-detail-container'}>
+      {toast.show && (
+        <div className={`toast-notification ${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
 
       {modalState.show && (
         <div className="modal-overlay">
@@ -445,8 +449,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         </div>
       )}
 
-      
-
       <div className="ticket-header">
         <div className="ticket-header-content">
           <h1>티켓 상세</h1>
@@ -471,337 +473,63 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         </div>
       </div>
 
-      <div className="ticket-info-card">
-        <div className="ticket-title-section">
-          <div className="ticket-header-row">
-            <h2>{ticket.title}</h2>
-            <div className="ticket-meta">
-              <span className={`ticket-type-badge ${getTicketTypeColor(ticket.ticket_type)}`}>
-                {ticket.ticket_type}
-              </span>
-              <span className={`status-badge ${getStatusColor(ticket.status)}`}>
-                {ticket.status}
-              </span>
-              <span className={`urgency-badge ${getUrgencyColor(ticket.urgency)}`}>
-                {ticket.urgency}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="ticket-description">
-          <h3>내용</h3>
-          <p>{ticket.description}</p>
-        </div>
-
-        {/* 진행도 단계 표시 */}
-        <div className="ticket-progress-section">
-          <h3>진행 상황</h3>
-          <div className="progress-steps">
-            <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''}`}>
-              <div className="step-icon">📝</div>
-              <div className="step-content">
-                <div className="step-title">접수</div>
-                <div className="step-description">티켓이 등록되었습니다</div>
-                {ticket.status === '접수' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
-              </div>
-            </div>
-            
-            <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
-              <div className="step-icon">⚙️</div>
-              <div className="step-content">
-                <div className="step-title">진행중</div>
-                <div className="step-description">담당자가 처리 중입니다</div>
-                {ticket.status === '진행중' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
-              </div>
-            </div>
-            
-            <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
-              <div className="step-icon">✅</div>
-              <div className="step-content">
-                <div className="step-title">답변 완료</div>
-                <div className="step-description">답변이 완료되었습니다</div>
-                {ticket.status === '답변 완료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
-              </div>
-            </div>
-            
-            <div className={`progress-step ${ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '종결' ? 'current' : ''}`}>
-              <div className="step-icon">🏁</div>
-              <div className="step-content">
-                <div className="step-title">종결</div>
-                <div className="step-description">티켓이 종결되었습니다</div>
-                {ticket.status === '종결' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="ticket-meta-grid">
-          {ticket.ticket_type === 'SR' ? (
-            <>
-              <div className="meta-item">
-                <span className="meta-label">관련 제품:</span>
-                <span className="meta-value">{ticket.product}</span>
-              </div>
-              <div className="meta-item">
-                <span className="meta-label">S/W Version:</span>
-                <span className="meta-value">{ticket.sw_version}</span>
-              </div>
-              <div className="meta-item">
-                <span className="meta-label">OS:</span>
-                <span className="meta-value">{ticket.os}</span>
-              </div>
-              <div className="meta-item">
-                <span className="meta-label">Platform:</span>
-                <span className="meta-value">{ticket.platform}</span>
-              </div>
-            </>
-          ) : (
-            <div className="meta-item">
-              <span className="meta-label">고객사:</span>
-              <span className="meta-value">{ticket.client_company}</span>
-            </div>
-          )}
-          <div className="meta-item">
-            <span className="meta-label">등록자:</span>
-            <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">담당자:</span>
-            <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">등록일:</span>
-            <span className="meta-value">
-              {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
-                year: 'numeric', month: 'long', day: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-              })}
-            </span>
-          </div>
-        </div>
-
-        {ticket.files && ticket.files.length > 0 && (
-          <div className="ticket-files">
-            <h3>첨부파일</h3>
-            <div className="file-grid">
-              {ticket.files.map(f => (
-                <div key={f.filename} className="file-item">
-                  {isImageFile(f.originalname) ? (
-                    // 이미지 파일 미리보기
-                    <div className="image-file">
-                      <img
-                        src={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
-                        alt={f.originalname}
-                        className="file-image"
-                        onClick={() => handleImageClick(`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`, f.originalname)}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <div className="file-info">
-                        <div className="file-name">{f.originalname}</div>
-                        <div className="file-actions">
-                          <a
-                            href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="file-link"
-                            title="새 탭에서 열기"
-                          >
-                            🔗
-                          </a>
-                          {(role === 'admin' || ticket.author_id === currentUserId) && (
-                            <button
-                              className="delete-btn"
-                              onClick={() => handleFileDelete(f.ticket_files_id, true)}
-                              title="삭제"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // 문서 파일 미리보기
-                    <div className="document-file">
-                      <div className="document-preview">
-                        <div className="document-icon">
-                          {getFileIcon(f.originalname)}
-                        </div>
-                        <div className="document-info">
-                          <div className="document-name">{f.originalname}</div>
-                          <div className="document-meta">
-                            {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
-                            <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="document-actions">
-                        {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
-                          <a
-                            href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="document-link"
-                            title="새 탭에서 열기"
-                          >
-                            🔗 열기
-                          </a>
-                        )}
-                        <a
-                          href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
-                          download={f.originalname}
-                          className="document-download"
-                          title="다운로드"
-                        >
-                          ⬇️ 다운로드
-                        </a>
-                        {(role === 'admin' || ticket.author_id === currentUserId) && (
-                          <button
-                            className="delete-btn"
-                            onClick={() => handleFileDelete(f.ticket_files_id, true)}
-                            title="삭제"
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="replies-section">
-        <h3>댓글 ({replies.length})</h3>
-        
-        <div className="replies-list">
-          {replies.map(reply => (
-            <div key={reply.id} className={`reply-card ${reply.role === 'admin' ? 'admin-reply' : ''}`}>
-              <div className="reply-header">
-                <div className="reply-author">
-                  <span className="author-name">{reply.author_name}</span>
-                  <span className={`author-role ${reply.role}`}>
-                    {reply.role === 'admin' ? '관리자' : '고객'}
-                  </span>
-                </div>
-                <span className="reply-date">
-                  {new Date(reply.created_at).toLocaleDateString('ko-KR', {
-                    year: 'numeric', month: 'short', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
+      {/* 2단 레이아웃: 메인 콘텐츠와 사이드바 */}
+      <div className="ticket-layout">
+        {/* 메인 콘텐츠 영역 */}
+        <div className="ticket-main-content">
+          {/* 통합된 티켓 내용 */}
+          <div className="ticket-info-card">
+            <div className="ticket-content-header">
+              <div className="ticket-title-row">
+                <h2>{ticket.title}</h2>
+                <span className="ticket-created-date">
+                  {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </span>
               </div>
-              
-              <div className="reply-content">
-                {editingReplyId === reply.id ? (
-                  <div className="reply-edit-form">
-                    <textarea
-                      value={editedMessage}
-                      onChange={(e) => setEditedMessage(e.target.value)}
-                      className="reply-edit-textarea"
-                    />
-                    <div className="reply-edit-buttons">
-                      <button onClick={() => handleUpdateReply(reply.id)}>저장</button>
-                      <button onClick={() => setEditingReplyId(null)}>취소</button>
-                    </div>
-                  </div>
-                ) : (
-                  <p>{reply.message}</p>
-                )}
-              </div>
-              <div className="reply-actions">
-                {reply.author_id === currentUserId && editingReplyId !== reply.id && (
-                  <>
-                    <button className="reply-edit-btn" onClick={() => {
-                      setEditingReplyId(reply.id);
-                      setEditedMessage(reply.message);
-                    }}>✏️ 수정</button>
-                    <button className="reply-delete-btn" onClick={() => handleDeleteReply(reply.id)}>🗑️ 삭제</button>
-                  </>
-                )}
-              </div>
-              {reply.files && reply.files.length > 0 && (
-                <div className="reply-files">
-                  <div className="file-grid">
-                    {reply.files.map(f => (
-                      <div key={f.public_id || f.originalname} className="file-item">
-                        {isImageFile(f.originalname) ? (
-                          // 이미지 파일 미리보기
-                          <div className="image-file">
-                            <img
-                              src={f.url}
-                              alt={f.originalname}
-                              className="file-image"
-                              onClick={() => handleImageClick(f.url, f.originalname)}
-                              style={{ cursor: 'pointer' }}
-                            />
-                            <div className="file-info">
-                              <div className="file-name">{f.originalname}</div>
-                              <div className="file-actions">
-                                <a
-                                  href={f.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="file-link"
-                                  title="새 탭에서 열기"
-                                >
-                                  🔗
-                                </a>
-                                {(role === 'admin' || reply.author_id === currentUserId) && (
-                                  <button 
-                                    className="delete-btn"
-                                    onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
-                                    title="삭제"
-                                  >
-                                    ✕
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          // 문서 파일 미리보기
-                          <div className="document-file">
-                            <div className="document-preview">
-                              <div className="document-icon">
-                                {getFileIcon(f.originalname)}
-                              </div>
-                              <div className="document-info">
-                                <div className="document-name">{f.originalname}</div>
-                                <div className="document-meta">
-                                  {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
-                                  <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="document-actions">
-                              {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
-                                <a
-                                  href={f.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="document-link"
-                                  title="새 탭에서 열기"
-                                >
-                                  🔗 열기
-                                </a>
-                              )}
+            </div>
+
+            <div className="ticket-content-body">
+              <p>{ticket.description}</p>
+            </div>
+
+            {ticket.files && ticket.files.length > 0 && (
+              <div className="ticket-files">
+                <h3>첨부파일</h3>
+                <div className="file-grid">
+                  {ticket.files.map(f => (
+                    <div key={f.filename} className="file-item">
+                      {isImageFile(f.originalname) ? (
+                        // 이미지 파일 미리보기
+                        <div className="image-file">
+                          <img
+                            src={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
+                            alt={f.originalname}
+                            className="file-image"
+                            onClick={() => handleImageClick(`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`, f.originalname)}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <div className="file-info">
+                            <div className="file-name">{f.originalname}</div>
+                            <div className="file-actions">
                               <a
-                                href={f.url}
-                                download={f.originalname}
-                                className="document-download"
-                                title="다운로드"
+                                href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="file-link"
+                                title="새 탭에서 열기"
                               >
-                                ⬇️ 다운로드
+                                🔗
                               </a>
-                              {(role === 'admin' || reply.author_id === currentUserId) && (
-                                <button 
+                              {(role === 'admin' || ticket.author_id === currentUserId) && (
+                                <button
                                   className="delete-btn"
-                                  onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
+                                  onClick={() => handleFileDelete(f.ticket_files_id, true)}
                                   title="삭제"
                                 >
                                   ✕
@@ -809,54 +537,340 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                               )}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                        </div>
+                      ) : (
+                        // 문서 파일 미리보기
+                        <div className="document-file">
+                          <div className="document-preview">
+                            <div className="document-icon">
+                              {getFileIcon(f.originalname)}
+                            </div>
+                            <div className="document-info">
+                              <div className="document-name">{f.originalname}</div>
+                              <div className="document-meta">
+                                {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
+                                <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="document-actions">
+                            {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
+                              <a
+                                href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="document-link"
+                                title="새 탭에서 열기"
+                              >
+                                🔗 열기
+                              </a>
+                            )}
+                            <a
+                              href={`${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}/${f.url}`}
+                              download={f.originalname}
+                              className="document-download"
+                              title="다운로드"
+                            >
+                              ⬇️ 다운로드
+                            </a>
+                            {(role === 'admin' || ticket.author_id === currentUserId) && (
+                              <button
+                                className="delete-btn"
+                                onClick={() => handleFileDelete(f.ticket_files_id, true)}
+                                title="삭제"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
+          </div>
+
+          {/* 댓글 섹션 */}
+          <div className="replies-section">
+            <h3>댓글 ({replies.length})</h3>
+            
+            <div className="replies-list">
+              {replies.map(reply => (
+                <div key={reply.id} className={`reply-card ${reply.role === 'admin' ? 'admin-reply' : ''}`}>
+                  <div className="reply-header">
+                    <div className="reply-author">
+                      <span className="author-name">{reply.author_name}</span>
+                      <span className={`author-role ${reply.role}`}>
+                        {reply.role === 'admin' ? '관리자' : '고객'}
+                      </span>
+                    </div>
+                    <span className="reply-date">
+                      {new Date(reply.created_at).toLocaleDateString('ko-KR', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
+                  
+                  <div className="reply-content">
+                    {editingReplyId === reply.id ? (
+                      <div className="reply-edit-form">
+                        <textarea
+                          value={editedMessage}
+                          onChange={(e) => setEditedMessage(e.target.value)}
+                          className="reply-edit-textarea"
+                        />
+                        <div className="reply-edit-buttons">
+                          <button onClick={() => handleUpdateReply(reply.id)}>저장</button>
+                          <button onClick={() => setEditingReplyId(null)}>취소</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p>{reply.message}</p>
+                    )}
+                  </div>
+                  <div className="reply-actions">
+                    {reply.author_id === currentUserId && editingReplyId !== reply.id && (
+                      <>
+                        <button className="reply-edit-btn" onClick={() => {
+                          setEditingReplyId(reply.id);
+                          setEditedMessage(reply.message);
+                        }}>✏️ 수정</button>
+                        <button className="reply-delete-btn" onClick={() => handleDeleteReply(reply.id)}>🗑️ 삭제</button>
+                      </>
+                    )}
+                  </div>
+                  {reply.files && reply.files.length > 0 && (
+                    <div className="reply-files">
+                      <div className="file-grid">
+                        {reply.files.map(f => (
+                          <div key={f.public_id || f.originalname} className="file-item">
+                            {isImageFile(f.originalname) ? (
+                              // 이미지 파일 미리보기
+                              <div className="image-file">
+                                <img
+                                  src={f.url}
+                                  alt={f.originalname}
+                                  className="file-image"
+                                  onClick={() => handleImageClick(f.url, f.originalname)}
+                                  style={{ cursor: 'pointer' }}
+                                />
+                                <div className="file-info">
+                                  <div className="file-name">{f.originalname}</div>
+                                  <div className="file-actions">
+                                    <a
+                                      href={f.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="file-link"
+                                      title="새 탭에서 열기"
+                                    >
+                                      🔗
+                                    </a>
+                                    {(role === 'admin' || reply.author_id === currentUserId) && (
+                                      <button 
+                                        className="delete-btn"
+                                        onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
+                                        title="삭제"
+                                      >
+                                        ✕
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              // 문서 파일 미리보기
+                              <div className="document-file">
+                                <div className="document-preview">
+                                  <div className="document-icon">
+                                    {getFileIcon(f.originalname)}
+                                  </div>
+                                  <div className="document-info">
+                                    <div className="document-name">{f.originalname}</div>
+                                    <div className="document-meta">
+                                      {f.size && <span className="file-size">{formatFileSize(f.size)}</span>}
+                                      <span className="file-type">{f.originalname.split('.').pop()?.toUpperCase()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="document-actions">
+                                  {!(isPdfFile(f.originalname) || isDocumentFile(f.originalname)) && (
+                                    <a
+                                      href={f.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="document-link"
+                                      title="새 탭에서 열기"
+                                    >
+                                      🔗 열기
+                                    </a>
+                                  )}
+                                  <a
+                                    href={f.url}
+                                    download={f.originalname}
+                                    className="document-download"
+                                    title="다운로드"
+                                  >
+                                    ⬇️ 다운로드
+                                  </a>
+                                  {(role === 'admin' || reply.author_id === currentUserId) && (
+                                    <button 
+                                      className="delete-btn"
+                                      onClick={() => handleReplyFileDelete(f.ticket_reply_files_id, false)}
+                                      title="삭제"
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+
+            <form onSubmit={handleSubmit} className="reply-form">
+              <div className="form-group">
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="댓글을 입력하세요..."
+                  required
+                  className="reply-textarea"
+                />
+              </div>
+              
+              <div className="form-group">
+                <DragDropFileUpload
+                  files={replyFiles}
+                  setFiles={setReplyFiles}
+                  filePreviews={replyFilePreviews}
+                  setFilePreviews={setReplyFilePreviews}
+                  maxFiles={5}
+                  maxSize={10 * 1024 * 1024} // 10MB
+                  acceptedTypes={[
+                    'image/*',
+                    'application/pdf',
+                    'text/*',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                  ]}
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="submit-btn"
+                disabled={submitting || !message.trim()}
+              >
+                {submitting ? '등록 중...' : '댓글 등록'}
+              </button>
+            </form>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="reply-form">
-          <div className="form-group">
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="댓글을 입력하세요..."
-              required
-              className="reply-textarea"
-            />
-          </div>
-          
-          <div className="form-group">
-            <DragDropFileUpload
-              files={replyFiles}
-              setFiles={setReplyFiles}
-              filePreviews={replyFilePreviews}
-              setFilePreviews={setReplyFilePreviews}
-              maxFiles={5}
-              maxSize={10 * 1024 * 1024} // 10MB
-              acceptedTypes={[
-                'image/*',
-                'application/pdf',
-                'text/*',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-              ]}
-            />
+        {/* 사이드바 영역 */}
+        <div className="ticket-sidebar">
+          {/* 진행도 단계 표시 */}
+          <div className="ticket-progress-section">
+            <h3>진행 상황</h3>
+            <div className="progress-steps">
+              <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''}`}>
+                <div className="step-icon">📝</div>
+                <div className="step-content">
+                  <div className="step-title">접수</div>
+                  <div className="step-description">티켓이 등록되었습니다</div>
+                  {ticket.status === '접수' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+                </div>
+              </div>
+              
+              <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
+                <div className="step-icon">⚙️</div>
+                <div className="step-content">
+                  <div className="step-title">진행중</div>
+                  <div className="step-description">담당자가 처리 중입니다</div>
+                  {ticket.status === '진행중' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+                </div>
+              </div>
+              
+              <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
+                <div className="step-icon">✅</div>
+                <div className="step-content">
+                  <div className="step-title">답변 완료</div>
+                  <div className="step-description">답변이 완료되었습니다</div>
+                  {ticket.status === '답변 완료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+                </div>
+              </div>
+              
+              <div className={`progress-step ${ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '종결' ? 'current' : ''}`}>
+                <div className="step-icon">🏁</div>
+                <div className="step-content">
+                  <div className="step-title">종결</div>
+                  <div className="step-description">티켓이 종결되었습니다</div>
+                  {ticket.status === '종결' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <button 
-            type="submit" 
-            className="submit-btn"
-            disabled={submitting || !message.trim()}
-          >
-            {submitting ? '등록 중...' : '댓글 등록'}
-          </button>
-        </form>
+          {/* 티켓 메타 정보 */}
+          <div className="ticket-meta-section">
+            <h3>티켓 정보</h3>
+            <div className="ticket-meta-grid">
+              {ticket.ticket_type === 'SR' ? (
+                <>
+                  <div className="meta-item">
+                    <span className="meta-label">관련 제품:</span>
+                    <span className="meta-value">{ticket.product}</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">S/W Version:</span>
+                    <span className="meta-value">{ticket.sw_version}</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">OS:</span>
+                    <span className="meta-value">{ticket.os}</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">Platform:</span>
+                    <span className="meta-value">{ticket.platform}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="meta-item">
+                  <span className="meta-label">고객사:</span>
+                  <span className="meta-value">{ticket.client_company}</span>
+                </div>
+              )}
+              <div className="meta-item">
+                <span className="meta-label">등록자:</span>
+                <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">담당자:</span>
+                <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">등록일:</span>
+                <span className="meta-value">
+                  {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 이미지 모달 */}
@@ -934,12 +948,11 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           </div>
         </div>
       )}
-
-      
-    </div>
-    </CommonLayout>
-    
+      </div>
   );
+
+  // 관리자용은 레이아웃 없이, 사용자용은 CommonLayout으로 감싸서 반환
+  return Layout ? <Layout>{content}</Layout> : content;
 };
 
 export default TicketDetailBase;

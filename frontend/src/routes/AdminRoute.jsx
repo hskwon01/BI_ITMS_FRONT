@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import AdminLayout from '../components/AdminLayout';
 
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -15,7 +16,7 @@ const AdminRoute = ({ children }) => {
     const decodedToken = jwtDecode(token);
     // 토큰이 유효하고, 역할이 'admin'인 경우에만 접근 허용
     if (decodedToken.role === 'admin' || decodedToken.role === 'itsm_team') {
-      return children;
+      return <AdminLayout>{children}</AdminLayout>;
     }
   } catch (error) {
     console.error("Invalid token:", error);

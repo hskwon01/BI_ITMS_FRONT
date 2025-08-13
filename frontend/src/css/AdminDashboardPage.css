@@ -1,274 +1,458 @@
-.admin-dashboard-container {
-  padding: 2rem;
-  background: #fff;
+/* Jira 스타일 대시보드 컨테이너 */
+.jira-dashboard-container {
+  background: #f4f5f7;
+  border-radius: 8px;
 }
 
-.admin-dashboard-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+/* Jira 헤더 */
+.jira-header {
+  margin-bottom: 2rem;
 }
 
-.dashboard-main { display: flex; flex-direction: column; gap: 2rem; }
-.dashboard-side { position: sticky; top: 80px; height: fit-content; }
+.jira-title-section {
+  text-align: center;
+}
 
-.admin-dashboard-toolbar {
+.jira-title-section h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin-bottom: 0.5rem;
+}
+
+.jira-subtitle {
+  color: #6b778c;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.jira-status {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #6b778c;
+}
+
+.auto-refresh-badge {
+  background: #36b37e;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Jira 툴바 */
+.jira-toolbar {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.jira-view-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 1rem;
+}
+
+.view-tab {
+  background: none;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #6b778c;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-tab:hover {
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+.view-tab.active {
+  background: #0052cc;
+  color: white;
+}
+
+.jira-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.admin-dashboard-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.admin-dashboard-filters {
+.jira-filters {
   display: flex;
   gap: 1rem;
-  justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
 }
 
 .filter-group {
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  background: #fff;
-  padding: 0.5rem 0.75rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(80, 80, 160, 0.07);
 }
 
 .filter-group label {
-  color: #7b8190;
+  color: #6b778c;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
-/* 필터 셀렉트/체크 스타일 - 주변 카드 톤과 일치 */
 .filter-group select {
-  appearance: none;
-  border: 1px solid #e5e7eb;
-  background: #f8f9fb;
-  color: #2d3652;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: 600;
+  border: 1px solid #dfe1e6;
+  background: white;
+  color: #172b4d;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
   outline: none;
-  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-}
-
-.filter-group select:hover {
-  background: #f3f4f6;
+  transition: border-color 0.2s;
 }
 
 .filter-group select:focus {
-  border-color: #7c83fd;
-  box-shadow: 0 0 0 3px rgba(124, 131, 253, 0.2);
+  border-color: #0052cc;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
 }
 
 .filter-group input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #7c83fd;
+  width: 16px;
+  height: 16px;
+  accent-color: #0052cc;
 }
 
-.admin-dashboard-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2d3652;
-  margin-bottom: 0.5rem;
-}
-
-.admin-dashboard-desc {
-  color: #7b8190;
-  font-size: 1.05rem;
-}
-
-.admin-dashboard-stats {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(140px, 1fr));
+.jira-actions {
+  display: flex;
   gap: 1rem;
 }
 
-.admin-dashboard-stat-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(80, 80, 160, 0.07);
-  padding: 1.2rem 1.5rem;
-  min-width: 120px;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+.jira-action-btn {
+  background: #0052cc;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.admin-dashboard-stat-card:hover {
+.jira-action-btn:hover:not(:disabled) {
+  background: #0747a6;
+  transform: translateY(-1px);
+}
+
+.jira-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Jira 콘텐츠 영역 */
+.jira-content {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 개요 뷰 */
+.jira-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.jira-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.jira-stat-card {
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.jira-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(80, 80, 160, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #0052cc;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .stat-icon {
   font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: #f8f9fa;
+  color: inherit;
 }
 
-.admin-dashboard-stat-card.total .stat-icon { background: #ffe6e6; }
-.admin-dashboard-stat-card.received .stat-icon { background: #fffbe6; }
-.admin-dashboard-stat-card.in-progress .stat-icon { background: #e6fffa; }
-.admin-dashboard-stat-card.answered .stat-icon { background: #e6ffe6; }
-.admin-dashboard-stat-card.closed .stat-icon { background: #f1f3f4; }
+.stat-badge {
+  background: #f4f5f7;
+  color: #6b778c;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
 
-.stat-content {
-  display: flex;
-  flex-direction: column;
+.jira-stat-card.total .stat-badge { background: #deebff; color: #0052cc; }
+.jira-stat-card.received .stat-badge { background: #fffae6; color: #ff8b00; }
+.jira-stat-card.in-progress .stat-badge { background: #e3fcef; color: #36b37e; }
+.jira-stat-card.answered .stat-badge { background: #e6fcff; color: #0065ff; }
+.jira-stat-card.closed .stat-badge { background: #f4f5f7; color: #6b778c; }
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
+  color: #6b778c;
   font-size: 0.9rem;
-  color: #7b8190;
-  margin-bottom: 0.2rem;
-}
-
-.stat-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #2d3652;
-}
-
-.admin-dashboard-actions {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-
-/* SLA 자동 종결 버튼 - 브랜드 톤(보라/인디고)으로 조정 */
-.auto-close-btn {
-  background: linear-gradient(135deg, #6366f1 0%, #7c83fd 100%);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 0.9rem 1.6rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.25);
-  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-}
-
-.auto-close-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.3);
-  filter: brightness(1.03);
-}
-
-.auto-close-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-
-
-.admin-dashboard-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-.admin-dashboard-charts .chart-container.full { grid-column: 1 / -1; }
-
-.chart-container {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(80, 80, 160, 0.07);
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.chart-container h3 {
-  color: #2d3652;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.admin-dashboard-summary {
-  display: none;
-}
-
-.summary-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(80, 80, 160, 0.07);
-  padding: 1.5rem 2rem;
-  min-width: 300px;
-}
-
-.summary-card h3 {
-  color: #2d3652;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.summary-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f1f3f4;
-}
-
-.summary-item:last-child {
-  border-bottom: none;
-}
-
-.summary-label {
-  color: #7b8190;
   font-weight: 500;
 }
 
-.summary-value {
-  color: #2d3652;
-  font-weight: 700;
-  font-size: 1.1rem;
+.jira-charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
 }
 
-.loading-spinner {
+.jira-chart-card {
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.jira-chart-card h3 {
+  color: #172b4d;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* 칸반 보드 뷰 */
+.jira-kanban {
+  padding: 1rem 0;
+}
+
+.kanban-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.kanban-column {
+  background: #f4f5f7;
+  border-radius: 8px;
+  min-height: 400px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  color: #7b8190;
-  font-size: 1.1rem;
+  flex-direction: column;
 }
 
-@media (max-width: 900px) {
-  .admin-dashboard-grid { grid-template-columns: 1fr; }
-  .dashboard-side { position: static; }
-  .admin-dashboard-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .admin-dashboard-charts { grid-template-columns: 1fr; }
-  .chart-container {
-    padding: 1rem;
-  }
-  .summary-card { min-width: auto; width: 100%; }
-} 
+.column-header {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #dfe1e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-.modal-overlay {
+.column-title {
+  font-weight: 600;
+  color: #172b4d;
+}
+
+.column-count {
+  background: #0052cc;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.column-content {
+  flex: 1;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.column-content:hover {
+  background: #e8f0fe;
+}
+
+.kanban-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b778c;
+  text-align: center;
+}
+
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.placeholder-text {
+  font-weight: 500;
+}
+
+/* 분석 뷰 */
+.jira-analytics {
+  padding: 1rem 0;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.analytics-card {
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.analytics-card h3 {
+  color: #172b4d;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.user-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f4f5f7;
+  border-radius: 8px;
+}
+
+.user-stat-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: inherit;
+}
+
+.user-stat-content {
+  flex: 1;
+}
+
+.user-stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin-bottom: 0.3rem;
+}
+
+.user-stat-label {
+  color: #6b778c;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Jira 토스트 */
+.jira-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+.jira-toast.success {
+  background: #36b37e;
+  color: white;
+}
+
+.jira-toast.error {
+  background: #ff5630;
+  color: white;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+
+/* Jira 모달 */
+.jira-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -282,11 +466,11 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-.confirm-modal {
-  background: #fff;
-  border-radius: 16px;
+.jira-modal {
+  background: white;
+  border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  max-width: 500px;
   width: 90%;
   animation: slideUp 0.3s ease-out;
 }
@@ -297,7 +481,7 @@
 }
 
 .modal-header h3 {
-  color: #2d3652;
+  color: #172b4d;
   font-size: 1.3rem;
   font-weight: 700;
   margin: 0;
@@ -307,23 +491,57 @@
   padding: 1rem 1.5rem;
 }
 
-.modal-content p {
-  color: #7b8190;
+.sla-explanation {
+  background: #f4f5f7;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.sla-explanation h4 {
+  margin: 0 0 0.8rem 0;
+  color: #172b4d;
   font-size: 1rem;
+}
+
+.sla-explanation ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style: none;
+}
+
+.sla-explanation li {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
   line-height: 1.5;
-  margin: 0 0 1rem 0;
+  color: #6b778c;
+}
+
+.confirmation-question {
+  background: #deebff;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #0052cc;
+  margin-bottom: 1rem;
+}
+
+.confirmation-question p {
+  margin: 0;
+  color: #0052cc;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .modal-warning {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 8px;
+  background: #fffae6;
+  border: 1px solid #ffd700;
+  border-radius: 6px;
   padding: 0.8rem;
   text-align: center;
 }
 
 .modal-warning span {
-  color: #856404;
+  color: #ff8b00;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -338,7 +556,7 @@
   flex: 1;
   padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -346,34 +564,30 @@
 }
 
 .modal-btn.cancel {
-  background: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
+  background: #f4f5f7;
+  color: #6b778c;
+  border: 1px solid #dfe1e6;
 }
 
 .modal-btn.cancel:hover {
-  background: #e9ecef;
-  color: #495057;
+  background: #ebecf0;
+  color: #172b4d;
 }
 
 .modal-btn.confirm {
-  background: #ff6b6b;
-  color: #fff;
+  background: #ff5630;
+  color: white;
 }
 
 .modal-btn.confirm:hover {
-  background: #ff5252;
+  background: #ff3d00;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 86, 48, 0.3);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -387,174 +601,73 @@
   }
 }
 
-/* SLA 자동 종결 섹션 스타일 */
-.sla-auto-close-section {
-  position: relative;
-  display: inline-block;
-}
-
-.sla-info-tooltip {
-  position: relative;
-  display: inline-block;
-  margin-left: 8px;
-}
-
-.info-icon {
-  cursor: pointer;
-  font-size: 1rem;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.info-icon:hover {
-  opacity: 1;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #2d3652;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 280px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  margin-bottom: 8px;
-}
-
-.tooltip-content::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: #2d3652;
-}
-
-.sla-info-tooltip:hover .tooltip-content {
-  opacity: 1;
-  visibility: visible;
-}
-
-.tooltip-content h4 {
-  margin: 0 0 8px 0;
-  font-size: 0.9rem;
-  color: #ffd43b;
-}
-
-.tooltip-content p {
-  margin: 4px 0;
-  font-size: 0.8rem;
-  line-height: 1.4;
-}
-
-/* 대시보드 헤더 개선 */
-.dashboard-title-section {
-  text-align: center;
-}
-
-.last-updated {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: #6b7280;
+/* 로딩 스피너 */
+.loading-spinner {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.auto-refresh-indicator {
-  color: #10b981;
-  font-weight: 600;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* 확인 모달 개선 */
-.sla-explanation {
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.sla-explanation h4 {
-  margin: 0 0 12px 0;
-  color: #2d3652;
-  font-size: 1rem;
-}
-
-.sla-explanation ul {
-  margin: 0;
-  padding-left: 20px;
-  list-style: none;
-}
-
-.sla-explanation li {
-  margin: 8px 0;
-  padding-left: 0;
-  position: relative;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.sla-explanation li::before {
-  content: '•';
-  color: #6366f1;
-  font-size: 1.2rem;
-  position: absolute;
-  left: -16px;
-}
-
-.confirmation-question {
-  background: #e0f2fe;
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 4px solid #0288d1;
-  margin-bottom: 16px;
-}
-
-.confirmation-question p {
-  margin: 0;
-  color: #01579b;
-  font-size: 0.95rem;
+  align-items: center;
+  height: 200px;
+  color: #6b778c;
+  font-size: 1.1rem;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-  .sla-auto-close-section {
-    display: block;
-    text-align: center;
+  .jira-dashboard-container {
+    padding: 1rem;
   }
   
-  .tooltip-content {
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    top: auto;
-    transform: none;
-    min-width: auto;
-    margin-bottom: 0;
+  .jira-controls {
+    flex-direction: column;
+    align-items: stretch;
   }
   
-  .tooltip-content::after {
-    display: none;
+  .jira-filters {
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
-  .last-updated {
+  .jira-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .jira-charts-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .kanban-columns {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .jira-view-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .view-tab {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .jira-title-section h1 {
+    font-size: 1.8rem;
+  }
+  
+  .jira-subtitle {
+    font-size: 1rem;
+  }
+  
+  .jira-status {
     flex-direction: column;
     gap: 0.5rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
   }
 } 

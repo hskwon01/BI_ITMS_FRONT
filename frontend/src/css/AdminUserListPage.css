@@ -1,208 +1,195 @@
 .admin-user-list-container {
-  padding: 2rem;
-  background: #fff;
+  background: #f4f5f7;
+  border-radius: 8px;
 }
 
 .admin-user-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .admin-user-header h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   margin-bottom: 0.5rem;
 }
 
 .admin-user-desc {
-  color: #7b8190;
-  font-size: 1.05rem;
+  color: #6b778c;
+  font-size: 1rem;
 }
 
 .admin-user-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
 .admin-user-stat-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(80, 80, 160, 0.07);
-  padding: 1.2rem 1.5rem;
-  min-width: 90px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem;
   text-align: center;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  transition: all 0.2s;
+}
+
+.admin-user-stat-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .admin-user-stat-card .stat-label {
-  font-size: 0.95rem;
-  color: #7b8190;
+  font-size: 0.8rem;
+  color: #6b7280;
   margin-bottom: 0.3rem;
+  font-weight: 500;
 }
 
 .admin-user-stat-card .stat-value {
-  font-size: 1.3rem;
-  color: #2d3652;
+  font-size: 1.5rem;
+  color: #111827;
+  font-weight: 600;
 }
 
-.admin-user-stat-card.total { border-left: 4px solid #fd7c7c; }
-.admin-user-stat-card.approved { border-left: 4px solid #ffd43b; }
-.admin-user-stat-card.pending { border-left: 4px solid #67cd4e; }
-.admin-user-stat-card.admin { border-left: 4px solid #405fc4e0; }
-.admin-user-stat-card.customer { border-left: 4px solid #868e96; }
+.admin-user-stat-card.total {
+  background: #f8fafc;
+}
+
+.admin-user-stat-card.approved {
+  background: #f0fdf4;
+}
+
+.admin-user-stat-card.pending {
+  background: #fffbeb;
+}
 
 .admin-user-search {
-  display: flex;
-  justify-content: center;
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 1.5rem;
   margin-bottom: 2rem;
+  box-sizing: border-box;
 }
 
 .search-input {
   width: 100%;
-  max-width: 400px;
   padding: 0.8rem 1rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: #f9fafb;
-  color: #2d3652;
+  border: 1px solid #dfe1e6;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+  color: #172b4d;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #7c83fd;
-  background: #fff;
+  border-color: #0052cc;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
 }
 
 .admin-user-table-wrapper {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(80, 80, 160, 0.07);
-  padding: 1.5rem 1rem;
-  overflow-x: auto;
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .admin-user-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-}
-
-.admin-user-table th, .admin-user-table td {
-  padding: 1rem 0.7rem;
-  text-align: left;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .admin-user-table th {
-  color: #7b8190;
-  font-weight: 700;
-  border-bottom: 2px solid #e2e8f0;
-  background: #f8f9fa;
+  background: #f4f5f7;
+  color: #172b4d;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .admin-user-table td {
-  border-bottom: 1px solid #f1f3f4;
-  color: #2d3652;
+  padding: 1rem;
+  border-bottom: 1px solid #f4f5f7;
+  color: #172b4d;
+}
+
+.admin-user-table tr:hover {
+  background: #f8f9fa;
 }
 
 .user-email {
-  font-weight: 600;
-  color: #7c83fd;
+  font-weight: 500;
+  color: #0052cc;
 }
 
 .user-name {
   font-weight: 600;
+  color: #172b4d;
 }
 
 .user-company {
-  color: #7b8190;
-}
-
-.role-badge {
-  padding: 0.3rem 0.9rem;
-  border-radius: 16px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
-}
-
-.role-badge.admin {
-  background: #e3f2fd;
-  color: #1976d2;
-}
-
-.role-badge.itsm_team {
-  background: #e8f5e9; /* 연한 초록색 배경 */
-  color: #2e7d32; /* 진한 초록색 텍스트 */
-}
-
-.role-badge.customer {
-   background: #f1f3f4;
-   color: #868e96;
+  color: #6b778c;
 }
 
 .approval-badge {
-  padding: 0.3rem 0.9rem;
-  border-radius: 16px;
-  font-size: 0.92rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
 }
 
 .approval-badge.approved {
-  background: #fffbe6;
-  color: #bfa100;
+  background: #e3fcef;
+  color: #36b37e;
 }
 
 .approval-badge.pending {
-  background: #e8f5e8;
-  color: #2e7d32;
+  background: #fffae6;
+  color: #ff8b00;
 }
 
 .approval-btn {
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .approval-btn.approve {
-  background: #4caf50;
-  color: #fff;
+  background: #36b37e;
+  color: white;
 }
 
 .approval-btn.approve:hover {
-  background: #45a049;
+  background: #2d9d6b;
+  transform: translateY(-1px);
 }
 
 .approval-btn.revoke {
-  background: #f44336;
-  color: #fff;
+  background: #ff5630;
+  color: white;
 }
 
 .approval-btn.revoke:hover {
-  background: #da190b;
+  background: #ff3d00;
+  transform: translateY(-1px);
 }
 
 .admin-user-empty {
   text-align: center;
-  color: #7b8190;
-  padding: 2rem 0;
+  padding: 3rem;
+  color: #6b778c;
   font-size: 1.1rem;
 }
 
@@ -211,39 +198,61 @@
   justify-content: center;
   align-items: center;
   height: 200px;
-  color: #7b8190;
+  color: #6b778c;
   font-size: 1.1rem;
 }
 
-/* 추가된 스타일 */
+/* 팀 관리 페이지 스타일 */
 .add-user-section {
-  margin-bottom: 1.5rem;
-  text-align: right;
+  background: white;
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .add-user-btn {
-  background-color: #4a90e2;
+  background: #0052cc;
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .add-user-btn:hover {
-  background-color: #357abd;
+  background: #0747a6;
+  transform: translateY(-1px);
 }
 
+.role-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.role-badge.admin {
+  background: #deebff;
+  color: #0052cc;
+}
+
+.role-badge.itsm_team {
+  background: #e3fcef;
+  color: #36b37e;
+}
+
+/* 모달 스타일 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,63 +261,118 @@
 
 .modal-content {
   background: white;
+  border-radius: 8px;
   padding: 2rem;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h2 {
-  margin-top: 0;
+  color: #172b4d;
+  font-size: 1.3rem;
+  font-weight: 700;
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.modal-content form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .modal-content input,
 .modal-content select {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #dfe1e6;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  background: white;
+  color: #172b4d;
+  transition: border-color 0.2s;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  outline: none;
+  border-color: #0052cc;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
 }
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
   gap: 1rem;
+  justify-content: flex-end;
   margin-top: 1.5rem;
 }
 
 .modal-actions button {
-  padding: 0.7rem 1.2rem;
-  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
   border: none;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-.modal-actions button[type="submit"] {
-  background-color: #4a90e2;
+.modal-actions button:first-child {
+  background: #f4f5f7;
+  color: #6b778c;
+  border: 1px solid #dfe1e6;
+}
+
+.modal-actions button:first-child:hover {
+  background: #ebecf0;
+  color: #172b4d;
+}
+
+.modal-actions button:last-child {
+  background: #0052cc;
   color: white;
 }
 
-.modal-actions button[type="button"] {
-  background-color: #f1f3f4;
+.modal-actions button:last-child:hover {
+  background: #0747a6;
+  transform: translateY(-1px);
 }
 
-@media (max-width: 900px) {
-  .admin-user-stats, .admin-user-filters {
-    flex-direction: column;
-    align-items: stretch;
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .admin-user-stats {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .admin-user-table-wrapper {
-    padding: 1rem 0.3rem;
+  
+  .admin-user-table {
+    font-size: 0.8rem;
+  }
+  
+  .admin-user-table th,
+  .admin-user-table td {
+    padding: 0.7rem 0.5rem;
+  }
+  
+  .admin-user-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-user-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-user-table {
+    font-size: 0.75rem;
+  }
+  
+  .admin-user-table th,
+  .admin-user-table td {
+    padding: 0.5rem 0.3rem;
   }
 } 

@@ -1,25 +1,32 @@
 /* AdminAccessRequestPage.css */
 
 .admin-access-request-container {
-  padding: 2rem;
-  background: #fff;
+  background: #f4f5f7;
+  border-radius: 8px;
 }
 
 .admin-access-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .admin-access-header h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #2d3652;
+  color: #172b4d;
   margin-bottom: 0.5rem;
 }
 
 .admin-access-desc {
-  color: #7b8190;
-  font-size: 1.05rem;
+  color: #6b778c;
+  font-size: 1rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .admin-access-header h1 {
+    font-size: 1.5rem;
+  }
 }
 
 .admin-access-table-wrapper {

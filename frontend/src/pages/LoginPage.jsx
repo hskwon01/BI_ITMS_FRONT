@@ -34,7 +34,13 @@ const LoginPage = () => {
         navigate(next);
         return;
       }
-      navigate('/home');
+      
+      // 사용자 역할에 따라 다른 페이지로 리다이렉트
+      if (me.role === 'admin' || me.role === 'itsm_team') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/my-tickets');
+      }
     } catch (err) {
       console.error('로그인 에러:', err);
       console.error('에러 응답:', err.response);
