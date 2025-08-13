@@ -5,6 +5,23 @@
   min-height: calc(100vh - 80px);
 }
 
+.admin-notices-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.admin-notices-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin-bottom: 0.5rem;
+}
+
+.admin-notices-header p {
+  color: #6b778c;
+  font-size: 1rem;
+}
+
 
 
 .admin-notices-toolbar {
@@ -32,16 +49,11 @@
   align-items: center;
 }
 
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  color: #6b778c;
-  font-size: 1rem;
-}
+
 
 .search-input {
   width: 100%;
-  padding: 0.8rem 1rem 0.8rem 2.5rem;
+  padding: 0.8rem 1rem;
   border: 1px solid #dfe1e6;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -407,6 +419,10 @@
   .admin-notices-table th,
   .admin-notices-table td {
     padding: 0.7rem 0.5rem;
+  }
+  
+  .admin-notices-header h1 {
+    font-size: 1.5rem;
   }
   
 
