@@ -177,40 +177,7 @@
   transform: none;
 }
 
-.toast-notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  animation: slideDown 0.3s ease-out;
-}
 
-.toast-notification.success {
-  background: #6366f1;
-  color: #fff;
-}
-
-.toast-notification.error {
-  background: #dc2626;
-  color: #fff;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
 
 .admin-dashboard-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .admin-dashboard-charts .chart-container.full { grid-column: 1 / -1; }
