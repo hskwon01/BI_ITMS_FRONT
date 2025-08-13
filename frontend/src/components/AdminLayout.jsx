@@ -7,6 +7,7 @@ import {
   FiUserCheck, 
   FiPackage, 
   FiShield,
+  FiFileText,
   FiLogOut,
   FiChevronLeft,
   FiChevronRight,
@@ -53,6 +54,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/customer', label: '고객관리', icon: FiUsers },
     { path: '/admin/team', label: '팀관리', icon: FiUserCheck },
     { path: '/admin/products', label: '제품관리', icon: FiPackage },
+    { path: '/admin/notices', label: '공지사항', icon: FiFileText },
     { path: '/admin/access-requests', label: '접근요청', icon: FiShield },
   ];
 

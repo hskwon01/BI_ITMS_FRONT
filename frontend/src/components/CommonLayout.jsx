@@ -38,6 +38,7 @@ const CommonLayout = memo(({ children }) => {
         { path: '/admin/customer', label: '고객관리', active: location.pathname === '/admin/customer' },
         { path: '/admin/team', label: '팀관리', active: location.pathname === '/admin/team' },
         { path: '/admin/products', label: '제품관리', active: location.pathname === '/admin/products' },
+        { path: '/admin/notices', label: '공지사항', active: location.pathname === '/admin/notices' },
         { path: '/admin/access-requests', label: '접근요청', active: location.pathname === '/admin/access-requests' },
         { path: '/admin/dashboard', label: '대시보드', active: location.pathname === '/admin/dashboard' }
       ];
