@@ -18,7 +18,7 @@ const NoticeCreatePage = () => {
   useEffect(() => {
     // 관리자 권한 확인
     if (!user?.data || (user.data.role !== 'admin' && user.data.role !== 'itsm_team')) {
-      navigate('/notices');
+      navigate('/admin/notices');
       return;
     }
   }, [user, navigate]);
@@ -47,7 +47,7 @@ const NoticeCreatePage = () => {
 
       const response = await createNotice(formData);
       alert('공지사항이 등록되었습니다.');
-      navigate(`/notices/${response.data.id}`);
+      navigate('/admin/notices');
     } catch (err) {
       console.error('등록 실패:', err);
       alert('등록에 실패했습니다.');

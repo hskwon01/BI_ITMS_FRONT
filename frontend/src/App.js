@@ -41,7 +41,7 @@ const App = () => (
         <Route path="/request-access" element={<RequestAccessPage />} />
         <Route path="/magic-login" element={<MagicLoginProcessor />} />
         <Route path="/notices" element={<NoticesPage />} />
-        <Route path="/notices/create" element={<NoticeCreatePage />} />
+        <Route path="/notices/create" element={<AdminRoute><NoticeCreatePage /></AdminRoute>} />
         <Route path="/notices/:id" element={<NoticeDetailPage />} />
         <Route path="/notices/:id/edit" element={<NoticeEditPage />} />
         <Route path="/quotes" element={<QuotesPage />} />
