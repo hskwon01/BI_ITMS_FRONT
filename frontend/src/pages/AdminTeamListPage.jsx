@@ -56,7 +56,7 @@ const AdminTeamListPage = () => {
 
   if (loading) {
     return (
-      <div className="loading-spinner">로딩 중...</div>
+              <div className="loading-spinner"></div>
     );
   }
 

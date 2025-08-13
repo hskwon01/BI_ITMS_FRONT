@@ -187,7 +187,7 @@ const AdminTicketListPage = () => {
 
       <div className="admin-ticket-table-wrapper">
         {loading ? (
-          <div className="admin-ticket-loading">로딩 중...</div>
+          <div className="admin-ticket-loading"></div>
         ) : filteredTickets.length === 0 ? (
           <div className="admin-ticket-empty">
             {allTickets.length === 0 ? '등록된 티켓이 없습니다.' : '검색 조건에 맞는 티켓이 없습니다.'}
