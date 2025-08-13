@@ -451,7 +451,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
 
       <div className="ticket-header">
         <div className="ticket-header-content">
-          <h1>티켓 상세</h1>
+          <h1>{ticket.title}</h1>
           {role === 'admin' && (
             <div className="status-change-section">
               <label htmlFor="status-select" className="status-label">상태 변경:</label>
@@ -480,8 +480,10 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           {/* 통합된 티켓 내용 */}
           <div className="ticket-info-card">
             <div className="ticket-content-header">
-              <div className="ticket-title-row">
-                <h2>{ticket.title}</h2>
+              <div className="ticket-content-row">
+                <div className="ticket-description">
+                  <p>{ticket.description}</p>
+                </div>
                 <span className="ticket-created-date">
                   {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
                     year: 'numeric',
@@ -492,10 +494,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                   })}
                 </span>
               </div>
-            </div>
-
-            <div className="ticket-content-body">
-              <p>{ticket.description}</p>
             </div>
 
             {ticket.files && ticket.files.length > 0 && (
