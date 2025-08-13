@@ -210,7 +210,7 @@ useEffect(() => {
 
         <div className="my-ticket-table-wrapper">
           {loading ? (
-            <div className="my-ticket-loading">로딩 중...</div>
+            <div className="my-ticket-loading"></div>
           ) : filteredTickets.length === 0 ? (
             <div className="my-ticket-empty">
               {allTickets.length === 0 ? '등록된 티켓이 없습니다.' : '검색 조건에 맞는 티켓이 없습니다.'}

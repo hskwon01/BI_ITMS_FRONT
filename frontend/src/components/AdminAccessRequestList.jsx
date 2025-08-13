@@ -47,7 +47,7 @@ const AdminAccessRequestList = () => {
     }
   };
 
-  if (loading) return <div className="loading-spinner">로딩 중...</div>;
+  if (loading) return <div className="loading-spinner"></div>;
   if (error) return <p className="error-message">{error}</p>;
 
   return (

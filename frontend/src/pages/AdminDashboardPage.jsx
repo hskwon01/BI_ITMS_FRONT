@@ -100,7 +100,7 @@ const AdminDashboardPage = () => {
   if (loading) {
     return (
       <div className="jira-dashboard-container">
-        <div className="loading-spinner">로딩 중...</div>
+        <div className="loading-spinner"></div>
       </div>
     );
   }
