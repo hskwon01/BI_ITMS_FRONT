@@ -107,7 +107,6 @@ const AdminNoticesPage = () => {
         </div>
         
         <Link to="/notices/create" className="admin-notices-create-btn">
-          <span className="btn-icon">✏️</span>
           새 공지 작성
         </Link>
       </div>
@@ -207,35 +206,29 @@ const AdminNoticesPage = () => {
         <>
           <div className="admin-notices-table-wrapper">
             <table className="admin-notices-table">
-              <thead>
-                <tr>
-                  <th style={{ width: '50%' }}>제목</th>
-                  <th>등록일</th>
-                  <th>상태</th>
-                  <th style={{ textAlign: 'right' }}>관리</th>
-                </tr>
-              </thead>
+                             <thead>
+                 <tr>
+                   <th style={{ width: '60%' }}>제목</th>
+                   <th>등록일</th>
+                   <th style={{ width: '120px', textAlign: 'center' }}>관리</th>
+                 </tr>
+               </thead>
               <tbody>
                 {list.map((n) => (
                   <tr key={n.id} className="admin-notices-row">
-                    <td className="admin-notices-title">
-                      <Link to={`/notices/${n.id}`} className="notice-title-link">
-                        {n.title}
-                        {n.is_pinned ? <span className="notices-pin">📌</span> : null}
-                      </Link>
-                    </td>
-                    <td>{new Date(n.created_at).toLocaleString('ko-KR')}</td>
-                    <td>
-                      <span className={`status-badge ${n.is_pinned ? 'pinned' : 'normal'}`}>
-                        {n.is_pinned ? '고정' : '일반'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="admin-notices-actions">
-                        <button className="btn btn-edit" onClick={() => onEdit(n)}>수정</button>
-                        <button className="btn btn-delete" onClick={() => onDelete(n.id)}>삭제</button>
-                      </div>
-                    </td>
+                                         <td className="admin-notices-title">
+                       <Link to={`/notices/${n.id}`} className="notice-title-link">
+                         {n.title}
+                         {n.is_pinned ? <span className="notices-pin">📌</span> : null}
+                       </Link>
+                     </td>
+                     <td>{new Date(n.created_at).toLocaleString('ko-KR')}</td>
+                     <td style={{ textAlign: 'center' }}>
+                       <div className="admin-notices-actions">
+                         <button className="btn btn-edit" onClick={() => onEdit(n)}>수정</button>
+                         <button className="btn btn-delete" onClick={() => onDelete(n.id)}>삭제</button>
+                       </div>
+                     </td>
                   </tr>
                 ))}
               </tbody>
