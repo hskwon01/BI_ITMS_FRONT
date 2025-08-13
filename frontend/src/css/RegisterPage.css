@@ -7,41 +7,7 @@
   position: relative;
 }
 
-/* Toast Notification Styles */
-.toast-notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  animation: toastSlideDown 0.3s ease-out;
-}
 
-.toast-notification.success {
-  background: #6366f1;
-  color: #fff;
-}
-
-.toast-notification.error {
-  background: #fecaca;
-  color: #dc2626;
-}
-
-@keyframes toastSlideDown {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
   
   .register-simple-card {
     background: #fff;

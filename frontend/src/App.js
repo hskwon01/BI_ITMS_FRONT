@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { UserProvider } from './contexts/UserContext';
+import { ToastProvider } from './contexts/ToastContext';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
@@ -29,8 +30,9 @@ import QuoteDetailPage from './pages/QuoteDetailPage';
 
 const App = () => (
   <UserProvider>
-    <BrowserRouter>
-      <Routes>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
         {/* 홈 페이지 */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
@@ -60,9 +62,10 @@ const App = () => (
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/admin/access-requests" element={<AdminRoute><AdminAccessRequestPage /></AdminRoute>} />
         <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
-      </Routes>
-    </BrowserRouter>
-  </UserProvider>
-);
+              </Routes>
+      </BrowserRouter>
+    </ToastProvider>
+    </UserProvider>
+  );
 
 export default App;

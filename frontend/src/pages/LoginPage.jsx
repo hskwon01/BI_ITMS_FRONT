@@ -2,23 +2,17 @@ import React, { useState } from 'react';
 import { login, getMe } from '../api/auth';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/LoginPage.css';
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const navigate = useNavigate();
   const location = useLocation();
   const { login: loginUser } = useUser();
-
-  const showToast = (message, type = 'error') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: '', type: '' });
-    }, 3000);
-  };
+  const { showError } = useToast();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -45,7 +39,7 @@ const LoginPage = () => {
       console.error('로그인 에러:', err);
       console.error('에러 응답:', err.response);
       const errorMessage = err.response?.data?.message || '사용자를 찾을 수 없습니다. 이메일과 비밀번호를 확인해주세요.';
-      showToast(errorMessage, 'error');
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -53,12 +47,6 @@ const LoginPage = () => {
 
   return (
     <div className="login-simple-container">
-      {/* Toast Notification */}
-      {toast.show && (
-        <div className={`toast-notification ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
 
       <form className="login-simple-card" onSubmit={handleSubmit}>
         <div className="login-simple-logo">
