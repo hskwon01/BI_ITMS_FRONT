@@ -1,60 +1,29 @@
 /* 공지사항 작성 페이지 스타일 */
 .notice-create-container {
-  max-width: 1000px;
-  margin: 0 auto;
+  background: #f4f5f7;
+  border-radius: 8px;
   padding: 2rem;
+  min-height: calc(100vh - 80px);
 }
 
-/* 브레드크럼 */
-.notice-breadcrumb {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: #6b7280;
-}
 
-.breadcrumb-link {
-  color: #6366f1;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.breadcrumb-link:hover {
-  color: #4f46e5;
-}
-
-.breadcrumb-separator {
-  margin: 0 0.5rem;
-  color: #d1d5db;
-}
-
-.breadcrumb-current {
-  color: #374151;
-  font-weight: 500;
-}
 
 /* 헤더 */
 .notice-create-header {
   text-align: center;
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
 }
 
 .notice-create-header h1 {
-  font-size: 1.875rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 0.5rem 0;
+  color: #172b4d;
+  margin-bottom: 0.5rem;
 }
 
 .notice-create-header p {
-  color: #6b7280;
+  color: #6b778c;
   font-size: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
 }
 
 /* 폼 스타일 */
@@ -377,10 +346,6 @@
   
   .preview-content {
     padding: 1rem;
-  }
-  
-  .breadcrumb-separator {
-    margin: 0 0.25rem;
   }
   
   .btn {
