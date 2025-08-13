@@ -5,22 +5,7 @@
   min-height: calc(100vh - 80px);
 }
 
-.admin-notices-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
 
-.admin-notices-header h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #172b4d;
-  margin-bottom: 0.5rem;
-}
-
-.admin-notices-header p {
-  color: #6b778c;
-  font-size: 1rem;
-}
 
 .admin-notices-toolbar {
   display: flex;
@@ -424,9 +409,7 @@
     padding: 0.7rem 0.5rem;
   }
   
-  .admin-notices-header h1 {
-    font-size: 1.5rem;
-  }
+
   
   .form-row.inline {
     flex-direction: column;

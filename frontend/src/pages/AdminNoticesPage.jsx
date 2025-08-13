@@ -56,11 +56,6 @@ const AdminNoticesPage = () => {
   return (
     <AdminLayout>
       <div className="admin-notices-container">
-        <div className="admin-notices-header">
-          <h1>공지사항 관리</h1>
-          <p>서비스 공지사항을 관리하고 작성하세요.</p>
-        </div>
-
         <div className="admin-notices-toolbar">
           <div className="admin-notices-search-section">
             <div className="search-container">
