@@ -208,11 +208,12 @@
 }
 
 .stat-icon {
-  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: inherit;
+  width: 40px;
+  height: 40px;
 }
 
 .stat-badge {
@@ -296,6 +297,9 @@
 .column-title {
   font-weight: 600;
   color: #172b4d;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .column-count {
@@ -330,13 +334,14 @@
 
 
 .placeholder-icon {
-  font-size: 3rem;
   margin-bottom: 1rem;
   opacity: 0.5;
   display: flex;
   align-items: center;
   justify-content: center;
   color: inherit;
+  width: 48px;
+  height: 48px;
 }
 
 .placeholder-text {
