@@ -13,6 +13,7 @@ export const useToast = () => {
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
   const showToast = useCallback((message, type = 'info', duration = 3000) => {
     const id = Date.now();
@@ -46,8 +47,16 @@ export const ToastProvider = ({ children }) => {
     showToast(message, 'info', duration);
   }, [showToast]);
 
+  const showConfirm = useCallback((message, onConfirm, onCancel) => {
+    setConfirmDialog({ message, onConfirm, onCancel });
+  }, []);
+
+  const hideConfirm = useCallback(() => {
+    setConfirmDialog(null);
+  }, []);
+
   return (
-    <ToastContext.Provider value={{ showToast, showSuccess, showError, showWarning, showInfo, removeToast }}>
+    <ToastContext.Provider value={{ showToast, showSuccess, showError, showWarning, showInfo, removeToast, showConfirm }}>
       {children}
       {toasts.map(toast => (
         <ToastNotification
@@ -58,6 +67,36 @@ export const ToastProvider = ({ children }) => {
           onClose={() => removeToast(toast.id)}
         />
       ))}
+      {confirmDialog && (
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <div className="confirm-dialog-content">
+              <div className="confirm-dialog-icon">⚠️</div>
+              <div className="confirm-dialog-message">{confirmDialog.message}</div>
+            </div>
+            <div className="confirm-dialog-actions">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => {
+                  if (confirmDialog.onCancel) confirmDialog.onCancel();
+                  hideConfirm();
+                }}
+              >
+                취소
+              </button>
+              <button 
+                className="btn btn-danger" 
+                onClick={() => {
+                  if (confirmDialog.onConfirm) confirmDialog.onConfirm();
+                  hideConfirm();
+                }}
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ToastContext.Provider>
   );
 }; 

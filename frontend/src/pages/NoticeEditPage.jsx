@@ -3,12 +3,14 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import { fetchNotice, updateNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/NoticeEditPage.css';
 
 const NoticeEditPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUser();
+  const { showSuccess, showError } = useToast();
   const [form, setForm] = useState({
     title: '',
     content: '',
@@ -55,7 +57,7 @@ const NoticeEditPage = () => {
     e.preventDefault();
     
     if (!form.title.trim() || !form.content.trim()) {
-      alert('제목과 내용을 모두 입력해주세요.');
+      showError('제목과 내용을 모두 입력해주세요.');
       return;
     }
 
@@ -74,11 +76,14 @@ const NoticeEditPage = () => {
       }
 
       await updateNotice(id, formData);
-      alert('공지사항이 수정되었습니다.');
-      navigate(`/notices/${id}`);
+      showSuccess('공지사항이 수정되었습니다.');
+      // 토스트 알림창이 표시될 시간을 주기 위해 약간의 지연 후 페이지 이동
+      setTimeout(() => {
+        navigate(`/notices/${id}`);
+      }, 1000);
     } catch (err) {
       console.error('수정 실패:', err);
-      alert('수정에 실패했습니다.');
+      showError('수정에 실패했습니다.');
     } finally {
       setSaving(false);
     }

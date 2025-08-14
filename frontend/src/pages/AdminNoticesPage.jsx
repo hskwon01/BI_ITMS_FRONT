@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchNotices, updateNotice, deleteNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/AdminNoticesPage.css';
 
 const AdminNoticesPage = () => {
@@ -11,6 +12,7 @@ const AdminNoticesPage = () => {
   const [form, setForm] = useState({ title: '', content: '', is_pinned: false });
   const [keyword, setKeyword] = useState('');
   const { user } = useUser();
+  const { showSuccess, showError, showConfirm } = useToast();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const pageSize = 10;
@@ -28,17 +30,29 @@ const AdminNoticesPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('content', form.content);
-    formData.append('is_pinned', form.is_pinned);
-    if (form.files && form.files.length) {
-      [...form.files].forEach((f) => formData.append('files', f));
+    
+    if (!form.title.trim() || !form.content.trim()) {
+      showError('제목과 내용을 모두 입력해주세요.');
+      return;
     }
-    await updateNotice(editing.id, formData);
-    setForm({ title: '', content: '', is_pinned: false });
-    setEditing(null);
-    load();
+    
+    try {
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('content', form.content);
+      formData.append('is_pinned', form.is_pinned);
+      if (form.files && form.files.length) {
+        [...form.files].forEach((f) => formData.append('files', f));
+      }
+      await updateNotice(editing.id, formData);
+      showSuccess('공지사항이 수정되었습니다.');
+      setForm({ title: '', content: '', is_pinned: false });
+      setEditing(null);
+      load();
+    } catch (err) {
+      console.error('수정 실패:', err);
+      showError('수정에 실패했습니다.');
+    }
   };
 
   const onEdit = (n) => {
@@ -47,9 +61,19 @@ const AdminNoticesPage = () => {
   };
 
   const onDelete = async (id) => {
-    if (!window.confirm('삭제하시겠습니까?')) return;
-    await deleteNotice(id);
-    load();
+    showConfirm(
+      '이 공지사항을 삭제하시겠습니까?',
+      async () => {
+        try {
+          await deleteNotice(id);
+          showSuccess('공지사항이 삭제되었습니다.');
+          load();
+        } catch (err) {
+          console.error('삭제 실패:', err);
+          showError('삭제에 실패했습니다.');
+        }
+      }
+    );
   };
 
   return (

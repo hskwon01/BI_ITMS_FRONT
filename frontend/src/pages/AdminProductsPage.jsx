@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { fetchProducts, createProduct, updateProduct, deleteProduct, fetchCategories } from '../api/products';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/AdminProductsPage.css';
 
 const AdminProductsPage = () => {
@@ -27,6 +28,7 @@ const AdminProductsPage = () => {
   const [total, setTotal] = useState(0);
   const pageSize = 20;
   const { user } = useUser();
+  const { showSuccess, showError, showConfirm } = useToast();
 
   useEffect(() => {
     loadProducts();
@@ -64,23 +66,23 @@ const AdminProductsPage = () => {
     e.preventDefault();
     
     if (!formData.name || !formData.category || !formData.base_price) {
-      alert('제품명, 카테고리, 가격을 모두 입력해주세요.');
+      showError('제품명, 카테고리, 가격을 모두 입력해주세요.');
       return;
     }
 
     const price = Number(formData.base_price);
     if (price < 0 || price > 9999999999999.99) {
-      alert('가격은 0 이상 9,999,999,999,999.99원 이하여야 합니다.');
+      showError('가격은 0 이상 9,999,999,999,999.99원 이하여야 합니다.');
       return;
     }
 
     try {
       if (editingProduct) {
         await updateProduct(editingProduct.id, formData);
-        alert('제품이 수정되었습니다.');
+        showSuccess('제품이 수정되었습니다.');
       } else {
         await createProduct(formData);
-        alert('제품이 등록되었습니다.');
+        showSuccess('제품이 등록되었습니다.');
       }
       
       setShowModal(false);
@@ -96,7 +98,7 @@ const AdminProductsPage = () => {
       loadCategories();
     } catch (error) {
       console.error('제품 저장 실패:', error);
-      alert('저장에 실패했습니다.');
+      showError('저장에 실패했습니다.');
     }
   };
 
@@ -113,27 +115,29 @@ const AdminProductsPage = () => {
   };
 
   const handleDelete = async (product) => {
-    if (!window.confirm(`"${product.name}" 제품을 비활성화하시겠습니까?`)) {
-      return;
-    }
-
-    try {
-      await deleteProduct(product.id);
-      alert('제품이 비활성화되었습니다.');
-      loadProducts();
-    } catch (error) {
-      console.error('제품 삭제 실패:', error);
-      alert('삭제에 실패했습니다.');
-    }
+    showConfirm(
+      `"${product.name}" 제품을 비활성화하시겠습니까?`,
+      async () => {
+        try {
+          await deleteProduct(product.id);
+          showSuccess('제품이 비활성화되었습니다.');
+          loadProducts();
+        } catch (error) {
+          console.error('제품 삭제 실패:', error);
+          showError('삭제에 실패했습니다.');
+        }
+      }
+    );
   };
 
   const handleToggleActive = async (product) => {
     try {
       await updateProduct(product.id, { is_active: !product.is_active });
+      showSuccess(`제품이 ${!product.is_active ? '활성화' : '비활성화'}되었습니다.`);
       loadProducts();
     } catch (error) {
       console.error('상태 변경 실패:', error);
-      alert('상태 변경에 실패했습니다.');
+      showError('상태 변경에 실패했습니다.');
     }
   };
 
