@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import { fetchNotices, updateNotice, deleteNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/NoticesPage.css';
 
 const NoticesPage = () => {
@@ -12,6 +13,7 @@ const NoticesPage = () => {
   const [form, setForm] = useState({ title: '', content: '', is_pinned: false });
   const [keyword, setKeyword] = useState('');
   const { user } = useUser();
+  const { showSuccess, showError, showConfirm } = useToast();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const pageSize = 10;
@@ -48,9 +50,18 @@ const NoticesPage = () => {
   };
 
   const onDelete = async (id) => {
-    if (!window.confirm('삭제하시겠습니까?')) return;
-    await deleteNotice(id);
-    load();
+    showConfirm(
+      '이 공지사항을 삭제하시겠습니까?',
+      async () => {
+        try {
+          await deleteNotice(id);
+          showSuccess('공지사항이 삭제되었습니다.');
+          load();
+        } catch (err) {
+          showError('삭제에 실패했습니다.');
+        }
+      }
+    );
   };
 
   return (
