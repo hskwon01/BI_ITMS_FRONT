@@ -1368,7 +1368,7 @@
   color: #1f2937;
   margin: 0 0 1.5rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #3b82f6;
+  border-bottom: 2px solid gray;
 }
 
 .progress-steps {
@@ -1377,17 +1377,20 @@
   align-items: flex-start;
   position: relative;
   gap: 1rem;
+  padding: 0 1rem;
 }
 
+/* 진행 선 추가 - lucide-check 아이콘들 사이에 */
 .progress-steps::before {
   content: '';
   position: absolute;
-  top: 25px;
-  left: 30px;
-  right: 30px;
+  top: 85px;
+  left: 40px;
+  right: 40px;
   height: 2px;
-  background: #e5e7eb;
+  background: #6b7280;
   z-index: 1;
+  border-radius: 1px;
 }
 
 .progress-step {
@@ -1401,31 +1404,73 @@
   transition: all 0.3s ease;
 }
 
+.step-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.progress-step.current .step-label {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.step-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 3;
+}
+
 .step-icon {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  background: #f3f4f6;
-  border: 3px solid #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.75rem;
   transition: all 0.3s ease;
-  position: relative;
+  color: #6b7280;
 }
 
 .progress-step.completed .step-icon {
-  background: #dcfce7;
-  border-color: #16a34a;
   color: #16a34a;
 }
 
 .progress-step.current .step-icon {
-  background: #dbeafe;
-  border-color: #3b82f6;
-  color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  color: #ef4444;
+}
+
+.step-status-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  margin-top: 0.25rem;
+}
+
+.step-status-indicator.completed {
+  background: #374151;
+  border: 2px solid #374151;
+}
+
+.step-status-indicator.error {
+  background: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.step-status-indicator.pending {
+  background: #d1d5db;
+  border: 2px solid #d1d5db;
 }
 
 .step-content {
@@ -1433,10 +1478,11 @@
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  margin-top: 0.5rem;
 }
 
 .step-title {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.25rem;
@@ -1447,15 +1493,10 @@
 }
 
 .progress-step.current .step-title {
-  color: #3b82f6;
+  color: #ef4444;
 }
 
-.step-description {
-  font-size: 0.75rem;
-  color: #6b7280;
-  line-height: 1.3;
-  margin-bottom: 0.25rem;
-}
+
 
 .step-date {
   font-size: 0.7rem;
@@ -1467,21 +1508,7 @@
   border: 1px solid #e5e7eb;
 }
 
-/* 진행도 단계 연결선 */
-.progress-step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 25px;
-  left: 50%;
-  width: 100%;
-  height: 2px;
-  background: #e5e7eb;
-  z-index: 1;
-}
-
-.progress-step.completed:not(:last-child)::after {
-  background: #16a34a;
-}
+/* 진행도 단계 연결선 삭제됨 */
 
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
@@ -1566,28 +1593,66 @@
   .progress-steps {
     flex-direction: column;
     gap: 1.5rem;
+    padding: 0;
   }
   
+  /* 모바일에서 세로 진행 선 - lucide-check 아이콘들 사이에 */
   .progress-steps::before {
-    display: none;
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 65px;
+    bottom: 20px;
+    width: 3px;
+    background: grey;
+    z-index: 1;
+    border-radius: 2px;
   }
+  
+
   
   .progress-step {
     flex-direction: row;
     text-align: left;
     gap: 1rem;
+    position: relative;
+  }
+  
+  .step-label {
+    display: none;
+  }
+  
+  .step-icon-container {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 0.5rem;
   }
   
   .step-icon {
-    margin-bottom: 0;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
+  }
+  
+  .step-status-indicator {
+    width: 12px;
+    height: 12px;
+    margin-top: 0;
+  }
+  
+  .step-status-indicator svg {
+    width: 8px;
+    height: 8px;
   }
   
   .step-content {
     align-items: flex-start;
+    margin-top: 0;
+    flex: 1;
   }
   
-  .progress-step:not(:last-child)::after {
-    display: none;
+  .step-title {
+    font-size: 0.75rem;
   }
 } 

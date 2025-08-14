@@ -46,12 +46,10 @@ export const formatDateTime = (dateString) => {
   const day = String(date.getDate()).padStart(2, '0');
   
   // 시간 부분
-  const hours = date.getHours();
+  const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  const ampm = hours >= 12 ? '오후' : '오전';
-  const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
   
-  return `${year}년 ${month}월 ${day}일\n${ampm} ${String(displayHours).padStart(2, '0')}:${minutes}`;
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 export const formatDateOnly = (dateString) => {

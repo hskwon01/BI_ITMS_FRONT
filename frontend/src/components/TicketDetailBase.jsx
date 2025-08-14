@@ -7,7 +7,7 @@ import CommonLayout from './CommonLayout';
 import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
-import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2 } from 'lucide-react';
+import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X } from 'lucide-react';
 
 const TicketDetailBase = ({ ticketId, token, role }) => {
   const [ticket, setTicket] = useState(null);
@@ -31,6 +31,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [assignReplyMessage, setAssignReplyMessage] = useState('');
+
+
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -785,39 +787,59 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           {/* 진행도 단계 표시 */}
           <div className="ticket-progress-section">
             <h3>진행 상황</h3>
-            <div className="progress-steps">
-              <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''}`}>
-                <div className="step-icon"><FileText size={20} /></div>
+                          <div className="progress-steps">
+              <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '접수' ? 'current' : ''}`}>
+                <div className="step-label">STEP 01</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><FileText size={20} /></div>
+                  <div className="step-status-indicator completed">
+                    <Check size={10} />
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">접수</div>
-                  <div className="step-description">티켓이 등록되었습니다</div>
                   {ticket.status === '접수' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
               <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
-                <div className="step-icon"><Wrench size={20} /></div>
+                <div className="step-label">STEP 02</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><Wrench size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">진행중</div>
-                  <div className="step-description">담당자가 처리 중입니다</div>
                   {ticket.status === '진행중' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
               <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
-                <div className="step-icon"><CheckCircle size={20} /></div>
+                <div className="step-label">STEP 03</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><CheckCircle size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '답변 완료' || ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">답변 완료</div>
-                  <div className="step-description">답변이 완료되었습니다</div>
                   {ticket.status === '답변 완료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
               <div className={`progress-step ${ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '종료' ? 'current' : ''}`}>
-                <div className="step-icon"><FileCheck size={20} /></div>
+                <div className="step-label">STEP 04</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><FileCheck size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">종료</div>
-                  <div className="step-description">티켓이 종료되었습니다</div>
                   {ticket.status === '종료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
