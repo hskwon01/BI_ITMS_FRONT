@@ -272,10 +272,16 @@
 }
 
 .urgency-badge {
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.6rem;
   border-radius: 16px;
   font-size: 0.75rem;
   font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 30px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .urgency-badge.low {

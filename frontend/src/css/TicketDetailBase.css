@@ -383,11 +383,19 @@
   opacity: 0.7;
 }
 
-.meta-item:nth-child(1)::before { content: '📦'; }
-.meta-item:nth-child(2)::before { content: '🏷️'; }
-.meta-item:nth-child(3)::before { content: '💻'; }
-.meta-item:nth-child(4)::before { content: '☁️'; }
-.meta-item:nth-child(5)::before { content: '👤'; }
+/* 이모지 아이콘 제거 - HTML에서 직접 아이콘 추가 */
+
+.meta-icon {
+  color: #6b7280;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 .meta-label {
   font-size: 0.9rem;

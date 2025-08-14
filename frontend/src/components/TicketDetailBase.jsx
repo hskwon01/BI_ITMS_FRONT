@@ -7,7 +7,7 @@ import CommonLayout from './CommonLayout';
 import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
-import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X } from 'lucide-react';
+import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X, Download, File, Presentation, Archive, Image, Package, Tag, Monitor, Cloud, User } from 'lucide-react';
 
 const TicketDetailBase = ({ ticketId, token, role }) => {
   const [ticket, setTicket] = useState(null);
@@ -272,7 +272,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     const extension = filename.split('.').pop()?.toLowerCase();
     switch (extension) {
       case 'pdf':
-        return '📄';
+        return <File size={16} />;
       case 'doc':
       case 'docx':
         return <FileText size={16} />;
@@ -281,21 +281,21 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
         return <BarChart3 size={16} />;
       case 'ppt':
       case 'pptx':
-        return '📈';
+        return <Presentation size={16} />;
       case 'txt':
-        return '📄';
+        return <File size={16} />;
       case 'zip':
       case 'rar':
-        return '📦';
+        return <Archive size={16} />;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
       case 'bmp':
       case 'svg':
-        return '🖼️';
+        return <Image size={16} />;
       default:
-        return '📎';
+        return <File size={16} />;
     }
   };
 
@@ -569,7 +569,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                               className="document-download"
                               title="다운로드"
                             >
-                              ⬇️ 다운로드
+                              <Download size={16} /> 다운로드
                             </a>
                             {(role === 'admin' || ticket.author_id === currentUserId) && (
                               <button
@@ -718,7 +718,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                                     className="document-download"
                                     title="다운로드"
                                   >
-                                    ⬇️ 다운로드
+                                    <Download size={16} /> 다운로드
                                   </a>
                                   {(role === 'admin' || reply.author_id === currentUserId) && (
                                     <button 
@@ -853,37 +853,45 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               {ticket.ticket_type === 'SR' ? (
                 <>
                   <div className="meta-item">
+                    <Package size={16} className="meta-icon" />
                     <span className="meta-label">관련 제품:</span>
                     <span className="meta-value">{ticket.product}</span>
                   </div>
                   <div className="meta-item">
+                    <Tag size={16} className="meta-icon" />
                     <span className="meta-label">S/W Version:</span>
                     <span className="meta-value">{ticket.sw_version}</span>
                   </div>
                   <div className="meta-item">
+                    <Monitor size={16} className="meta-icon" />
                     <span className="meta-label">OS:</span>
                     <span className="meta-value">{ticket.os}</span>
                   </div>
                   <div className="meta-item">
+                    <Cloud size={16} className="meta-icon" />
                     <span className="meta-label">Platform:</span>
                     <span className="meta-value">{ticket.platform}</span>
                   </div>
                 </>
               ) : (
                 <div className="meta-item">
+                  <Package size={16} className="meta-icon" />
                   <span className="meta-label">고객사:</span>
                   <span className="meta-value">{ticket.client_company}</span>
                 </div>
               )}
               <div className="meta-item">
+                <User size={16} className="meta-icon" />
                 <span className="meta-label">등록자:</span>
                 <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
               </div>
               <div className="meta-item">
+                <User size={16} className="meta-icon" />
                 <span className="meta-label">담당자:</span>
                 <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
               </div>
               <div className="meta-item">
+                <FileText size={16} className="meta-icon" />
                 <span className="meta-label">등록일:</span>
                 <span className="meta-value">
                   {new Date(ticket.created_at).toLocaleDateString('ko-KR', {
