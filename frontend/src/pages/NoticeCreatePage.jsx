@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/NoticeCreatePage.css';
 
 const NoticeCreatePage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { showSuccess, showError } = useToast();
   const [form, setForm] = useState({
     title: '',
     content: '',
@@ -27,7 +29,7 @@ const NoticeCreatePage = () => {
     e.preventDefault();
     
     if (!form.title.trim() || !form.content.trim()) {
-      alert('제목과 내용을 모두 입력해주세요.');
+      showError('제목과 내용을 모두 입력해주세요.');
       return;
     }
 
@@ -46,11 +48,14 @@ const NoticeCreatePage = () => {
       }
 
       const response = await createNotice(formData);
-      alert('공지사항이 등록되었습니다.');
-      navigate('/admin/notices');
+      showSuccess('공지사항이 등록되었습니다.');
+      // 토스트 알림창이 표시될 시간을 주기 위해 약간의 지연 후 페이지 이동
+      setTimeout(() => {
+        navigate('/admin/notices');
+      }, 1000);
     } catch (err) {
       console.error('등록 실패:', err);
-      alert('등록에 실패했습니다.');
+      showError('등록에 실패했습니다.');
     } finally {
       setSaving(false);
     }
