@@ -23,6 +23,38 @@
   font-size: 1.05rem;
 }
 
+/* 정렬 버튼 스타일 */
+.sort-button {
+  background: none;
+  border: none;
+  color: #2d3652;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.sort-button:hover {
+  background: #f1f5f9;
+  color: #3b82f6;
+}
+
+.sort-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.sort-icon {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #3b82f6;
+}
+
 
 
 .my-ticket-filters {
