@@ -16,7 +16,7 @@ import {
 import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
 import '../css/AdminTicketListPage.css';
 
-const statusList = ['접수', '진행중', '답변 완료', '종결'];
+const statusList = ['접수', '진행중', '답변 완료', '종료'];
 const urgencyList = ['낮음', '보통', '높음'];
 const ticketTypeList = ['SM', 'SR'];
 
@@ -114,7 +114,7 @@ const AdminTicketListPage = () => {
       case '접수': return 'received';
       case '진행중': return 'in-progress';
       case '답변 완료': return 'answered';
-      case '종결': return 'closed';
+      case '종료': return 'closed';
       default: return 'default';
     }
   };
@@ -249,7 +249,7 @@ const AdminTicketListPage = () => {
                       {ticket.status === '접수' && <FiMessageSquare />}
                       {ticket.status === '진행중' && <FiAlertCircle />}
                       {ticket.status === '답변 완료' && <FiCheckCircle />}
-                      {ticket.status === '종결' && <FiXCircle />}
+                      {ticket.status === '종료' && <FiXCircle />}
                       {ticket.status}
                     </span>
                   </td>

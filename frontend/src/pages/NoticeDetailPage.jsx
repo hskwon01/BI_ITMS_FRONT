@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import { fetchNotice, deleteNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
+import { FileText, BarChart3 } from 'lucide-react';
 import '../css/NoticeDetailPage.css';
 
 const NoticeDetailPage = () => {
@@ -83,10 +84,10 @@ const NoticeDetailPage = () => {
         return '📄';
       case 'doc':
       case 'docx':
-        return '📝';
+        return <FileText size={16} />;
       case 'xls':
       case 'xlsx':
-        return '📊';
+        return <BarChart3 size={16} />;
       case 'ppt':
       case 'pptx':
         return '📈';

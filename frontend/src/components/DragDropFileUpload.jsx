@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { FileText, BarChart3, Folder } from 'lucide-react';
 import './DragDropFileUpload.css';
 
 const DragDropFileUpload = ({ 
@@ -139,8 +140,8 @@ const DragDropFileUpload = ({
   const getFileIcon = (type) => {
     if (type.startsWith('image/')) return '🖼️';
     if (type.includes('pdf')) return '📄';
-    if (type.includes('word') || type.includes('document')) return '📝';
-    if (type.includes('excel') || type.includes('spreadsheet')) return '📊';
+    if (type.includes('word') || type.includes('document')) return <FileText size={16} />;
+    if (type.includes('excel') || type.includes('spreadsheet')) return <BarChart3 size={16} />;
     if (type.includes('powerpoint') || type.includes('presentation')) return '📈';
     if (type.includes('text')) return '📄';
     if (type.includes('zip') || type.includes('rar')) return '📦';
@@ -174,7 +175,7 @@ const DragDropFileUpload = ({
         onClick={() => fileInputRef.current?.click()}
       >
         <div className="drag-drop-content">
-          <div className="drag-drop-icon">📁</div>
+          <div className="drag-drop-icon"><Folder size={32} /></div>
           <p className="drag-drop-text">
             파일을 드래그하여 여기에 놓거나 <span className="click-here">클릭</span>하여 선택하세요
           </p>
