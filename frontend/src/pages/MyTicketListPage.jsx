@@ -13,6 +13,7 @@ const MyTicketListPage = () => {
   const [loading, setLoading] = useState(true);
   const [unreadMap, setUnreadMap] = useState({});
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 또는 'desc'
 
   // 1. 전체 티켓 목록을 처음 한 번만 가져오는 useEffect
 useEffect(() => {
@@ -59,11 +60,15 @@ useEffect(() => {
     }
   };
   fetchUnreadCounts();
-  // 등록일이 오래된 순으로 정렬
-  filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  // 등록일 기준으로 정렬
+  filtered.sort((a, b) => {
+    const dateA = new Date(a.created_at);
+    const dateB = new Date(b.created_at);
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
   
   setFilteredTickets(filtered);
-}, [filters, allTickets]);
+}, [filters, allTickets, sortOrder]);
 
 // 실시간 시간 업데이트
 useEffect(() => {
@@ -78,17 +83,11 @@ useEffect(() => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
-  const getStatusCount = (status) => {
-    return allTickets.filter(ticket => ticket.status === status).length;
+  const handleSortToggle = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   };
 
-  const getUrgencyCount = (urgency) => {
-    return allTickets.filter(ticket => ticket.urgency === urgency).length;
-  };
 
-  const getTicketTypeCount = (ticketType) => {
-    return allTickets.filter(ticket => ticket.ticket_type === ticketType).length;
-  };
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -134,36 +133,7 @@ useEffect(() => {
           <p className="my-ticket-desc">내가 등록한 티켓들을 관리하고 확인하세요</p>
         </div>
 
-        <div className="my-ticket-stats">
-          <div className="my-ticket-stat-card total">
-            <div className="stat-label">전체</div>
-            <div className="stat-value">{allTickets.length}</div>
-          </div>
-          <div className="my-ticket-stat-card sm">
-            <div className="stat-label">SM</div>
-            <div className="stat-value">{getTicketTypeCount('SM')}</div>
-          </div>
-          <div className="my-ticket-stat-card sr">
-            <div className="stat-label">SR</div>
-            <div className="stat-value">{getTicketTypeCount('SR')}</div>
-          </div>
-          <div className="my-ticket-stat-card received">
-            <div className="stat-label">접수</div>
-            <div className="stat-value">{getStatusCount('접수')}</div>
-          </div>
-          <div className="my-ticket-stat-card in-progress">
-            <div className="stat-label">진행중</div>
-            <div className="stat-value">{getStatusCount('진행중')}</div>
-          </div>
-          <div className="my-ticket-stat-card answered">
-            <div className="stat-label">답변완료</div>
-            <div className="stat-value">{getStatusCount('답변 완료')}</div>
-          </div>
-          <div className="my-ticket-stat-card closed">
-            <div className="stat-label">종료</div>
-            <div className="stat-value">{getStatusCount('종료')}</div>
-          </div>
-        </div>
+
 
         <div className="my-ticket-filters">
           <input
@@ -217,16 +187,27 @@ useEffect(() => {
             </div>
           ) : (
             <table className="my-ticket-table">
-              <thead>
-                <tr>
-                  <th>제목</th>
-                  <th>티켓 타입</th>
-                  <th>상태</th>
-                  <th>긴급도</th>
-                  <th>담당자</th>
-                  <th>등록일</th>
-                </tr>
-              </thead>
+                          <thead>
+              <tr>
+                <th>제목</th>
+                <th>티켓 타입</th>
+                <th>상태</th>
+                <th>긴급도</th>
+                <th>담당자</th>
+                <th>
+                  <button 
+                    onClick={handleSortToggle} 
+                    className="sort-button"
+                    title={sortOrder === 'asc' ? '최신순으로 정렬' : '오래된순으로 정렬'}
+                  >
+                    등록일
+                    <span className="sort-icon">
+                      {sortOrder === 'asc' ? '↑' : '↓'}
+                    </span>
+                  </button>
+                </th>
+              </tr>
+            </thead>
               <tbody>
                 {filteredTickets.map(ticket => (
                   <tr key={ticket.id} className={getTicketAgeClass(ticket.created_at)}>

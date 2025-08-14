@@ -29,6 +29,7 @@ const AdminTicketListPage = () => {
   const [loading, setLoading] = useState(true);
   const [adminUnreadMap, setAdminUnreadMap] = useState({});
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 또는 'desc'
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -77,11 +78,15 @@ const AdminTicketListPage = () => {
       setAdminUnreadMap(map);
     };
     fetchUnreadCounts();
-    // 등록일이 오래된 순으로 정렬
-    filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    // 등록일 기준으로 정렬
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
     
     setFilteredTickets(filtered);
-  }, [filters, allTickets]);
+  }, [filters, allTickets, sortOrder]);
 
   // 실시간 시간 업데이트
   useEffect(() => {
@@ -94,6 +99,10 @@ const AdminTicketListPage = () => {
 
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const handleSortToggle = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   };
 
   const getStatusCount = (status) => allTickets.filter(ticket => ticket.status === status).length;
@@ -202,7 +211,18 @@ const AdminTicketListPage = () => {
                 <th>긴급도</th>
                 <th>고객</th>
                 <th>회사</th>
-                <th>등록일</th>
+                <th>
+                  <button 
+                    onClick={handleSortToggle} 
+                    className="sort-button"
+                    title={sortOrder === 'asc' ? '최신순으로 정렬' : '오래된순으로 정렬'}
+                  >
+                    등록일
+                    <span className="sort-icon">
+                      {sortOrder === 'asc' ? '↑' : '↓'}
+                    </span>
+                  </button>
+                </th>
                 <th>담당자</th>
               </tr>
             </thead>

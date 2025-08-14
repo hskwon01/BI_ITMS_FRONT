@@ -15,8 +15,12 @@ const CommonLayout = memo(({ children }) => {
   const handleLogoClick = () => {
     const token = localStorage.getItem('token');
     if (token && user) {
-      // 토큰이 있고 사용자 정보가 있으면 /home으로 이동
-      navigate('/home');
+      // 사용자 역할에 따라 적절한 페이지로 이동
+      if (user?.data?.role === 'admin' || user?.data?.role === 'itsm_team') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/my-tickets');
+      }
     } else {
       // 토큰이 없거나 만료되었으면 /로 이동
       navigate('/');
@@ -89,9 +93,7 @@ const CommonLayout = memo(({ children }) => {
                 </button>
                 <ul className="dropdown-menu">
                   <li><Link to="/notices">공지사항</Link></li>
-                  <li><Link to="/tickets/sr">SR 답변</Link></li>
                   <li><a href="https://www.ibm.com/docs/en/webmethods-integration" target="_blank" rel="noopener noreferrer">공식문서</a></li>
-                  <li><Link to="/quotes">견적</Link></li>
                 </ul>
               </li>
             </ul>

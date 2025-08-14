@@ -24,6 +24,7 @@ import NoticeEditPage from './pages/NoticeEditPage';
 import NoticeCreatePage from './pages/NoticeCreatePage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminNoticesPage from './pages/AdminNoticesPage';
+import HomePage from './pages/HomePage';
 import QuotesPage from './pages/QuotesPage';
 import QuoteCreatePage from './pages/QuoteCreatePage';
 import QuoteDetailPage from './pages/QuoteDetailPage';
@@ -35,7 +36,7 @@ const App = () => (
         <Routes>
         {/* 홈 페이지 */}
         <Route path="/" element={<LoginPage />} />
-        <Route path="/home" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/request-access" element={<RequestAccessPage />} />

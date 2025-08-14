@@ -32,7 +32,7 @@ const AdminLayout = ({ children }) => {
   const handleLogoClick = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      // 토큰이 있으면 대시보드로 이동
+      // 토큰이 있으면 관리자 대시보드로 이동
       navigate('/admin/dashboard');
     } else {
       // 토큰이 없으면 /로 이동
