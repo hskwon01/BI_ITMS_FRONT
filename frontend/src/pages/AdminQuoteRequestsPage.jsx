@@ -80,6 +80,7 @@ const AdminQuoteRequestsPage = () => {
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'pending': return 'pending';
+      case 'draft': return 'draft';
       case 'approved': return 'approved';
       case 'rejected': return 'rejected';
       default: return 'default';
@@ -89,6 +90,7 @@ const AdminQuoteRequestsPage = () => {
   const getStatusText = (status) => {
     switch (status) {
       case 'pending': return '승인 대기';
+      case 'draft': return '임시저장';
       case 'approved': return '승인됨';
       case 'rejected': return '거부됨';
       default: return status;
@@ -114,9 +116,10 @@ const AdminQuoteRequestsPage = () => {
             className="status-select"
           >
             <option value="pending">승인 대기</option>
+            <option value="draft">임시저장</option>
             <option value="approved">승인됨</option>
             <option value="rejected">거부됨</option>
-            <option value="">전체</option>
+            <option value="all">전체</option>
           </select>
         </div>
       </div>
