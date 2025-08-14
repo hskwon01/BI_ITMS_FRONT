@@ -61,15 +61,15 @@ const QuoteCreatePage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, isDraft = false) => {
     e.preventDefault();
     
-    if (!formData.title.trim()) {
+    if (!isDraft && !formData.title.trim()) {
       alert('견적 제목을 입력해주세요.');
       return;
     }
 
-    if (selectedItems.length === 0) {
+    if (!isDraft && selectedItems.length === 0) {
       alert('최소 1개 이상의 제품을 선택해주세요.');
       return;
     }
@@ -77,22 +77,25 @@ const QuoteCreatePage = () => {
     try {
       setLoading(true);
 
-      // 견적서 생성
-      const quoteResponse = await createQuote(formData);
+      // 견적서 생성 (임시저장인 경우 status를 'draft'로 설정)
+      const quoteData = isDraft ? { ...formData, status: 'draft' } : formData;
+      const quoteResponse = await createQuote(quoteData);
       const quoteId = quoteResponse.data.id;
 
-      // 견적 항목들 추가
-      for (const item of selectedItems) {
-        await addQuoteItem(quoteId, {
-          product_id: item.product_id,
-          product_name: item.product_name,
-          product_description: item.description,
-          quantity: item.quantity,
-          unit_price: item.unit_price
-        });
+      // 견적 항목들 추가 (임시저장인 경우에도 항목이 있으면 추가)
+      if (selectedItems.length > 0) {
+        for (const item of selectedItems) {
+          await addQuoteItem(quoteId, {
+            product_id: item.product_id,
+            product_name: item.product_name,
+            product_description: item.description,
+            quantity: item.quantity,
+            unit_price: item.unit_price
+          });
+        }
       }
 
-      alert('견적이 성공적으로 생성되었습니다.');
+      alert(isDraft ? '견적이 임시저장되었습니다.' : '견적이 성공적으로 생성되었습니다.');
       navigate(`/quotes/${quoteId}`);
     } catch (error) {
       console.error('견적 생성 실패:', error);
@@ -322,6 +325,14 @@ const QuoteCreatePage = () => {
               className="btn btn-secondary"
             >
               취소
+            </button>
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, true)}
+              disabled={loading}
+              className="btn btn-outline"
+            >
+              {loading ? '저장 중...' : '임시저장'}
             </button>
             <button
               type="submit"
