@@ -217,16 +217,31 @@ const AdminNoticesPage = () => {
                 {list.map((n) => (
                   <tr key={n.id} className="admin-notices-row">
                                          <td className="admin-notices-title">
-                       <Link to={`/notices/${n.id}`} className="notice-title-link">
+                       <button 
+                         className="notice-title-link" 
+                         onClick={() => onEdit(n)}
+                       >
                          {n.title}
                          {n.is_pinned ? <span className="notices-pin">📌</span> : null}
-                       </Link>
+                       </button>
                      </td>
                      <td>{new Date(n.created_at).toLocaleString('ko-KR')}</td>
                      <td style={{ textAlign: 'center' }}>
                        <div className="admin-notices-actions">
-                         <button className="btn btn-edit" onClick={() => onEdit(n)}>수정</button>
-                         <button className="btn btn-delete" onClick={() => onDelete(n.id)}>삭제</button>
+                         <button 
+                           className="btn btn-edit" 
+                           onClick={() => onEdit(n)}
+                           disabled={editing && editing.id === n.id}
+                         >
+                           수정
+                         </button>
+                         <button 
+                           className="btn btn-delete" 
+                           onClick={() => onDelete(n.id)}
+                           disabled={editing && editing.id === n.id}
+                         >
+                           삭제
+                         </button>
                        </div>
                      </td>
                   </tr>
