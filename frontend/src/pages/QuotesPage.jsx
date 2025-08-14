@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
-import { fetchQuotes, deleteQuote } from '../api/quotes';
+import { getQuotes, deleteQuote } from '../api/quotes';
 import { useUser } from '../contexts/UserContext';
 import '../css/QuotesPage.css';
 
@@ -25,7 +25,7 @@ const QuotesPage = () => {
     try {
       setLoading(true);
       const offset = (page - 1) * pageSize;
-      const response = await fetchQuotes({
+      const response = await getQuotes({
         limit: pageSize,
         offset,
         ...filters

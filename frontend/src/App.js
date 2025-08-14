@@ -24,6 +24,7 @@ import NoticeEditPage from './pages/NoticeEditPage';
 import NoticeCreatePage from './pages/NoticeCreatePage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminNoticesPage from './pages/AdminNoticesPage';
+import AdminQuoteRequestsPage from './pages/AdminQuoteRequestsPage';
 import HomePage from './pages/HomePage';
 import QuotesPage from './pages/QuotesPage';
 import QuoteCreatePage from './pages/QuoteCreatePage';
@@ -64,6 +65,7 @@ const App = () => (
         <Route path="/admin/access-requests" element={<AdminRoute><AdminAccessRequestPage /></AdminRoute>} />
         <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
         <Route path="/admin/notices" element={<AdminRoute><AdminNoticesPage /></AdminRoute>} />
+        <Route path="/admin/quote-requests" element={<AdminRoute><AdminQuoteRequestsPage /></AdminRoute>} />
               </Routes>
       </BrowserRouter>
     </ToastProvider>

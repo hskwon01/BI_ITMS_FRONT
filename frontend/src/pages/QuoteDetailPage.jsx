@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
-import { fetchQuote, deleteQuote, updateQuote } from '../api/quotes';
+import { getQuote, deleteQuote, updateQuote } from '../api/quotes';
 import { useUser } from '../contexts/UserContext';
 import '../css/QuoteDetailPage.css';
 
@@ -21,7 +21,7 @@ const QuoteDetailPage = () => {
   const loadQuote = async () => {
     try {
       setLoading(true);
-      const response = await fetchQuote(id);
+      const response = await getQuote(id);
       setQuote(response.data);
     } catch (error) {
       console.error('견적 조회 실패:', error);
