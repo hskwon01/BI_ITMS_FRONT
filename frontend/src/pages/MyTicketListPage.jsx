@@ -78,17 +78,7 @@ useEffect(() => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
-  const getStatusCount = (status) => {
-    return allTickets.filter(ticket => ticket.status === status).length;
-  };
 
-  const getUrgencyCount = (urgency) => {
-    return allTickets.filter(ticket => ticket.urgency === urgency).length;
-  };
-
-  const getTicketTypeCount = (ticketType) => {
-    return allTickets.filter(ticket => ticket.ticket_type === ticketType).length;
-  };
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -134,36 +124,7 @@ useEffect(() => {
           <p className="my-ticket-desc">내가 등록한 티켓들을 관리하고 확인하세요</p>
         </div>
 
-        <div className="my-ticket-stats">
-          <div className="my-ticket-stat-card total">
-            <div className="stat-label">전체</div>
-            <div className="stat-value">{allTickets.length}</div>
-          </div>
-          <div className="my-ticket-stat-card sm">
-            <div className="stat-label">SM</div>
-            <div className="stat-value">{getTicketTypeCount('SM')}</div>
-          </div>
-          <div className="my-ticket-stat-card sr">
-            <div className="stat-label">SR</div>
-            <div className="stat-value">{getTicketTypeCount('SR')}</div>
-          </div>
-          <div className="my-ticket-stat-card received">
-            <div className="stat-label">접수</div>
-            <div className="stat-value">{getStatusCount('접수')}</div>
-          </div>
-          <div className="my-ticket-stat-card in-progress">
-            <div className="stat-label">진행중</div>
-            <div className="stat-value">{getStatusCount('진행중')}</div>
-          </div>
-          <div className="my-ticket-stat-card answered">
-            <div className="stat-label">답변완료</div>
-            <div className="stat-value">{getStatusCount('답변 완료')}</div>
-          </div>
-          <div className="my-ticket-stat-card closed">
-            <div className="stat-label">종결</div>
-            <div className="stat-value">{getStatusCount('종결')}</div>
-          </div>
-        </div>
+
 
         <div className="my-ticket-filters">
           <input
