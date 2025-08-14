@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import { fetchNotice, deleteNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
-import { FileText, BarChart3 } from 'lucide-react';
+import { FileText, BarChart3, Download, File, Presentation, Archive, Image } from 'lucide-react';
 import '../css/NoticeDetailPage.css';
 
 const NoticeDetailPage = () => {
@@ -81,7 +81,7 @@ const NoticeDetailPage = () => {
     const extension = filename.split('.').pop()?.toLowerCase();
     switch (extension) {
       case 'pdf':
-        return '📄';
+        return <File size={16} />;
       case 'doc':
       case 'docx':
         return <FileText size={16} />;
@@ -90,12 +90,12 @@ const NoticeDetailPage = () => {
         return <BarChart3 size={16} />;
       case 'ppt':
       case 'pptx':
-        return '📈';
+        return <Presentation size={16} />;
       case 'txt':
-        return '📄';
+        return <File size={16} />;
       case 'zip':
       case 'rar':
-        return '📦';
+        return <Archive size={16} />;
       case 'jpg':
       case 'jpeg':
       case 'png':
@@ -103,9 +103,9 @@ const NoticeDetailPage = () => {
       case 'bmp':
       case 'svg':
       case 'webp':
-        return '🖼️';
+        return <Image size={16} />;
       default:
-        return '📎';
+        return <File size={16} />;
     }
   };
 
@@ -266,7 +266,7 @@ const NoticeDetailPage = () => {
                               className="file-action-btn download-btn"
                               title="다운로드"
                             >
-                              ⬇️
+                              <Download size={16} />
                             </button>
                             <a
                               href={getFileUrl(file.url)}
@@ -303,7 +303,7 @@ const NoticeDetailPage = () => {
                               className="file-action-btn download-btn"
                               title="다운로드"
                             >
-                              ⬇️
+                              <Download size={16} />
                             </button>
                             <a
                               href={getFileUrl(file.url)}
@@ -359,7 +359,7 @@ const NoticeDetailPage = () => {
                   }}
                   className="btn btn-primary"
                 >
-                  ⬇️ 다운로드
+                  <Download size={16} /> 다운로드
                 </button>
                 <a
                   href={selectedImage.url}

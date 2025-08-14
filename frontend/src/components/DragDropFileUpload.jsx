@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { FileText, BarChart3, Folder } from 'lucide-react';
+import { FileText, BarChart3, Folder, File, Presentation, Archive, Image } from 'lucide-react';
 import './DragDropFileUpload.css';
 
 const DragDropFileUpload = ({ 
@@ -138,14 +138,14 @@ const DragDropFileUpload = ({
   };
 
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return '🖼️';
-    if (type.includes('pdf')) return '📄';
+    if (type.startsWith('image/')) return <Image size={16} />;
+    if (type.includes('pdf')) return <File size={16} />;
     if (type.includes('word') || type.includes('document')) return <FileText size={16} />;
     if (type.includes('excel') || type.includes('spreadsheet')) return <BarChart3 size={16} />;
-    if (type.includes('powerpoint') || type.includes('presentation')) return '📈';
-    if (type.includes('text')) return '📄';
-    if (type.includes('zip') || type.includes('rar')) return '📦';
-    return '📎';
+    if (type.includes('powerpoint') || type.includes('presentation')) return <Presentation size={16} />;
+    if (type.includes('text')) return <File size={16} />;
+    if (type.includes('zip') || type.includes('rar')) return <Archive size={16} />;
+    return <File size={16} />;
   };
 
   const isImageFile = (type) => {

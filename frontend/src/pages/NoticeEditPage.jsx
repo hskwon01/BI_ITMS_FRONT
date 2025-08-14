@@ -4,6 +4,7 @@ import CommonLayout from '../components/CommonLayout';
 import { fetchNotice, updateNotice } from '../api/notices';
 import { useUser } from '../contexts/UserContext';
 import { useToast } from '../contexts/ToastContext';
+import { File } from 'lucide-react';
 import '../css/NoticeEditPage.css';
 
 const NoticeEditPage = () => {
@@ -183,7 +184,7 @@ const NoticeEditPage = () => {
               <div className="existing-files">
                 {existingFiles.map((file, index) => (
                   <div key={index} className="existing-file-item">
-                    <span className="file-icon">📄</span>
+                    <span className="file-icon"><File size={16} /></span>
                     <span className="file-name">{file.originalname}</span>
                   </div>
                 ))}

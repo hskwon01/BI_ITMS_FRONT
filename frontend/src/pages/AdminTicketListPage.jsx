@@ -12,6 +12,7 @@ import {
   FiAlertCircle,
   FiXCircle
 } from 'react-icons/fi';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
 import '../css/AdminTicketListPage.css';
@@ -219,7 +220,7 @@ const AdminTicketListPage = () => {
                   >
                     등록일
                     <span className="sort-icon">
-                      {sortOrder === 'asc' ? '↑' : '↓'}
+                      {sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </span>
                   </button>
                 </th>
