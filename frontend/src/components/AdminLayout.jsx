@@ -8,6 +8,7 @@ import {
   FiPackage, 
   FiShield,
   FiFileText,
+  FiDollarSign,
   FiLogOut,
   FiChevronLeft,
   FiChevronRight,
@@ -55,6 +56,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/team', label: '팀관리', icon: FiUserCheck },
     { path: '/admin/products', label: '제품관리', icon: FiPackage },
     { path: '/admin/notices', label: '공지사항', icon: FiFileText },
+    { path: '/admin/quote-requests', label: '견적요청', icon: FiDollarSign },
     { path: '/admin/access-requests', label: '접근요청', icon: FiShield },
   ];
 
