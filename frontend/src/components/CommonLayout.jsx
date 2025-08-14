@@ -93,7 +93,6 @@ const CommonLayout = memo(({ children }) => {
                 </button>
                 <ul className="dropdown-menu">
                   <li><Link to="/notices">공지사항</Link></li>
-                  <li><Link to="/tickets/sr">SR 답변</Link></li>
                   <li><a href="https://www.ibm.com/docs/en/webmethods-integration" target="_blank" rel="noopener noreferrer">공식문서</a></li>
                   <li><Link to="/quotes">견적</Link></li>
                 </ul>
