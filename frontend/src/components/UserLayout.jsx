@@ -17,8 +17,8 @@ const UserLayout = ({ children }) => {
   const handleLogoClick = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      // 토큰이 있으면 /home으로 이동
-      navigate('/home');
+      // 토큰이 있으면 /my-tickets로 이동 (고객용 레이아웃이므로)
+      navigate('/my-tickets');
     } else {
       // 토큰이 없으면 /로 이동
       navigate('/');

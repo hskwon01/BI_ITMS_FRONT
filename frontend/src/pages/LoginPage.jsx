@@ -12,7 +12,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login: loginUser } = useUser();
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -30,13 +30,16 @@ const LoginPage = () => {
       // UserContext에 사용자 정보 업데이트
       loginUser(me);
 
+      // 로그인 성공 메시지 표시
+      showSuccess('로그인 성공!');
+
       if (next) {
         navigate(next);
         return;
       }
       
       // 사용자 역할에 따라 다른 페이지로 리다이렉트
-      if (me.role === 'admin' || me.role === 'itsm_team') {
+      if (me.data?.role === 'admin' || me.data?.role === 'itsm_team') {
         navigate('/admin/dashboard');
       } else {
         navigate('/my-tickets');
