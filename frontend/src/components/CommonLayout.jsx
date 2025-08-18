@@ -103,6 +103,10 @@ const CommonLayout = memo(({ children }) => {
             {user ? (
               <div className="user-menu">
                 <span className="user-name">{user?.data?.name || '사용자'}</span>
+                <span className="user-role">
+                  {user?.data?.role === 'admin' ? '관리자' : 
+                   user?.data?.role === 'itsm_team' ? '기술지원팀' : '고객'}
+                </span>
                 <button 
                   onClick={handleLogout} 
                   className="logout-btn"

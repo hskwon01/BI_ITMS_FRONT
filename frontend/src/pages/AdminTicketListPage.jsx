@@ -148,13 +148,6 @@ const AdminTicketListPage = () => {
 
   return (
     <div className="admin-ticket-list-container">
-        <div className="admin-ticket-header">
-          <h1>티켓 관리</h1>
-          <p className="admin-ticket-desc">모든 고객 문의를 한눈에 관리하세요</p>
-        </div>
-
-
-
       <div className="admin-ticket-filters">
         <div className="search-container">
           <FiSearch className="search-icon" />

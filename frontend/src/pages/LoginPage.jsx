@@ -30,9 +30,6 @@ const LoginPage = () => {
       // UserContext에 사용자 정보 업데이트
       loginUser(me);
 
-      // 로그인 성공 메시지 표시
-      showSuccess('로그인 성공!');
-
       if (next) {
         navigate(next);
         return;
