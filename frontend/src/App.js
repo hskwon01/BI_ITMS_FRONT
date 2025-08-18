@@ -25,6 +25,7 @@ import NoticeCreatePage from './pages/NoticeCreatePage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminNoticesPage from './pages/AdminNoticesPage';
 import AdminQuoteRequestsPage from './pages/AdminQuoteRequestsPage';
+import AdminQuoteDetailPage from './pages/AdminQuoteDetailPage';
 import HomePage from './pages/HomePage';
 import QuotesPage from './pages/QuotesPage';
 import QuoteCreatePage from './pages/QuoteCreatePage';
@@ -66,6 +67,7 @@ const App = () => (
         <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
         <Route path="/admin/notices" element={<AdminRoute><AdminNoticesPage /></AdminRoute>} />
         <Route path="/admin/quote-requests" element={<AdminRoute><AdminQuoteRequestsPage /></AdminRoute>} />
+        <Route path="/admin/quotes/:id" element={<AdminRoute><AdminQuoteDetailPage /></AdminRoute>} />
               </Routes>
       </BrowserRouter>
     </ToastProvider>

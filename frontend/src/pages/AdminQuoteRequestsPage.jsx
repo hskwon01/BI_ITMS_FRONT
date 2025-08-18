@@ -152,7 +152,7 @@ const AdminQuoteRequestsPage = () => {
                   </td>
                   <td>{request.customer_company || '-'}</td>
                   <td>
-                    <Link to={`/quotes/${request.id}`} className="quote-title-link">
+                    <Link to={`/admin/quotes/${request.id}`} className="quote-title-link">
                       {request.title}
                     </Link>
                   </td>
