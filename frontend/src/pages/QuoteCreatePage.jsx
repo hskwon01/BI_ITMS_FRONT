@@ -4,11 +4,13 @@ import CommonLayout from '../components/CommonLayout';
 import { createQuote, addQuoteItem } from '../api/quotes';
 import { fetchProducts } from '../api/products';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
 import '../css/QuoteCreatePage.css';
 
 const QuoteCreatePage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -65,12 +67,12 @@ const QuoteCreatePage = () => {
     e.preventDefault();
     
     if (!isDraft && !formData.title.trim()) {
-      alert('견적 제목을 입력해주세요.');
+      showToast('견적 제목을 입력해주세요.', 'error');
       return;
     }
 
     if (!isDraft && selectedItems.length === 0) {
-      alert('최소 1개 이상의 제품을 선택해주세요.');
+      showToast('최소 1개 이상의 제품을 선택해주세요.', 'error');
       return;
     }
 
@@ -84,22 +86,30 @@ const QuoteCreatePage = () => {
 
       // 견적 항목들 추가 (임시저장인 경우에도 항목이 있으면 추가)
       if (selectedItems.length > 0) {
-        for (const item of selectedItems) {
-          await addQuoteItem(quoteId, {
-            product_id: item.product_id,
-            product_name: item.product_name,
-            product_description: item.description,
-            quantity: item.quantity,
-            unit_price: item.unit_price
-          });
+        try {
+          for (const item of selectedItems) {
+            await addQuoteItem(quoteId, {
+              product_id: item.product_id,
+              product_name: item.product_name,
+              product_description: item.description || '',
+              quantity: item.quantity,
+              unit_price: item.unit_price
+            });
+          }
+        } catch (itemError) {
+          console.error('견적 항목 추가 실패:', itemError);
+          showToast('견적은 생성되었지만 일부 항목 추가에 실패했습니다.', 'warning');
+          // 견적은 생성되었으므로 상세 페이지로 이동
+          navigate(`/quotes/${quoteId}`);
+          return;
         }
       }
 
-      alert(isDraft ? '견적이 임시저장되었습니다.' : '견적이 성공적으로 생성되었습니다.');
+      showToast(isDraft ? '견적이 임시저장되었습니다.' : '견적이 성공적으로 생성되었습니다.', 'success');
       navigate(`/quotes/${quoteId}`);
     } catch (error) {
       console.error('견적 생성 실패:', error);
-      alert('견적 생성에 실패했습니다.');
+      showToast('견적 생성에 실패했습니다.', 'error');
     } finally {
       setLoading(false);
     }

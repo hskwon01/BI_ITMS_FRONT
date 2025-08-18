@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getQuote, updateQuote } from '../api/quotes';
 import { useUser } from '../contexts/UserContext';
+import { useToast } from '../contexts/ToastContext';
+import { Check, X, Search, RotateCcw, FileText, Mail, Copy } from 'lucide-react';
 import '../css/QuoteDetailPage.css';
 
 const AdminQuoteDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUser();
+  const { showSuccess, showError } = useToast();
   
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -104,13 +107,13 @@ const AdminQuoteDetailPage = () => {
       
       setStatusHistory(prev => [...prev, newHistoryItem]);
       setQuote(prev => ({ ...prev, status: selectedStatus, status_reason: statusReason }));
-      alert('상태가 변경되었습니다.');
+      showSuccess('상태가 변경되었습니다.');
       setShowStatusModal(false);
       setSelectedStatus('');
       setStatusReason('');
     } catch (error) {
       console.error('상태 변경 실패:', error);
-      alert('상태 변경에 실패했습니다.');
+      showError('상태 변경에 실패했습니다.');
     } finally {
       setUpdating(false);
     }
@@ -165,17 +168,17 @@ const AdminQuoteDetailPage = () => {
   const getAvailableActions = (currentStatus) => {
     const actions = {
       'draft': [
-        { status: 'pending', label: '검토 시작', icon: '🔍', color: 'warning' }
+        { status: 'pending', label: '검토 시작', icon: <Search size={16} />, color: 'warning' }
       ],
       'pending': [
-        { status: 'approved', label: '승인', icon: '✅', color: 'success' },
-        { status: 'rejected', label: '거절', icon: '❌', color: 'danger' }
+        { status: 'approved', label: '승인', icon: <Check size={16} />, color: 'success' },
+        { status: 'rejected', label: '거절', icon: <X size={16} />, color: 'danger' }
       ],
       'approved': [
-        { status: 'pending', label: '재검토', icon: '🔄', color: 'warning' }
+        { status: 'pending', label: '재검토', icon: <RotateCcw size={16} />, color: 'warning' }
       ],
       'rejected': [
-        { status: 'pending', label: '재검토', icon: '🔄', color: 'warning' }
+        { status: 'pending', label: '재검토', icon: <RotateCcw size={16} />, color: 'warning' }
       ]
     };
     return actions[currentStatus] || [];
@@ -209,11 +212,6 @@ const AdminQuoteDetailPage = () => {
         {/* 헤더 */}
         <div className="quote-header">
           <div className="header-top">
-            <div className="breadcrumb">
-              <Link to="/admin/quote-requests">견적 요청 관리</Link>
-              <span className="separator">›</span>
-              <span>견적 상세</span>
-            </div>
           </div>
           
           <div className="quote-title-section">
@@ -399,15 +397,15 @@ const AdminQuoteDetailPage = () => {
               <h3>빠른 액션</h3>
               <div className="quick-actions">
                 <button className="quick-action-btn">
-                  <span className="action-icon">📧</span>
+                  <span className="action-icon"><Mail size={16} /></span>
                   <span>고객에게 연락</span>
                 </button>
                 <button className="quick-action-btn">
-                  <span className="action-icon">📄</span>
+                  <span className="action-icon"><FileText size={16} /></span>
                   <span>견적서 다운로드</span>
                 </button>
                 <button className="quick-action-btn">
-                  <span className="action-icon">📋</span>
+                  <span className="action-icon"><Copy size={16} /></span>
                   <span>내역 복사</span>
                 </button>
               </div>
@@ -427,11 +425,11 @@ const AdminQuoteDetailPage = () => {
       {showStatusModal && (
         <div className="modal-overlay">
           <div className="status-modal">
-            <div className="modal-header">
+            <div className="modal-header-quote">
               <h3>상태 변경</h3>
             </div>
             <div className="modal-content">
-              <p>견적 상태를 '{getStatusLabel(selectedStatus)}'로 변경하시겠습니까?</p>
+              <p>견적 상태를 <strong>'{getStatusLabel(selectedStatus)}'</strong> 으로 변경하시겠습니까?</p>
               
               <div className="form-group">
                 <label htmlFor="status-reason">변경 사유 (선택 사항):</label>
@@ -439,9 +437,9 @@ const AdminQuoteDetailPage = () => {
                   id="status-reason"
                   value={statusReason}
                   onChange={(e) => setStatusReason(e.target.value)}
-                  placeholder="상태 변경 사유를 입력하세요..."
+                  placeholder="상태 변경 사유를 입력하세요."
                   className="status-reason-textarea"
-                  rows="3"
+                  rows="2"
                 />
               </div>
             </div>
@@ -475,12 +473,12 @@ const AdminQuoteDetailPage = () => {
 // 상태별 아이콘 반환 함수
 const getStatusIcon = (status) => {
   const icons = {
-    'draft': '📝',
-    'pending': '🔍',
-    'approved': '✅',
-    'rejected': '❌'
+    'draft': <FileText size={16} />,
+    'pending': <Search size={16} />,
+    'approved': <Check size={16} />,
+    'rejected': <X size={16} />
   };
-  return icons[status] || '📋';
+  return icons[status] || <FileText size={16} />;
 };
 
 export default AdminQuoteDetailPage;

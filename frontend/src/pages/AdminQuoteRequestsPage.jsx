@@ -204,13 +204,13 @@ const AdminQuoteRequestsPage = () => {
                   id="rejectReason"
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
-                  placeholder="거부 사유를 입력하세요..."
+                  placeholder="거부 사유를 입력하세요."
                   rows="3"
                 />
               </div>
             )}
             
-            <div className="modal-actions">
+            <div className="modal-actions-admin-quote-requests">
               <button onClick={handleConfirm} className="confirm-btn">
                 {pendingAction?.action === 'approve' ? '승인' : '거부'}
               </button>
