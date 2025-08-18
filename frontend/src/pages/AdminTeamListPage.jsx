@@ -63,7 +63,6 @@ const AdminTeamListPage = () => {
   return (
       <div className="admin-user-list-container">
         <div className="admin-user-header">
-          <h1>팀 멤버 관리</h1>
           <p className="admin-user-desc">내부 팀 멤버(관리자, 기술지원팀) 계정을 관리합니다.</p>
         </div>
 

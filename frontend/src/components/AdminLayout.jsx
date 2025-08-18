@@ -47,6 +47,10 @@ const AdminLayout = ({ children }) => {
 
   const toggleMobileSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+    // 모바일에서 사이드바 토글 시 collapsed 상태도 함께 토글
+    if (window.innerWidth <= 768) {
+      setSidebarCollapsed(!sidebarCollapsed);
+    }
   };
 
   const menuItems = [
@@ -74,9 +78,6 @@ const AdminLayout = ({ children }) => {
               </div>
             )}
           </div>
-          <button className="sidebar-toggle" onClick={toggleSidebar}>
-            {sidebarCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
-          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -112,6 +113,9 @@ const AdminLayout = ({ children }) => {
         <div className="content-header">
           <div className="header-left">
             <button className="mobile-menu-toggle" onClick={toggleMobileSidebar}>
+              <FiMenu />
+            </button>
+            <button className="desktop-sidebar-toggle" onClick={toggleSidebar}>
               <FiMenu />
             </button>
             <div className="breadcrumb">

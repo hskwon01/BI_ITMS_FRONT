@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import { getMyTickets, getUnreadCounts } from '../api/ticket';
 import CommonLayout from '../components/CommonLayout';
 import { getTimeAgo, formatDateTime, isOldTicket, isVeryOldTicket } from '../utils/timeUtils';
+import { 
+  FiMessageSquare,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiXCircle
+} from 'react-icons/fi';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import '../css/MyTicketListPage.css';
 
 const MyTicketListPage = () => {
@@ -94,7 +101,7 @@ useEffect(() => {
       case '접수': return 'received';
       case '진행중': return 'in-progress';
       case '답변 완료': return 'answered';
-      case '종결': return 'closed';
+      case '종료': return 'closed';
       default: return '';
     }
   };
@@ -163,7 +170,7 @@ useEffect(() => {
             <option value="접수">접수</option>
             <option value="진행중">진행중</option>
             <option value="답변 완료">답변 완료</option>
-            <option value="종결">종결</option>
+            <option value="종료">종료</option>
           </select>
           <select
             name="urgency"
@@ -202,7 +209,7 @@ useEffect(() => {
                   >
                     등록일
                     <span className="sort-icon">
-                      {sortOrder === 'asc' ? '↑' : '↓'}
+                      {sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </span>
                   </button>
                 </th>
@@ -228,6 +235,10 @@ useEffect(() => {
                     </td>
                     <td>
                       <span className={`status-badge ${getStatusClass(ticket.status)}`}>
+                        {ticket.status === '접수' && <FiMessageSquare />}
+                        {ticket.status === '진행중' && <FiAlertCircle />}
+                        {ticket.status === '답변 완료' && <FiCheckCircle />}
+                        {ticket.status === '종료' && <FiXCircle />}
                         {ticket.status}
                       </span>
                     </td>

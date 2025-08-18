@@ -217,13 +217,25 @@
 .user-menu {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-direction: row;
 }
 
 .user-name {
   font-size: 0.9rem;
   color: #374151;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 400;
+  white-space: nowrap;
 }
 
 .login-btn {
@@ -245,10 +257,10 @@
   background: #ef4444;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 400;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }

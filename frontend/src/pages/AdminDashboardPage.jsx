@@ -13,6 +13,17 @@ import {
   FiFileText,
   FiSettings
 } from 'react-icons/fi';
+import { 
+  Wrench, 
+  CheckCircle, 
+  Folder, 
+  FileText, 
+  Inbox, 
+  Zap,
+  Target,
+  FileCheck,
+  List
+} from 'lucide-react';
 
 import '../css/AdminDashboardPage.css';
 
@@ -91,7 +102,7 @@ const AdminDashboardPage = () => {
         window.location.reload();
       }, 1000);
     } catch {
-      showToast('자동 종결 처리에 실패했습니다.', 'error');
+      showToast('자동 종료 처리에 실패했습니다.', 'error');
     } finally {
       setAutoClosing(false);
     }
@@ -111,7 +122,7 @@ const AdminDashboardPage = () => {
     { name: '접수', value: Number(stats.접수) },
     { name: '진행중', value: Number(stats.진행중) },
     { name: '답변 완료', value: Number(stats.답변완료) },
-    { name: '종결', value: Number(stats.종결) }
+    { name: '종료', value: Number(stats.종료) }
   ];
   const hasNonZeroPie = pieData.some(d => d.value > 0);
   const pieRenderData = hasNonZeroPie ? pieData.filter(d => d.value > 0) : pieData;
@@ -120,7 +131,7 @@ const AdminDashboardPage = () => {
     { name: '접수', value: Number(stats.접수) },
     { name: '진행중', value: Number(stats.진행중) },
     { name: '답변완료', value: Number(stats.답변완료) },
-    { name: '종결', value: Number(stats.종결) }
+    { name: '종료', value: Number(stats.종료) }
   ];
 
   const nf = new Intl.NumberFormat('ko-KR');
@@ -136,7 +147,7 @@ const AdminDashboardPage = () => {
         <div className="jira-stat-card total">
           <div className="stat-header">
             <div className="stat-icon">
-              <FiBarChart2 />
+              <List size={24} />
             </div>
             <div className="stat-badge">전체</div>
           </div>
@@ -145,7 +156,7 @@ const AdminDashboardPage = () => {
         </div>
         <div className="jira-stat-card received">
           <div className="stat-header">
-            <div className="stat-icon">📥</div>
+            <div className="stat-icon"><FileText size={24} /></div>
             <div className="stat-badge">접수</div>
           </div>
           <div className="stat-number">{nf.format(Number(stats.접수 || 0))}</div>
@@ -153,7 +164,7 @@ const AdminDashboardPage = () => {
         </div>
         <div className="jira-stat-card in-progress">
           <div className="stat-header">
-            <div className="stat-icon">🔧</div>
+            <div className="stat-icon"><Wrench size={24} /></div>
             <div className="stat-badge">진행</div>
           </div>
           <div className="stat-number">{nf.format(Number(stats.진행중 || 0))}</div>
@@ -161,7 +172,7 @@ const AdminDashboardPage = () => {
         </div>
         <div className="jira-stat-card answered">
           <div className="stat-header">
-            <div className="stat-icon">✅</div>
+            <div className="stat-icon"><CheckCircle size={24} /></div>
             <div className="stat-badge">완료</div>
           </div>
           <div className="stat-number">{nf.format(Number(stats.답변완료 || 0))}</div>
@@ -169,10 +180,10 @@ const AdminDashboardPage = () => {
         </div>
         <div className="jira-stat-card closed">
           <div className="stat-header">
-            <div className="stat-icon">📁</div>
-            <div className="stat-badge">종결</div>
+            <div className="stat-icon"><FileCheck size={24} /></div>
+            <div className="stat-badge">종료</div>
           </div>
-          <div className="stat-number">{nf.format(Number(stats.종결 || 0))}</div>
+          <div className="stat-number">{nf.format(Number(stats.종료 || 0))}</div>
           <div className="stat-label">해결됨</div>
         </div>
       </div>
@@ -226,7 +237,7 @@ const AdminDashboardPage = () => {
       <div className="kanban-columns">
         <div className="kanban-column received">
           <div className="column-header">
-            <div className="column-title">📥 접수</div>
+            <div className="column-title"><FileText size={20} /> 접수</div>
             <div className="column-count">{Number(stats.접수 || 0)}</div>
           </div>
           <div className="column-content" onClick={() => navigateToList('접수')}>
@@ -241,12 +252,12 @@ const AdminDashboardPage = () => {
 
         <div className="kanban-column in-progress">
           <div className="column-header">
-            <div className="column-title">🔧 진행중</div>
+            <div className="column-title"><Wrench size={20} /> 진행중</div>
             <div className="column-count">{Number(stats.진행중 || 0)}</div>
           </div>
           <div className="column-content" onClick={() => navigateToList('진행중')}>
             <div className="kanban-placeholder">
-              <div className="placeholder-icon">⚡</div>
+              <div className="placeholder-icon"><Zap size={24} /></div>
               <div className="placeholder-text">진행중인 티켓 보기</div>
             </div>
           </div>
@@ -254,12 +265,12 @@ const AdminDashboardPage = () => {
 
         <div className="kanban-column answered">
           <div className="column-header">
-            <div className="column-title">✅ 답변 완료</div>
+            <div className="column-title"><CheckCircle size={20} /> 답변 완료</div>
             <div className="column-count">{Number(stats.답변완료 || 0)}</div>
           </div>
           <div className="column-content" onClick={() => navigateToList('답변 완료')}>
             <div className="kanban-placeholder">
-              <div className="placeholder-icon">📝</div>
+              <div className="placeholder-icon"><FileText size={24} /></div>
               <div className="placeholder-text">답변 완료된 티켓 보기</div>
             </div>
           </div>
@@ -267,15 +278,15 @@ const AdminDashboardPage = () => {
 
         <div className="kanban-column closed">
           <div className="column-header">
-            <div className="column-title">📁 종결</div>
-            <div className="column-count">{Number(stats.종결 || 0)}</div>
+            <div className="column-title"><FileCheck size={20} /> 종료</div>
+            <div className="column-count">{Number(stats.종료 || 0)}</div>
           </div>
-          <div className="column-content" onClick={() => navigateToList('종결')}>
+          <div className="column-content" onClick={() => navigateToList('종료')}>
             <div className="kanban-placeholder">
               <div className="placeholder-icon">
               <FiTarget />
             </div>
-              <div className="placeholder-text">종결된 티켓 보기</div>
+              <div className="placeholder-text">종료된 티켓 보기</div>
             </div>
           </div>
         </div>
@@ -342,20 +353,20 @@ const AdminDashboardPage = () => {
           <div className="jira-modal-overlay">
             <div className="jira-modal">
               <div className="modal-header">
-                <h3>⚠️ SLA 자동 종결 확인</h3>
+                <h3>⚠️ SLA 자동 종료 확인</h3>
               </div>
               <div className="modal-content">
                 <div className="sla-explanation">
-                  <h4><FiFileText /> SLA 자동 종결 정책</h4>
+                  <h4><FiFileText /> SLA 자동 종료 정책</h4>
                   <ul>
                     <li><strong>대상 티켓:</strong> 상태가 "답변 완료"인 티켓</li>
                     <li><strong>기준 기간:</strong> 답변 완료 후 7일간 고객 응답 없음</li>
-                    <li><strong>처리 결과:</strong> 해당 티켓들이 "종결" 상태로 변경</li>
+                    <li><strong>처리 결과:</strong> 해당 티켓들이 "종료" 상태로 변경</li>
                     <li><strong>목적:</strong> 서비스 수준 협약(SLA) 준수 및 효율적인 티켓 관리</li>
                   </ul>
                 </div>
                 <div className="confirmation-question">
-                  <p><strong>위 조건에 해당하는 티켓들을 자동으로 종결 처리하시겠습니까?</strong></p>
+                  <p><strong>위 조건에 해당하는 티켓들을 자동으로 종료 처리하시겠습니까?</strong></p>
                 </div>
                 <div className="modal-warning">
                   <span>⚠️ 이 작업은 되돌릴 수 없습니다. 신중히 결정해 주세요.</span>
@@ -379,17 +390,12 @@ const AdminDashboardPage = () => {
           </div>
         )}
         
-        <div className="jira-header">
-          <div className="jira-title-section">
-            <h1>ITMS 관리자 대시보드</h1>
-            <div className="jira-status">
-              <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
-              {autoRefresh && <span className="auto-refresh-badge"><FiRefreshCw /> 자동 새로고침</span>}
-            </div>
-          </div>
-        </div>
-
         <div className="jira-toolbar">
+          <div className="jira-status">
+            <span>마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}</span>
+            {autoRefresh && <span className="auto-refresh-badge"><FiRefreshCw /> 자동 새로고침</span>}
+          </div>
+          
           <div className="jira-view-tabs">
             <button 
               className={`view-tab ${selectedView === 'overview' ? 'active' : ''}`}
@@ -441,7 +447,7 @@ const AdminDashboardPage = () => {
                 onClick={() => setShowConfirmModal(true)}
                 disabled={autoClosing}
               >
-                {autoClosing ? '처리 중...' : 'SLA 자동 종결'}
+                {autoClosing ? '처리 중...' : 'SLA 자동 종료'}
               </button>
             </div>
           </div>

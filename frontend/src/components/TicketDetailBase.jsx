@@ -7,6 +7,7 @@ import CommonLayout from './CommonLayout';
 import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
+import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X, Download, File, Presentation, Archive, Image, Package, Tag, Monitor, Cloud, User } from 'lucide-react';
 
 const TicketDetailBase = ({ ticketId, token, role }) => {
   const [ticket, setTicket] = useState(null);
@@ -31,6 +32,8 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [assignReplyMessage, setAssignReplyMessage] = useState('');
 
+
+
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
     setTimeout(() => {
@@ -54,17 +57,17 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const handleStatusChange = async (newStatus) => {
     if (newStatus === ticket.status) return;
 
-    if (ticket.status === '종결') {
-      showToast('이미 종결된 티켓입니다.', 'error');
+    if (ticket.status === '종료') {
+      showToast('이미 종료된 티켓입니다.', 'error');
       return;
     }
 
-    if (newStatus === '종결') {
+    if (newStatus === '종료') {
       setModalState({
         show: true,
-        title: '티켓 종결 확인',
-        content: '이 티켓을 종결 처리하시겠습니까?',
-        warning: '종결된 티켓은 더 이상 상태를 변경할 수 없습니다.',
+        title: '티켓 종료 확인',
+        content: '이 티켓을 종료 처리하시겠습니까?',
+        warning: '종료된 티켓은 더 이상 상태를 변경할 수 없습니다.',
         onConfirm: () => handleCloseTicket(),
       });
       return;
@@ -129,12 +132,12 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
   const handleCloseTicket = async () => {
     try {
       setUpdatingStatus(true);
-      await updateTicketStatus(ticketId, '종결', token);
-      showToast('티켓이 종결 처리되었습니다.', 'success');
+      await updateTicketStatus(ticketId, '종료', token);
+      showToast('티켓이 종료 처리되었습니다.', 'success');
       fetchDetail();
     } catch (err) {
-      console.error("티켓 종결 실패:", err);
-      showToast('티켓 종결 처리에 실패했습니다.', 'error');
+      console.error("티켓 종료 실패:", err);
+      showToast('티켓 종료 처리에 실패했습니다.', 'error');
     } finally {
       setUpdatingStatus(false);
     }
@@ -232,7 +235,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       case '접수': return 'received';
       case '진행중': return 'in-progress';
       case '답변 완료': return 'answered';
-      case '종결': return 'closed';
+      case '종료': return 'closed';
       default: return 'default';
     }
   };
@@ -269,30 +272,30 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
     const extension = filename.split('.').pop()?.toLowerCase();
     switch (extension) {
       case 'pdf':
-        return '📄';
+        return <File size={16} />;
       case 'doc':
       case 'docx':
-        return '📝';
+        return <FileText size={16} />;
       case 'xls':
       case 'xlsx':
-        return '📊';
+        return <BarChart3 size={16} />;
       case 'ppt':
       case 'pptx':
-        return '📈';
+        return <Presentation size={16} />;
       case 'txt':
-        return '📄';
+        return <File size={16} />;
       case 'zip':
       case 'rar':
-        return '📦';
+        return <Archive size={16} />;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
       case 'bmp':
       case 'svg':
-        return '🖼️';
+        return <Image size={16} />;
       default:
-        return '📎';
+        return <File size={16} />;
     }
   };
 
@@ -417,9 +420,6 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       {modalState.show && (
         <div className="modal-overlay">
           <div className="confirm-modal">
-            <div className="modal-header">
-              <h3>{modalState.title}</h3>
-            </div>
             <div className="modal-content">
               <p>{modalState.content}</p>
               {modalState.warning && (
@@ -459,13 +459,13 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                 id="status-select"
                 value={ticket.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
-                disabled={updatingStatus || ticket.status === '종결'}
-                className="status-select"
+                disabled={updatingStatus || ticket.status === '종료'}
+                className={`status-select ${ticket.status === '종료' ? 'status-closed' : ''}`}
               >
                 <option value="접수">접수</option>
                 <option value="진행중">진행중</option>
                 <option value="답변 완료">답변 완료</option>
-                <option value="종결">종결</option>
+                <option value="종료">종료</option>
               </select>
               {updatingStatus && <span className="updating-indicator">변경 중...</span>}
             </div>
@@ -569,7 +569,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                               className="document-download"
                               title="다운로드"
                             >
-                              ⬇️ 다운로드
+                              <Download size={16} /> 다운로드
                             </a>
                             {(role === 'admin' || ticket.author_id === currentUserId) && (
                               <button
@@ -635,8 +635,14 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                         <button className="reply-edit-btn" onClick={() => {
                           setEditingReplyId(reply.id);
                           setEditedMessage(reply.message);
-                        }}>✏️ 수정</button>
-                        <button className="reply-delete-btn" onClick={() => handleDeleteReply(reply.id)}>🗑️ 삭제</button>
+                        }}>
+                          <Edit size={16} />
+                          수정
+                        </button>
+                        <button className="reply-delete-btn" onClick={() => handleDeleteReply(reply.id)}>
+                          <Trash2 size={16} />
+                          삭제
+                        </button>
                       </>
                     )}
                   </div>
@@ -712,7 +718,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                                     className="document-download"
                                     title="다운로드"
                                   >
-                                    ⬇️ 다운로드
+                                    <Download size={16} /> 다운로드
                                   </a>
                                   {(role === 'admin' || reply.author_id === currentUserId) && (
                                     <button 
@@ -781,40 +787,60 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
           {/* 진행도 단계 표시 */}
           <div className="ticket-progress-section">
             <h3>진행 상황</h3>
-            <div className="progress-steps">
-              <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''}`}>
-                <div className="step-icon">📝</div>
+                          <div className="progress-steps">
+              <div className={`progress-step ${ticket.status === '접수' || ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '접수' ? 'current' : ''}`}>
+                <div className="step-label">STEP 01</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><FileText size={20} /></div>
+                  <div className="step-status-indicator completed">
+                    <Check size={10} />
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">접수</div>
-                  <div className="step-description">티켓이 등록되었습니다</div>
                   {ticket.status === '접수' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
-              <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
-                <div className="step-icon">⚙️</div>
+              <div className={`progress-step ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '진행중' ? 'current' : ''}`}>
+                <div className="step-label">STEP 02</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><Wrench size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '진행중' || ticket.status === '답변 완료' || ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">진행중</div>
-                  <div className="step-description">담당자가 처리 중입니다</div>
                   {ticket.status === '진행중' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
-              <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
-                <div className="step-icon">✅</div>
+              <div className={`progress-step ${ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '답변 완료' ? 'current' : ''}`}>
+                <div className="step-label">STEP 03</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><CheckCircle size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '답변 완료' || ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '답변 완료' || ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
                   <div className="step-title">답변 완료</div>
-                  <div className="step-description">답변이 완료되었습니다</div>
                   {ticket.status === '답변 완료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
               
-              <div className={`progress-step ${ticket.status === '종결' ? 'completed' : ''} ${ticket.status === '종결' ? 'current' : ''}`}>
-                <div className="step-icon">🏁</div>
+              <div className={`progress-step ${ticket.status === '종료' ? 'completed' : ''} ${ticket.status === '종료' ? 'current' : ''}`}>
+                <div className="step-label">STEP 04</div>
+                <div className="step-icon-container">
+                  <div className="step-icon"><FileCheck size={20} /></div>
+                  <div className={`step-status-indicator ${ticket.status === '종료' ? 'completed' : 'pending'}`}>
+                    {ticket.status === '종료' ? <Check size={10} /> : null}
+                  </div>
+                </div>
                 <div className="step-content">
-                  <div className="step-title">종결</div>
-                  <div className="step-description">티켓이 종결되었습니다</div>
-                  {ticket.status === '종결' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
+                  <div className="step-title">종료</div>
+                  {ticket.status === '종료' && <div className="step-date">{new Date(ticket.created_at).toLocaleDateString('ko-KR')}</div>}
                 </div>
               </div>
             </div>
@@ -827,37 +853,45 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               {ticket.ticket_type === 'SR' ? (
                 <>
                   <div className="meta-item">
+                    <Package size={16} className="meta-icon" />
                     <span className="meta-label">관련 제품:</span>
                     <span className="meta-value">{ticket.product}</span>
                   </div>
                   <div className="meta-item">
+                    <Tag size={16} className="meta-icon" />
                     <span className="meta-label">S/W Version:</span>
                     <span className="meta-value">{ticket.sw_version}</span>
                   </div>
                   <div className="meta-item">
+                    <Monitor size={16} className="meta-icon" />
                     <span className="meta-label">OS:</span>
                     <span className="meta-value">{ticket.os}</span>
                   </div>
                   <div className="meta-item">
+                    <Cloud size={16} className="meta-icon" />
                     <span className="meta-label">Platform:</span>
                     <span className="meta-value">{ticket.platform}</span>
                   </div>
                 </>
               ) : (
                 <div className="meta-item">
+                  <Package size={16} className="meta-icon" />
                   <span className="meta-label">고객사:</span>
                   <span className="meta-value">{ticket.client_company}</span>
                 </div>
               )}
               <div className="meta-item">
+                <User size={16} className="meta-icon" />
                 <span className="meta-label">등록자:</span>
                 <span className="meta-value">{ticket.customer_name || '알 수 없음'}</span>
               </div>
               <div className="meta-item">
+                <User size={16} className="meta-icon" />
                 <span className="meta-label">담당자:</span>
                 <span className="meta-value">{ticket.assignee_name || '미배정'}</span>
               </div>
               <div className="meta-item">
+                <FileText size={16} className="meta-icon" />
                 <span className="meta-label">등록일:</span>
                 <span className="meta-value">
                   {new Date(ticket.created_at).toLocaleDateString('ko-KR', {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import { getQuotes, deleteQuote } from '../api/quotes';
 import { useUser } from '../contexts/UserContext';
+import { ClipboardList } from 'lucide-react';
 import '../css/QuotesPage.css';
 
 const QuotesPage = () => {
@@ -121,7 +122,7 @@ const QuotesPage = () => {
           <div className="loading">견적 목록을 불러오는 중...</div>
         ) : quotes.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📋</div>
+            <div className="empty-icon"><ClipboardList size={48} /></div>
             <h3>견적이 없습니다</h3>
             <p>아직 요청한 견적이 없습니다. 새로운 견적을 요청해보세요.</p>
             <Link to="/quotes/create" className="btn btn-primary">
