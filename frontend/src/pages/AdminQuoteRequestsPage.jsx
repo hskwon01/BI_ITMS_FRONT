@@ -102,7 +102,6 @@ const AdminQuoteRequestsPage = () => {
   return (
     <div className="admin-quote-requests-container">
       <div className="admin-quote-requests-header">
-        <h1>견적 요청 관리</h1>
         <p className="admin-quote-requests-desc">고객의 견적 요청을 승인하거나 거부할 수 있습니다.</p>
       </div>
 
