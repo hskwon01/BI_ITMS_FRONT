@@ -42,7 +42,7 @@
 }
 
 .notice-error h2 {
-  color: #ef4444;
+  color: #ff5630;
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
@@ -129,7 +129,7 @@
 }
 
 .btn-danger {
-  background: #ef4444;
+  background: #ff5630;
   color: white;
 }
 

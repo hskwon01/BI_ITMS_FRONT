@@ -9,7 +9,6 @@
 /* 관리자용 견적 상세 페이지 래퍼 */
 .admin-quote-wrapper {
   min-height: 100vh;
-  background: #f8fafc;
   padding: 2rem;
 }
 
@@ -84,6 +83,9 @@
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-left: 0;
+  width: 100%;
 }
 
 .quote-title-section h1 {
@@ -91,7 +93,9 @@
   font-weight: 700;
   color: #2d3652;
   margin: 0;
-  flex: 1;
+  padding: 1rem 0 1rem 1.5rem;
+  flex: 0 1 auto;
+  text-align: left;
 }
 
 .quote-status {
@@ -163,7 +167,7 @@
 }
 
 .btn-danger {
-  background: #ef4444;
+  background: #ff5630;
   color: white;
 }
 
@@ -181,7 +185,7 @@
 }
 
 .btn-success {
-  background: #10b981;
+  background: #36B37E;
   color: white;
 }
 
@@ -220,6 +224,8 @@
 }
 
 .quote-sidebar .info-item {
+  display: flex;
+  flex-direction: column;
   gap: 0.25rem;
 }
 
@@ -229,6 +235,11 @@
 
 .quote-sidebar .info-item span {
   font-size: 0.9rem;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
 }
 
 .info-grid {
@@ -242,6 +253,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-height: 60px;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .info-item label {
@@ -255,10 +269,15 @@
 .info-item span {
   color: #2d3652;
   font-size: 1rem;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
 }
 
 .info-item span.expired {
-  color: #ef4444;
+  color: #ff5630;
   font-weight: 600;
 }
 
@@ -395,7 +414,7 @@
 }
 
 .progress-step-quote.completed {
-  border-color: #10b981;
+  border-color: #36B37E;
   background: #f0fdf4;
 }
 
@@ -761,7 +780,7 @@
 }
 
 .error {
-  color: #ef4444;
+  color: #ff5630;
 }
 
 /* 반응형 디자인 */
@@ -867,15 +886,21 @@
   overflow-y: auto;
 }
 
-.modal-header {
-  padding: 1.5rem 1.5rem 0;
+.modal-header-quote {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
 }
 
-.modal-header h3 {
+.modal-header-quote h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: #2d3652;
+  text-align: center !important;
+}
+
+/* 상태 변경 모달 헤더 강제 중앙 정렬 */
+.status-modal-quote .modal-header-quote h3 {
+  text-align: center !important;
 }
 
 .modal-content {
@@ -886,6 +911,7 @@
   margin: 0 0 1rem;
   color: #374151;
   line-height: 1.6;
+  text-align: center;
 }
 
 .modal-warning {
@@ -905,7 +931,7 @@
 .modal-actions {
   display: flex;
   gap: 0.75rem;
-  padding: 0 1.5rem 1.5rem;
+  padding: 1.5rem 1.5rem 1.5rem 1.5rem;
   justify-content: flex-end;
 }
 
@@ -929,7 +955,7 @@
 }
 
 .modal-btn.confirm {
-  background: #ef4444;
+  background: #ff5630;
   color: white;
 }
 
@@ -955,6 +981,8 @@
   resize: vertical;
   min-height: 80px;
   font-family: inherit;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .status-reason-textarea:focus {

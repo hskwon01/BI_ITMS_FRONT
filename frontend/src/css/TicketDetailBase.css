@@ -1261,33 +1261,43 @@
   max-width: 500px;
   width: 90%;
   animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .assign-modal .modal-header {
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  text-align: center;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: none;
 }
 
 .assign-modal .modal-header h3 {
-  color: #2d3652;
-  font-size: 1.3rem;
-  font-weight: 700;
   margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3652;
+  text-align: center !important;
 }
 
 .assign-modal .modal-content {
-  padding: 1rem 1.5rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .assign-modal .modal-content p {
-  color: #7b8190;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1rem;
+  color: #374151;
+  line-height: 1.6;
+  text-align: center;
 }
 
 .assign-modal .form-group {
   margin-bottom: 1rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .assign-modal label {
@@ -1300,65 +1310,66 @@
 .assign-modal .assignee-select,
 .assign-modal .assign-reply-textarea {
   width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1.5px solid #e2e8f0;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-size: 1rem;
+  padding: 0.75rem;
+  font-size: 0.9rem;
   font-family: inherit;
-  background: #f9fafb;
+  background: #fff;
   color: #2d3652;
   transition: border-color 0.2s;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .assign-modal .assignee-select:focus,
 .assign-modal .assign-reply-textarea:focus {
   outline: none;
-  border-color: #7c83fd;
+  border-color: #6366f1;
   background: #fff;
 }
 
 .assign-modal .assign-reply-textarea {
-  min-height: 100px;
+  min-height: 80px;
   resize: vertical;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .assign-modal .modal-actions {
   display: flex;
-  gap: 1rem;
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  gap: 0.75rem;
+  padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+  justify-content: flex-end;
 }
 
 .assign-modal .modal-btn {
-  flex: 1;
-  padding: 0.8rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .assign-modal .modal-btn.cancel {
-  background: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .assign-modal .modal-btn.cancel:hover {
-  background: #e9ecef;
-  color: #495057;
+  background: #e5e7eb;
 }
 
 .assign-modal .modal-btn.confirm {
-  background: #7c83fd;
-  color: #fff;
+  background: #6366f1;
+  color: white;
 }
 
 .assign-modal .modal-btn.confirm:hover {
-  background: #6b73fd;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 131, 253, 0.2);
+  background: #4f46e5;
 }
 
 /* 진행도 단계 표시 */
@@ -1422,7 +1433,7 @@
 }
 
 .progress-step.current .step-label {
-  color: #ef4444;
+  color: #ff5630;
   font-weight: 700;
 }
 
@@ -1450,7 +1461,7 @@
 }
 
 .progress-step.current .step-icon {
-  color: #ef4444;
+  color: #ff5630;
 }
 
 .step-status-indicator {
@@ -1472,8 +1483,8 @@
 }
 
 .step-status-indicator.error {
-  background: #ef4444;
-  border: 2px solid #ef4444;
+  background: #ff5630;
+  border: 2px solid #ff5630;
 }
 
 .step-status-indicator.pending {
@@ -1501,7 +1512,7 @@
 }
 
 .progress-step.current .step-title {
-  color: #ef4444;
+  color: #ff5630;
 }
 
 

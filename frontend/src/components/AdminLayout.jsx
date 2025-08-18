@@ -47,6 +47,11 @@ const AdminLayout = ({ children }) => {
       return '티켓 관리 > 티켓 상세';
     }
     
+    // 견적 상세 페이지인 경우
+    if (pathname.match(/^\/admin\/quotes\/\d+$/)) {
+      return '견적요청 관리 > 견적 상세';
+    }
+    
     // 일반 메뉴 페이지인 경우
     const menuItem = menuItems.find(item => item.path === pathname);
     return menuItem?.label || '관리자';
