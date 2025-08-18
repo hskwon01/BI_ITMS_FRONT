@@ -88,7 +88,7 @@
   background: #f8fafc;
 }
 
-.customer-info {
+.customer-info-quote {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -116,7 +116,7 @@
   text-decoration: underline;
 }
 
-.status-badge {
+.status-badge-quote {
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -125,17 +125,17 @@
   display: inline-block;
 }
 
-.status-badge.pending {
+.status-badge-quote.pending {
   background: #fef3c7;
   color: #d97706;
 }
 
-.status-badge.approved {
+.status-badge-quote.approved {
   background: #dcfce7;
   color: #16a34a;
 }
 
-.status-badge.rejected {
+.status-badge-quote.rejected {
   background: #fee2e2;
   color: #dc2626;
 }

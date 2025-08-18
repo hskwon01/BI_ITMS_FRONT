@@ -144,7 +144,7 @@ const AdminQuoteRequestsPage = () => {
               {requests.map(request => (
                 <tr key={request.id}>
                   <td>
-                    <div className="customer-info">
+                    <div className="customer-info-quote">
                       <div className="customer-name">{request.customer_name}</div>
                       <div className="customer-email">{request.customer_email}</div>
                     </div>
@@ -157,7 +157,7 @@ const AdminQuoteRequestsPage = () => {
                   </td>
                   <td>{formatDateTime(request.created_at)}</td>
                   <td>
-                    <span className={`status-badge ${getStatusBadgeClass(request.status)}`}>
+                    <span className={`status-badge-quote ${getStatusBadgeClass(request.status)}`}>
                       {getStatusText(request.status)}
                     </span>
                   </td>
