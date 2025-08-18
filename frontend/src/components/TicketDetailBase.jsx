@@ -7,7 +7,7 @@ import CommonLayout from './CommonLayout';
 import AdminLayout from './AdminLayout';
 import '../css/TicketDetailBase.css';
 import { jwtDecode } from 'jwt-decode';
-import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X, Download, File, Presentation, Archive, Image, Package, Tag, Monitor, Cloud, User } from 'lucide-react';
+import { FileText, BarChart3, Wrench, CheckCircle, FileCheck, Edit, Trash2, Check, X, Download, File, Presentation, Archive, Image, Package, Tag, Monitor, Cloud, User, Ban } from 'lucide-react';
 
 const TicketDetailBase = ({ ticketId, token, role }) => {
   const [ticket, setTicket] = useState(null);
@@ -73,14 +73,22 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
       return;
     }
 
-    if (ticket.status === '접수' && newStatus === '진행중') {
-      setShowAssignModal(true);
-      return;
+    // 접수 상태에서 진행중으로만 변경 가능
+    if (ticket.status === '접수') {
+      if (newStatus === '진행중') {
+        setShowAssignModal(true);
+        return;
+      } else if (newStatus === '답변 완료') {
+        showToast('접수 상태에서는 진행중으로 먼저 변경해야 합니다.', 'error');
+        return;
+      }
     }
 
-    // 진행중 상태에서 접수로 변경하는 것을 막음
-    if (ticket.status === '진행중' && newStatus === '접수') {
-      showToast('진행중인 티켓은 접수 상태로 되돌릴 수 없습니다.', 'error');
+
+
+    // 답변 완료 상태에서 진행중으로 변경하는 것을 막음
+    if (ticket.status === '답변 완료' && newStatus === '진행중') {
+      showToast('답변 완료된 티켓은 진행중 상태로 되돌릴 수 없습니다.', 'error');
       return;
     }
     
@@ -462,9 +470,15 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                 disabled={updatingStatus || ticket.status === '종료'}
                 className={`status-select ${ticket.status === '종료' ? 'status-closed' : ''}`}
               >
-                <option value="접수">접수</option>
-                <option value="진행중">진행중</option>
-                <option value="답변 완료">답변 완료</option>
+                <option value="접수" disabled={ticket.status === '진행중' || ticket.status === '답변 완료'}>
+                  {ticket.status === '진행중' || ticket.status === '답변 완료' ? '🚫 접수' : '접수'}
+                </option>
+                <option value="진행중" disabled={ticket.status === '답변 완료'}>
+                  {ticket.status === '답변 완료' ? '🚫 진행중' : '진행중'}
+                </option>
+                <option value="답변 완료" disabled={ticket.status === '접수'}>
+                  {ticket.status === '접수' ? '🚫 답변 완료' : '답변 완료'}
+                </option>
                 <option value="종료">종료</option>
               </select>
               {updatingStatus && <span className="updating-indicator">변경 중...</span>}
@@ -930,7 +944,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
               <h3>티켓 진행 시작</h3>
             </div>
             <div className="modal-content">
-              <p>이 티켓의 상태를 '진행중'으로 변경하고 담당자를 배정하시겠습니까?</p>
+              <p>이 티켓의 상태를 <strong>'진행중'</strong>으로 변경하고 <br></br> <strong>담당자를 배정</strong>하시겠습니까?</p>
               
               <div className="form-group">
                 <label htmlFor="assignee-select">담당자 선택:</label>
@@ -956,7 +970,7 @@ const TicketDetailBase = ({ ticketId, token, role }) => {
                   id="assign-reply-message"
                   value={assignReplyMessage}
                   onChange={(e) => setAssignReplyMessage(e.target.value)}
-                  placeholder="진행 시작에 대한 댓글을 남겨주세요..."
+                  placeholder="진행 시작에 대한 댓글을 남겨주세요."
                   className="assign-reply-textarea"
                 />
               </div>

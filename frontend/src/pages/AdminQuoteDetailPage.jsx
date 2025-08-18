@@ -286,7 +286,7 @@ const AdminQuoteDetailPage = () => {
                     </div>
                     <div className="timeline-content">
                       <div className="timeline-header">
-                        <span className={`status-badge ${getStatusClass(item.status)}`}>
+                        <span className={`status-badge-quote ${getStatusClass(item.status)}`}>
                           {item.status_label}
                         </span>
                         <span className="timeline-date">{formatDate(item.changed_at)}</span>
@@ -363,7 +363,7 @@ const AdminQuoteDetailPage = () => {
               <h3>상태 관리</h3>
               <div className="current-status">
                 <label>현재 상태:</label>
-                <span className={`status-badge ${getStatusClass(quote.status)}`}>
+                <span className={`status-badge-quote ${getStatusClass(quote.status)}`}>
                   {getStatusLabel(quote.status)}
                 </span>
               </div>

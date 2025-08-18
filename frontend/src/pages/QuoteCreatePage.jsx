@@ -106,58 +106,55 @@ const QuoteCreatePage = () => {
   };
 
   const addProductToQuote = (product) => {
-    const existingIndex = selectedItems.findIndex(item => item.product_id === product.id);
+    const existingItem = selectedItems.find(item => item.product_id === product.id);
     
-    if (existingIndex >= 0) {
-      // 이미 있는 제품이면 수량 증가
-      const newItems = [...selectedItems];
-      newItems[existingIndex].quantity += 1;
-      newItems[existingIndex].total_price = newItems[existingIndex].quantity * newItems[existingIndex].unit_price;
-      setSelectedItems(newItems);
+    if (existingItem) {
+      setSelectedItems(prev => prev.map(item => 
+        item.product_id === product.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
     } else {
-      // 새로운 제품 추가
-      const newItem = {
+      setSelectedItems(prev => [...prev, {
         product_id: product.id,
         product_name: product.name,
-        description: product.description || '',
+        description: product.description,
         quantity: 1,
-        unit_price: Number(product.base_price),
-        unit: product.unit,
-        total_price: Number(product.base_price)
-      };
-      setSelectedItems([...selectedItems, newItem]);
+        unit_price: product.price || 0
+      }]);
     }
-    setShowProductModal(false);
   };
 
-  const updateItemQuantity = (index, quantity) => {
-    if (quantity <= 0) return;
-    
-    const newItems = [...selectedItems];
-    newItems[index].quantity = quantity;
-    newItems[index].total_price = quantity * newItems[index].unit_price;
-    setSelectedItems(newItems);
+  const updateItemQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      setSelectedItems(prev => prev.filter(item => item.product_id !== productId));
+    } else {
+      setSelectedItems(prev => prev.map(item => 
+        item.product_id === productId 
+          ? { ...item, quantity }
+          : item
+      ));
+    }
   };
 
-  const updateItemPrice = (index, price) => {
-    if (price < 0) return;
-    
-    const newItems = [...selectedItems];
-    newItems[index].unit_price = Number(price);
-    newItems[index].total_price = newItems[index].quantity * Number(price);
-    setSelectedItems(newItems);
+  const updateItemPrice = (productId, price) => {
+    setSelectedItems(prev => prev.map(item => 
+      item.product_id === productId 
+        ? { ...item, unit_price: price }
+        : item
+    ));
   };
 
-  const removeItem = (index) => {
-    const newItems = selectedItems.filter((_, i) => i !== index);
-    setSelectedItems(newItems);
+  const removeItem = (productId) => {
+    setSelectedItems(prev => prev.filter(item => item.product_id !== productId));
   };
 
-  const getTotalAmount = () => {
-    return selectedItems.reduce((sum, item) => sum + item.total_price, 0);
+  const getTotalPrice = () => {
+    return selectedItems.reduce((total, item) => total + (item.quantity * item.unit_price), 0);
   };
 
   const formatPrice = (price) => {
+    if (!price) return '₩0';
     return new Intl.NumberFormat('ko-KR').format(price);
   };
 
@@ -208,6 +205,17 @@ const QuoteCreatePage = () => {
               </div>
 
               <div className="form-group">
+                <label htmlFor="customer_email">이메일</label>
+                <input
+                  type="email"
+                  id="customer_email"
+                  value={formData.customer_email}
+                  onChange={(e) => setFormData({ ...formData, customer_email: e.target.value })}
+                  placeholder="이메일"
+                />
+              </div>
+
+              <div className="form-group">
                 <label htmlFor="customer_company">회사명</label>
                 <input
                   type="text"
@@ -217,17 +225,17 @@ const QuoteCreatePage = () => {
                   placeholder="회사명"
                 />
               </div>
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="notes">메모</label>
-              <textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="추가 요청사항이나 메모를 입력하세요"
-                rows={3}
-              />
+              <div className="form-group full-width">
+                <label htmlFor="notes">비고</label>
+                <textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="추가 요청사항이나 비고를 입력하세요"
+                  rows="3"
+                />
+              </div>
             </div>
           </div>
 
@@ -238,15 +246,15 @@ const QuoteCreatePage = () => {
               <button
                 type="button"
                 onClick={() => setShowProductModal(true)}
-                className="btn btn-primary"
+                className="btn btn-secondary"
               >
                 제품 추가
               </button>
             </div>
 
             {selectedItems.length === 0 ? (
-              <div className="empty-items">
-                <p>선택된 제품이 없습니다. 제품을 추가해주세요.</p>
+              <div className="empty-state">
+                <p>선택된 제품이 없습니다. 제품 추가 버튼을 클릭하여 제품을 선택하세요.</p>
               </div>
             ) : (
               <div className="selected-items">
@@ -256,48 +264,43 @@ const QuoteCreatePage = () => {
                       <th>제품명</th>
                       <th>수량</th>
                       <th>단가</th>
-                      <th>합계</th>
-                      <th>관리</th>
+                      <th>소계</th>
+                      <th>액션</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedItems.map((item, index) => (
-                      <tr key={index}>
+                    {selectedItems.map(item => (
+                      <tr key={item.product_id}>
                         <td>
-                          <div className="item-info">
-                            <div className="item-name">{item.product_name}</div>
-                            {item.description && (
-                              <div className="item-description">{item.description}</div>
-                            )}
+                          <div className="product-info">
+                            <div className="product-name">{item.product_name}</div>
+                            <div className="product-description">{item.description}</div>
                           </div>
                         </td>
                         <td>
                           <input
                             type="number"
-                            value={item.quantity}
-                            onChange={(e) => updateItemQuantity(index, Number(e.target.value))}
                             min="1"
+                            value={item.quantity}
+                            onChange={(e) => updateItemQuantity(item.product_id, parseInt(e.target.value) || 0)}
                             className="quantity-input"
                           />
-                          <span className="unit">{item.unit}</span>
                         </td>
                         <td>
                           <input
                             type="number"
-                            value={item.unit_price}
-                            onChange={(e) => updateItemPrice(index, e.target.value)}
                             min="0"
-                            step="0.01"
+                            step="1000"
+                            value={item.unit_price}
+                            onChange={(e) => updateItemPrice(item.product_id, parseInt(e.target.value) || 0)}
                             className="price-input"
                           />
                         </td>
-                        <td className="total-price">
-                          ₩{formatPrice(item.total_price)}
-                        </td>
+                        <td>₩{formatPrice(item.quantity * item.unit_price)}</td>
                         <td>
                           <button
                             type="button"
-                            onClick={() => removeItem(index)}
+                            onClick={() => removeItem(item.product_id)}
                             className="btn btn-danger btn-sm"
                           >
                             삭제
@@ -306,55 +309,54 @@ const QuoteCreatePage = () => {
                       </tr>
                     ))}
                   </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colSpan="3" className="total-label">총 금액</td>
+                      <td className="total-amount">₩{formatPrice(getTotalPrice())}</td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
                 </table>
-
-                <div className="total-section">
-                  <div className="total-amount">
-                    <strong>총 견적금액: ₩{formatPrice(getTotalAmount())}</strong>
-                  </div>
-                </div>
               </div>
             )}
           </div>
 
-          {/* 제출 버튼 */}
+          {/* 버튼 */}
           <div className="form-actions">
-            <button
-              type="button"
-              onClick={() => navigate('/quotes')}
-              className="btn btn-secondary"
-            >
-              취소
-            </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, true)}
               disabled={loading}
-              className="btn btn-outline"
+              className="btn btn-secondary"
             >
-              {loading ? '저장 중...' : '임시저장'}
+              임시저장
             </button>
             <button
               type="submit"
-              disabled={loading || selectedItems.length === 0}
+              disabled={loading}
               className="btn btn-primary"
             >
-              {loading ? '생성 중...' : '견적 요청'}
+              {loading ? '처리 중...' : '견적 요청'}
             </button>
           </div>
         </form>
 
         {/* 제품 선택 모달 */}
         {showProductModal && (
-          <div className="modal-overlay" onClick={() => setShowProductModal(false)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-overlay">
+            <div className="modal-content">
               <div className="modal-header">
-                <h2>제품 선택</h2>
-                <button onClick={() => setShowProductModal(false)} className="modal-close">×</button>
+                <h3>제품 선택</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowProductModal(false)}
+                  className="modal-close"
+                >
+                  ×
+                </button>
               </div>
               
               <div className="modal-body">
-                {/* 제품 필터 */}
                 <div className="product-filters">
                   <select
                     value={productFilters.category}
@@ -376,21 +378,19 @@ const QuoteCreatePage = () => {
                   />
                 </div>
 
-                {/* 제품 목록 */}
-                <div className="products-grid">
+                <div className="product-list">
                   {products.map(product => (
-                    <div key={product.id} className="product-card">
-                      <div className="product-info">
-                        <h3>{product.name}</h3>
-                        <p className="product-category">{product.category}</p>
-                        {product.description && (
-                          <p className="product-description">{product.description}</p>
-                        )}
-                        <div className="product-price">
-                          ₩{formatPrice(product.base_price)} / {product.unit}
+                    <div key={product.id} className="product-item">
+                      <div className="product-details">
+                        <h4>{product.name}</h4>
+                        <p>{product.description}</p>
+                        <div className="product-meta">
+                          <span className="category">{product.category}</span>
+                          <span className="price">₩{formatPrice(product.price)}</span>
                         </div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => addProductToQuote(product)}
                         className="btn btn-primary btn-sm"
                       >
@@ -399,12 +399,6 @@ const QuoteCreatePage = () => {
                     </div>
                   ))}
                 </div>
-
-                {products.length === 0 && (
-                  <div className="no-products">
-                    <p>조건에 맞는 제품이 없습니다.</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -415,7 +409,3 @@ const QuoteCreatePage = () => {
 };
 
 export default QuoteCreatePage;
-
-
-
-

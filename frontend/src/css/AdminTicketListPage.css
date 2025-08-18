@@ -204,6 +204,7 @@
 .admin-ticket-table th:nth-child(5),
 .admin-ticket-table td:nth-child(5) {
   width: 12%;
+  white-space: nowrap;
 }
 
 .admin-ticket-table th:nth-child(6),
@@ -255,6 +256,8 @@
   gap: 0.5rem;
   color: #6b778c;
   font-size: 0.9rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 .info-icon {

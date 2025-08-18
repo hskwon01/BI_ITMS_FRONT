@@ -41,6 +41,17 @@ const AdminLayout = ({ children }) => {
     }
   };
 
+  const getBreadcrumbText = (pathname) => {
+    // 티켓 상세 페이지인 경우
+    if (pathname.match(/^\/admin\/tickets\/\d+$/)) {
+      return '티켓 관리 > 티켓 상세';
+    }
+    
+    // 일반 메뉴 페이지인 경우
+    const menuItem = menuItems.find(item => item.path === pathname);
+    return menuItem?.label || '관리자';
+  };
+
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
@@ -119,7 +130,7 @@ const AdminLayout = ({ children }) => {
               <FiMenu />
             </button>
             <div className="breadcrumb">
-              {menuItems.find(item => item.path === location.pathname)?.label || '관리자'}
+              {getBreadcrumbText(location.pathname)}
             </div>
           </div>
           <div className="user-info">
