@@ -77,7 +77,6 @@ const AdminUserListPage = () => {
   return (
     <div className="admin-user-list-container">
       <div className="admin-user-header">
-        <h1>고객 계정 관리</h1>
         <p className="admin-user-desc">가입한 고객 계정을 관리하고 승인합니다.</p>
       </div>
       <div className="admin-user-stats">

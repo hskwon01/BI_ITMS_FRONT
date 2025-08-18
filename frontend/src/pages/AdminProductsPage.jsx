@@ -160,7 +160,6 @@ const AdminProductsPage = () => {
   return (
       <div className="admin-products-container">
         <div className="admin-products-header">
-          <h1>제품 관리</h1>
           <p>견적 시스템에서 사용할 제품을 관리합니다.</p>
         </div>
 

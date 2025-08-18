@@ -112,9 +112,10 @@
   background: #dc3545;
   color: #fff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 400;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
