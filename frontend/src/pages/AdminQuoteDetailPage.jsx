@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getQuote, deleteQuote, updateQuote } from '../api/quotes';
+import { getQuote, updateQuote } from '../api/quotes';
 import { useUser } from '../contexts/UserContext';
 import '../css/QuoteDetailPage.css';
 
@@ -12,10 +12,10 @@ const AdminQuoteDetailPage = () => {
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [statusReason, setStatusReason] = useState('');
+  const [statusHistory, setStatusHistory] = useState([]);
 
   useEffect(() => {
     loadQuote();
@@ -26,6 +26,9 @@ const AdminQuoteDetailPage = () => {
       setLoading(true);
       const response = await getQuote(id);
       setQuote(response.data);
+      
+      // 상태 변경 히스토리 생성 (실제 API에서 제공하는 경우 해당 데이터 사용)
+      generateStatusHistory(response.data);
     } catch (error) {
       console.error('견적 조회 실패:', error);
       if (error.response?.status === 404) {
@@ -40,17 +43,42 @@ const AdminQuoteDetailPage = () => {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      await deleteQuote(id);
-      alert('견적이 삭제되었습니다.');
-      navigate('/admin/quote-requests');
-    } catch (error) {
-      console.error('견적 삭제 실패:', error);
-      alert('삭제에 실패했습니다.');
-    } finally {
-      setShowDeleteModal(false);
+  // 상태 변경 히스토리 생성 (실제로는 백엔드에서 제공해야 함)
+  const generateStatusHistory = (quoteData) => {
+    const history = [
+      {
+        id: 1,
+        status: 'draft',
+        status_label: '임시저장',
+        reason: null,
+        changed_by: quoteData.customer_name,
+        changed_at: quoteData.created_at,
+        description: '견적 요청이 등록되었습니다.'
+      }
+    ];
+
+    if (quoteData.status !== 'draft') {
+      history.push({
+        id: 2,
+        status: quoteData.status,
+        status_label: getStatusLabel(quoteData.status),
+        reason: quoteData.status_reason,
+        changed_by: '관리자',
+        changed_at: quoteData.updated_at || quoteData.created_at,
+        description: getStatusDescription(quoteData.status)
+      });
     }
+
+    setStatusHistory(history);
+  };
+
+  const getStatusDescription = (status) => {
+    const descriptions = {
+      'pending': '견적 요청이 검토 대기 상태로 변경되었습니다.',
+      'approved': '견적 요청이 승인되었습니다.',
+      'rejected': '견적 요청이 거부되었습니다.'
+    };
+    return descriptions[status] || '상태가 변경되었습니다.';
   };
 
   const handleStatusChange = async () => {
@@ -62,6 +90,19 @@ const AdminQuoteDetailPage = () => {
       }
       
       await updateQuote(id, updateData);
+      
+      // 상태 히스토리에 새 항목 추가
+      const newHistoryItem = {
+        id: statusHistory.length + 1,
+        status: selectedStatus,
+        status_label: getStatusLabel(selectedStatus),
+        reason: statusReason.trim() || null,
+        changed_by: user?.data?.name || '관리자',
+        changed_at: new Date().toISOString(),
+        description: getStatusDescription(selectedStatus)
+      };
+      
+      setStatusHistory(prev => [...prev, newHistoryItem]);
       setQuote(prev => ({ ...prev, status: selectedStatus, status_reason: statusReason }));
       alert('상태가 변경되었습니다.');
       setShowStatusModal(false);
@@ -121,6 +162,25 @@ const AdminQuoteDetailPage = () => {
     }
   };
 
+  const getAvailableActions = (currentStatus) => {
+    const actions = {
+      'draft': [
+        { status: 'pending', label: '검토 시작', icon: '🔍', color: 'warning' }
+      ],
+      'pending': [
+        { status: 'approved', label: '승인', icon: '✅', color: 'success' },
+        { status: 'rejected', label: '거절', icon: '❌', color: 'danger' }
+      ],
+      'approved': [
+        { status: 'pending', label: '재검토', icon: '🔄', color: 'warning' }
+      ],
+      'rejected': [
+        { status: 'pending', label: '재검토', icon: '🔄', color: 'warning' }
+      ]
+    };
+    return actions[currentStatus] || [];
+  };
+
   if (loading) {
     return (
       <div className="admin-quote-wrapper">
@@ -141,6 +201,8 @@ const AdminQuoteDetailPage = () => {
     );
   }
 
+  const availableActions = getAvailableActions(quote.status);
+
   return (
     <div className="admin-quote-wrapper">
       <div className="quote-detail-container">
@@ -151,14 +213,6 @@ const AdminQuoteDetailPage = () => {
               <Link to="/admin/quote-requests">견적 요청 관리</Link>
               <span className="separator">›</span>
               <span>견적 상세</span>
-            </div>
-            <div className="header-actions">
-              <Link to={`/quotes/${id}/edit`} className="btn btn-primary">
-                수정
-              </Link>
-              <button onClick={() => setShowDeleteModal(true)} className="btn btn-danger">
-                삭제
-              </button>
             </div>
           </div>
           
@@ -174,54 +228,6 @@ const AdminQuoteDetailPage = () => {
         <div className="quote-layout">
           {/* 메인 콘텐츠 영역 */}
           <div className="quote-main-content">
-            {/* 기본 정보 */}
-            <div className="quote-info-section">
-              <h2>기본 정보</h2>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>견적번호</label>
-                  <span>Q{String(quote.id).padStart(6, '0')}</span>
-                </div>
-                <div className="info-item">
-                  <label>요청자</label>
-                  <span>{quote.customer_name}</span>
-                </div>
-                <div className="info-item">
-                  <label>이메일</label>
-                  <span>{quote.customer_email}</span>
-                </div>
-                <div className="info-item">
-                  <label>회사명</label>
-                  <span>{quote.customer_company || '-'}</span>
-                </div>
-                <div className="info-item">
-                  <label>생성일</label>
-                  <span>{formatDate(quote.created_at)}</span>
-                </div>
-                <div className="info-item">
-                  <label>유효기간</label>
-                  <span className={new Date(quote.valid_until) < new Date() ? 'expired' : ''}>
-                    {formatDate(quote.valid_until)}
-                    {new Date(quote.valid_until) < new Date() && ' (만료됨)'}
-                  </span>
-                </div>
-              </div>
-
-              {quote.notes && (
-                <div className="notes-section">
-                  <label>메모</label>
-                  <div className="notes-content">{quote.notes}</div>
-                </div>
-              )}
-
-              {quote.status_reason && (
-                <div className="status-reason-section">
-                  <label>상태 변경 사유</label>
-                  <div className="status-reason-content">{quote.status_reason}</div>
-                </div>
-              )}
-            </div>
-
             {/* 견적 항목 */}
             <div className="quote-items-section">
               <h2>견적 항목</h2>
@@ -268,10 +274,90 @@ const AdminQuoteDetailPage = () => {
                 </div>
               )}
             </div>
+
+            {/* 상태 변경 히스토리 */}
+            <div className="status-history-section">
+              <h2>상태 변경 히스토리</h2>
+              <div className="status-history-timeline">
+                {statusHistory.map((item, index) => (
+                  <div key={item.id} className={`timeline-item ${index === statusHistory.length - 1 ? 'latest' : ''}`}>
+                    <div className="timeline-marker">
+                      <div className="marker-icon">{getStatusIcon(item.status)}</div>
+                    </div>
+                    <div className="timeline-content">
+                      <div className="timeline-header">
+                        <span className={`status-badge ${getStatusClass(item.status)}`}>
+                          {item.status_label}
+                        </span>
+                        <span className="timeline-date">{formatDate(item.changed_at)}</span>
+                      </div>
+                      <div className="timeline-description">{item.description}</div>
+                      {item.reason && (
+                        <div className="timeline-reason">
+                          <strong>변경 사유:</strong> {item.reason}
+                        </div>
+                      )}
+                      <div className="timeline-user">
+                        <span className="user-label">처리자:</span>
+                        <span className="user-name">{item.changed_by}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* 사이드바 영역 */}
           <div className="quote-sidebar">
+            {/* 기본 정보 */}
+            <div className="quote-info-section">
+              <h3>기본 정보</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label>견적번호</label>
+                  <span>Q{String(quote.id).padStart(6, '0')}</span>
+                </div>
+                <div className="info-item">
+                  <label>요청자</label>
+                  <span>{quote.customer_name}</span>
+                </div>
+                <div className="info-item">
+                  <label>이메일</label>
+                  <span>{quote.customer_email}</span>
+                </div>
+                <div className="info-item">
+                  <label>회사명</label>
+                  <span>{quote.customer_company || '-'}</span>
+                </div>
+                <div className="info-item">
+                  <label>생성일</label>
+                  <span>{formatDate(quote.created_at)}</span>
+                </div>
+                <div className="info-item">
+                  <label>유효기간</label>
+                  <span className={new Date(quote.valid_until) < new Date() ? 'expired' : ''}>
+                    {formatDate(quote.valid_until)}
+                    {new Date(quote.valid_until) < new Date() && ' (만료됨)'}
+                  </span>
+                </div>
+              </div>
+
+              {quote.notes && (
+                <div className="notes-section">
+                  <label>메모</label>
+                  <div className="notes-content">{quote.notes}</div>
+                </div>
+              )}
+
+              {quote.status_reason && (
+                <div className="status-reason-section">
+                  <label>상태 변경 사유</label>
+                  <div className="status-reason-content">{quote.status_reason}</div>
+                </div>
+              )}
+            </div>
+
             {/* 상태 관리 */}
             <div className="status-management-section">
               <h3>상태 관리</h3>
@@ -282,93 +368,48 @@ const AdminQuoteDetailPage = () => {
                 </span>
               </div>
               
-              <div className="status-actions">
-                <button
-                  onClick={() => {
-                    setSelectedStatus('pending');
-                    setShowStatusModal(true);
-                  }}
-                  disabled={updating || quote.status === 'pending'}
-                  className="btn btn-warning"
-                >
-                  검토중으로 변경
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedStatus('approved');
-                    setShowStatusModal(true);
-                  }}
-                  disabled={updating || quote.status === 'approved'}
-                  className="btn btn-success"
-                >
-                  승인
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedStatus('rejected');
-                    setShowStatusModal(true);
-                  }}
-                  disabled={updating || quote.status === 'rejected'}
-                  className="btn btn-danger"
-                >
-                  거절
-                </button>
-              </div>
+              {availableActions.length > 0 && (
+                <div className="status-actions">
+                  {availableActions.map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSelectedStatus(action.status);
+                        setShowStatusModal(true);
+                      }}
+                      disabled={updating}
+                      className={`btn btn-${action.color} action-btn`}
+                    >
+                      <span className="action-icon">{action.icon}</span>
+                      <span className="action-label">{action.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {availableActions.length === 0 && (
+                <div className="no-actions">
+                  <p>현재 상태에서는 추가 액션이 없습니다.</p>
+                </div>
+              )}
             </div>
 
-            {/* 진행 상황 */}
-            <div className="quote-progress-section">
-              <h3>진행 상황</h3>
-              <div className="progress-steps">
-                <div className={`progress-step ${['draft', 'pending', 'approved', 'rejected'].includes(quote.status) ? 'completed' : ''}`}>
-                  <div className="step-icon">📝</div>
-                  <div className="step-content">
-                    <div className="step-title">견적 요청</div>
-                    <div className="step-description">견적이 등록되었습니다</div>
-                    {quote.status === 'draft' && <div className="step-date">{formatDate(quote.created_at)}</div>}
-                  </div>
-                </div>
-                
-                <div className={`progress-step ${['pending', 'approved', 'rejected'].includes(quote.status) ? 'completed' : ''} ${quote.status === 'pending' ? 'current' : ''}`}>
-                  <div className="step-icon">🔍</div>
-                  <div className="step-content">
-                    <div className="step-title">검토중</div>
-                    <div className="step-description">관리자가 검토 중입니다</div>
-                    {quote.status === 'pending' && <div className="step-date">{formatDate(quote.updated_at)}</div>}
-                  </div>
-                </div>
-                
-                <div className={`progress-step ${['approved', 'rejected'].includes(quote.status) ? 'completed' : ''} ${['approved', 'rejected'].includes(quote.status) ? 'current' : ''}`}>
-                  <div className="step-icon">✅</div>
-                  <div className="step-content">
-                    <div className="step-title">처리 완료</div>
-                    <div className="step-description">승인 또는 거절 처리됨</div>
-                    {['approved', 'rejected'].includes(quote.status) && <div className="step-date">{formatDate(quote.updated_at)}</div>}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 고객 정보 */}
-            <div className="customer-info-section">
-              <h3>고객 정보</h3>
-              <div className="customer-details">
-                <div className="customer-item">
-                  <label>이름:</label>
-                  <span>{quote.customer_name}</span>
-                </div>
-                <div className="customer-item">
-                  <label>이메일:</label>
-                  <span>{quote.customer_email}</span>
-                </div>
-                <div className="customer-item">
-                  <label>회사:</label>
-                  <span>{quote.customer_company || '미입력'}</span>
-                </div>
-                <div className="customer-item">
-                  <label>요청일:</label>
-                  <span>{formatDate(quote.created_at)}</span>
-                </div>
+            {/* 빠른 액션 */}
+            <div className="quick-actions-section">
+              <h3>빠른 액션</h3>
+              <div className="quick-actions">
+                <button className="quick-action-btn">
+                  <span className="action-icon">📧</span>
+                  <span>고객에게 연락</span>
+                </button>
+                <button className="quick-action-btn">
+                  <span className="action-icon">📄</span>
+                  <span>견적서 다운로드</span>
+                </button>
+                <button className="quick-action-btn">
+                  <span className="action-icon">📋</span>
+                  <span>내역 복사</span>
+                </button>
               </div>
             </div>
           </div>
@@ -381,37 +422,6 @@ const AdminQuoteDetailPage = () => {
           </Link>
         </div>
       </div>
-
-      {/* 삭제 확인 모달 */}
-      {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="confirm-modal">
-            <div className="modal-header">
-              <h3>⚠️ 견적 삭제 확인</h3>
-            </div>
-            <div className="modal-content">
-              <p>이 견적을 삭제하시겠습니까?</p>
-              <div className="modal-warning">
-                <span>삭제된 견적은 복구할 수 없습니다.</span>
-              </div>
-            </div>
-            <div className="modal-actions">
-              <button 
-                className="modal-btn cancel"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                취소
-              </button>
-              <button 
-                className="modal-btn confirm"
-                onClick={handleDelete}
-              >
-                삭제
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 상태 변경 모달 */}
       {showStatusModal && (
@@ -460,6 +470,17 @@ const AdminQuoteDetailPage = () => {
       )}
     </div>
   );
+};
+
+// 상태별 아이콘 반환 함수
+const getStatusIcon = (status) => {
+  const icons = {
+    'draft': '📝',
+    'pending': '🔍',
+    'approved': '✅',
+    'rejected': '❌'
+  };
+  return icons[status] || '📋';
 };
 
 export default AdminQuoteDetailPage;
